@@ -1,0 +1,20 @@
+{
+  "name": "moah-mono",
+  "version": "1.0.0",
+  "license": "ISC",
+  "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "turbo": "^2.10.7"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
