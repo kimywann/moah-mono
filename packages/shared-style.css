@@ -3,6 +3,10 @@
 @theme {
   --width-layout: 1920px;
   --width-content: 1440px;
-  --width-tablet: 820px;
-  --width-mobile: 412px;
+
+  --radius-full: 9999px;
+  --radius-large: 40px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+  --radius-tiny: 4px;
 }
