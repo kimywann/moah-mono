@@ -9,4 +9,97 @@
   --radius-medium: 16px;
   --radius-small: 12px;
   --radius-tiny: 4px;
+
+  /* mono colors */
+  --color-mono0: #ffffff;
+  --color-mono10: #f0f0f0;
+  --color-mono20: #dadada;
+  --color-mono40: #aaaaaa;
+  --color-mono60: #7c7c7c;
+  --color-mono80: #4e4e4e;
+  --color-mono100: #000000;
+
+  /* neutral colors */
+  --color-neutral5: #fafafa;
+  --color-neutral10: #e3e6ea;
+  --color-neutral20: #b7bbbf;
+  --color-neutral40: #848a92;
+  --color-neutral60: #535a64;
+  --color-neutral80: #2e3540;
+  --color-neutral100: #191f28;
+
+  /* brand colors */
+  --color-brand0: #fff8f8;
+  --color-brand5: #ffe5e5;
+  --color-brand10: #ffd4d5;
+  --color-brand15: #ffc4c6;
+  --color-brand20: #ffb4b7;
+  --color-brand30: #ff959c;
+  --color-brand40: #fb7581;
+  --color-brand50: #f55168;
+  --color-brand60: #c63f52;
+  --color-brand70: #9e3040;
+  --color-brand80: #7a232f;
+  --color-brand90: #5a1620;
+  --color-brand100: #3b0b12;
+
+  /* red colors */
+  --color-red5: #fff1f1;
+  --color-red10: #ffdbdb;
+  --color-red20: #ffbdbd;
+  --color-red40: #ff7575;
+  --color-red50: #ff4747;
+  --color-red60: #e92f2f;
+  --color-red80: #c70000;
+  --color-red100: #7b0000;
+
+  /* orange colors */
+  --color-orange5: #fff6f2;
+  --color-orange10: #ffd4c4;
+  --color-orange20: #ffb699;
+  --color-orange40: #ff9166;
+  --color-orange50: #ff6a00;
+  --color-orange60: #e95a00;
+  --color-orange80: #cc3a00;
+  --color-orange100: #802500;
+
+  /* yellow colors */
+  --color-yellow5: #fff8e0;
+  --color-yellow10: #fff3cc;
+  --color-yellow20: #ffedb3;
+  --color-yellow40: #ffdc6b;
+  --color-yellow50: #ffd23d;
+  --color-yellow60: #ffcc24;
+  --color-yellow80: #c58e02;
+  --color-yellow100: #856403;
+
+  /* green colors */
+  --color-green5: #f0fff5;
+  --color-green10: #d9ffe5;
+  --color-green20: #c2ffd5;
+  --color-green40: #52ff89;
+  --color-green50: #00d943;
+  --color-green60: #00b839;
+  --color-green80: #008f2d;
+  --color-green100: #004717;
+
+  /* blue colors */
+  --color-blue5: #f0f4ff;
+  --color-blue10: #dbe6ff;
+  --color-blue20: #b8caff;
+  --color-blue40: #5c85ff;
+  --color-blue50: #0066ff;
+  --color-blue60: #0052cc;
+  --color-blue80: #002966;
+  --color-blue100: #001433;
+
+  /* tint colors */
+  --color-tintRed: #fdf4f4;
+  --color-tintOrange: #fffaf2;
+  --color-tintYellow: #ffefd2;
+  --color-tintGreen: #f5fbf8;
+  --color-tintBlue: #f0f4ff;
+
+  --color-positive: #07ac30;
+  --color-negative: #d6173a;
 }
