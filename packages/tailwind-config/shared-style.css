@@ -10,6 +10,9 @@
   --radius-small: 12px;
   --radius-tiny: 4px;
 
+  --background: #ffffff;
+  --foreground: #171717;
+
   /* mono colors */
   --color-mono0: #ffffff;
   --color-mono10: #f0f0f0;
