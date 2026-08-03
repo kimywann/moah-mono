@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  --width-layout: 1920px;
+  --width-content: 1440px;
+  --width-tablet: 820px;
+  --width-mobile: 412px;
+}
