@@ -27,6 +27,9 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@moah/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.3.3
@@ -48,6 +51,12 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/tailwind-config:
+    dependencies:
+      tailwindcss:
+        specifier: ^4
+        version: 4.3.3
 
 packages:
 

@@ -1,0 +1,11 @@
+{
+  "name": "@moah/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./shared-style.css": "./shared-style.css"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4"
+  }
+}
