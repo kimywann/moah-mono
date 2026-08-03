@@ -18,6 +18,12 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe"
+        }
+      },
       "suspicious": {
         "noUnknownAtRules": "off"
       }
