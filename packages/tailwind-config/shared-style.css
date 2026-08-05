@@ -10,6 +10,13 @@
   --radius-small: 12px;
   --radius-tiny: 4px;
 
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
   --background: #ffffff;
   --foreground: #171717;
 
