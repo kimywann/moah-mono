@@ -113,6 +113,15 @@
   --color-positive: #07ac30;
   --color-negative: #d6173a;
 
+  /* state */
+  --color-danger: var(--color-red50);
+  --color-warning: var(--color-orange50);
+  --color-safe: var(--color-blue50);
+  --color-success: var(--color-green50);
+
+  --color-disabled-bg: var(--color-neutral10);
+  --color-disabled-text: var(--color-neutral20);
+
   /* text size */
 
   /* caption */
