@@ -17,26 +17,19 @@
   --spacing-xl: 24px;
   --spacing-2xl: 32px;
 
-  --background: #ffffff;
+  --background: var(--color-white);
   --foreground: #171717;
 
-  /* mono colors */
-  --color-mono0: #ffffff;
-  --color-mono10: #f0f0f0;
-  --color-mono20: #dadada;
-  --color-mono40: #aaaaaa;
-  --color-mono60: #7c7c7c;
-  --color-mono80: #4e4e4e;
-  --color-mono100: #000000;
-
-  /* neutral colors */
+  /* base colors */
+  --color-white: #ffffff;
   --color-neutral5: #fafafa;
   --color-neutral10: #e3e6ea;
   --color-neutral20: #b7bbbf;
   --color-neutral40: #848a92;
   --color-neutral60: #535a64;
   --color-neutral80: #2e3540;
-  --color-neutral100: #191f28;
+  --color-neutral90: #191f28;
+  --color-black: #000000;
 
   /* brand colors */
   --color-brand0: #fff8f8;
