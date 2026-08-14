@@ -69,6 +69,8 @@
 
   --color-disabled-bg: var(--color-neutral10);
   --color-disabled-text: var(--color-neutral20);
+  --color-disabled-border: var(--color-neutral10);
+  --color-border: var(--color-neutral10);
 
   /* text size */
 
