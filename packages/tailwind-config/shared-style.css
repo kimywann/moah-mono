@@ -46,55 +46,19 @@
   --color-brand90: #5e1521;
   --color-brand100: #3b0b12;
 
-  /* red colors */
-  --color-red5: #fff1f1;
-  --color-red10: #ffdbdb;
-  --color-red20: #ffbdbd;
-  --color-red40: #ff7575;
-  --color-red50: #ff4747;
-  --color-red60: #e92f2f;
-  --color-red80: #c70000;
-  --color-red100: #7b0000;
+  /* etc colors */
+  --color-red50: #cc455a;
+  --color-yellow50: #8a6518;
+  --color-green50: #327a55;
+  --color-blue50: #3268b2;
+  --color-purple50: #72529a;
 
-  /* orange colors */
-  --color-orange5: #fff6f2;
-  --color-orange10: #ffd4c4;
-  --color-orange20: #ffb699;
-  --color-orange40: #ff9166;
-  --color-orange50: #ff6a00;
-  --color-orange60: #e95a00;
-  --color-orange80: #cc3a00;
-  --color-orange100: #802500;
-
-  /* yellow colors */
-  --color-yellow5: #fff8e0;
-  --color-yellow10: #fff3cc;
-  --color-yellow20: #ffedb3;
-  --color-yellow40: #ffdc6b;
-  --color-yellow50: #ffd23d;
-  --color-yellow60: #ffcc24;
-  --color-yellow80: #c58e02;
-  --color-yellow100: #856403;
-
-  /* green colors */
-  --color-green5: #f0fff5;
-  --color-green10: #d9ffe5;
-  --color-green20: #c2ffd5;
-  --color-green40: #52ff89;
-  --color-green50: #00d943;
-  --color-green60: #00b839;
-  --color-green80: #008f2d;
-  --color-green100: #004717;
-
-  /* blue colors */
-  --color-blue5: #f0f4ff;
-  --color-blue10: #dbe6ff;
-  --color-blue20: #b8caff;
-  --color-blue40: #5c85ff;
-  --color-blue50: #0066ff;
-  --color-blue60: #0052cc;
-  --color-blue80: #002966;
-  --color-blue100: #001433;
+  /* Functional Colors */
+  --color-danger: var(--color-red50);
+  --color-warning: var(--color-yellow50);
+  --color-success: var(--color-green50);
+  --color-safe: var(--color-blue50);
+  --color-info: var(--color-purple50);
 
   /* tint colors */
   --color-tintRed: #fdf4f4;
@@ -102,15 +66,6 @@
   --color-tintYellow: #ffefd2;
   --color-tintGreen: #f5fbf8;
   --color-tintBlue: #f0f4ff;
-
-  --color-positive: #07ac30;
-  --color-negative: #d6173a;
-
-  /* state */
-  --color-danger: var(--color-red50);
-  --color-warning: var(--color-orange50);
-  --color-safe: var(--color-blue50);
-  --color-success: var(--color-green50);
 
   --color-disabled-bg: var(--color-neutral10);
   --color-disabled-text: var(--color-neutral20);
