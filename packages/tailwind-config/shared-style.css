@@ -98,10 +98,10 @@
   --color-blue100: #00327d;
 
   /* Functional Colors */
-  --color-danger: var(--color-red60);
-  --color-warning: var(--color-yellow60);
-  --color-success: var(--color-green60);
-  --color-info: var(--color-blue60);
+  --color-danger: var(--color-red50);
+  --color-warning: var(--color-yellow50);
+  --color-success: var(--color-green50);
+  --color-info: var(--color-blue50);
 
   /* semantic colors */
   --color-bg: var(--color-white);
