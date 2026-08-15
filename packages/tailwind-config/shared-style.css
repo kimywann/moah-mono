@@ -17,8 +17,8 @@
   --spacing-xl: 24px;
   --spacing-2xl: 32px;
 
-  --background: var(--color-white);
-  --foreground: #171717;
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
 
   /* base colors */
   --color-white: #ffffff;
@@ -104,27 +104,25 @@
   --color-info: var(--color-blue50);
 
   /* semantic colors */
-  --color-bg: var(--color-white);
-  --color-bg-subtle: var(--color-neutral5);
-  --color-bg-disabled: var(--color-neutral10);
+  --color-background: var(--color-white);
+  --color-muted: var(--color-neutral5);
+  --color-disabled: var(--color-neutral10);
 
-  --color-text-primary: var(--color-neutral90);
-  --color-text-secondary: var(--color-neutral60);
-  --color-text-tertiary: var(--color-neutral40);
-  --color-text-disabled: var(--color-neutral40);
-  --color-text-inverse: var(--color-white);
+  --color-foreground: var(--color-neutral90);
+  --color-muted-foreground: var(--color-neutral60);
+  --color-subtle-foreground: var(--color-neutral40);
+  --color-disabled-foreground: var(--color-neutral40);
+  --color-inverse: var(--color-white);
 
   --color-border-subtle: var(--color-neutral10);
   --color-border: var(--color-neutral20);
   --color-border-strong: var(--color-neutral40);
 
-  --color-primary: var(--color-brand60);
+  --color-primary: var(--color-brand50);
   --color-primary-hover: var(--color-brand70);
   --color-primary-pressed: var(--color-brand80);
-  --color-focus: var(--color-brand50);
+  --color-focus: var(--color-brand40);
 
-  --color-disabled-bg: var(--color-bg-disabled);
-  --color-disabled-text: var(--color-text-disabled);
   --color-disabled-border: var(--color-border);
 
   /* tint colors */
