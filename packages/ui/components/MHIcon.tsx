@@ -1,7 +1,8 @@
-import { Gift, type LucideIcon, X } from "lucide-react";
+import { Check, Gift, type LucideIcon, X } from "lucide-react";
 import cn from "../utils/cn";
 
 const ICONS = {
+  check: Check,
   gift: Gift,
   x: X,
 } satisfies Record<string, LucideIcon>;
