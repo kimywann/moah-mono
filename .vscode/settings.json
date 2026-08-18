@@ -4,5 +4,19 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.classFunctions": ["cn"],
+  "tailwindCSS.experimental.configFile": {
+    "apps/moah/src/app/globals.css": [
+      "apps/moah/src/**",
+      "packages/ui/**",
+      "packages/tailwind-config/**"
+    ]
   }
 }
