@@ -12,6 +12,7 @@ interface IMHButtonProps {
   size?: "xSmall" | "small" | "medium" | "large" | "xLarge";
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "ghost" | "danger";
+  isFullWidth?: boolean;
 }
 
 const MHButton = ({
@@ -22,6 +23,7 @@ const MHButton = ({
   size = "medium",
   type = "button",
   variant = "primary",
+  isFullWidth = false,
 }: IMHButtonProps) => {
   const isDisabled = disabled;
 
@@ -43,6 +45,7 @@ const MHButton = ({
     isDisabled &&
       "cursor-not-allowed bg-disabled text-disabled-foreground border-disabled-border",
     isDisabled && variant === "secondary" && "border-0",
+    isFullWidth && "w-full",
     className,
   );
 
