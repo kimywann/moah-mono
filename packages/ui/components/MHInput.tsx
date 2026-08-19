@@ -4,11 +4,12 @@ import type {
   HTMLInputTypeAttribute,
   MouseEventHandler,
 } from "react";
+import { COMPONENT_CLASS, type TComponentSize } from "../constants/component";
 import cn from "../utils/cn";
 import MHIcon from "./MHIcon";
 
 const BASE_INPUT =
-  "inline-flex rounded-small border border-border bg-transparent px-4 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-focus focus:ring-2 focus:ring-focus focus:ring-offset-2";
+  "inline-flex w-80 rounded-small border border-border bg-transparent text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-focus focus:ring-2 focus:ring-focus focus:ring-offset-2";
 
 interface IMHInputProps {
   className?: string;
@@ -23,7 +24,7 @@ interface IMHInputProps {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
-  size?: "xSmall" | "small" | "medium" | "large" | "xLarge";
+  size?: TComponentSize;
   type?: HTMLInputTypeAttribute;
   value?: string;
 }
@@ -48,11 +49,7 @@ const MHInput = ({
 
   const inputClassName = cn(
     BASE_INPUT,
-    size === "xSmall" && "h-6 px-2 display10",
-    size === "small" && "h-8 px-3 display12",
-    size === "medium" && "h-11 px-4 display16",
-    size === "large" && "h-12 px-5 display18",
-    size === "xLarge" && "h-14 px-6 display20",
+    COMPONENT_CLASS[size],
     isError && "border-danger focus:border-danger focus:ring-danger",
     isDisabled &&
       "cursor-not-allowed border-disabled-border bg-disabled text-disabled-foreground placeholder:text-disabled-foreground",
