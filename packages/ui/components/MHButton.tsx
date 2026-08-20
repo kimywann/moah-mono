@@ -3,7 +3,7 @@ import { COMPONENT_CLASS, type TComponentSize } from "../constants/component";
 import cn from "../utils/cn";
 
 const BASE_BUTTON =
-  "inline-flex items-center justify-center whitespace-nowrap medium rounded-small leading-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 cursor-pointer";
+  "inline-flex semibold items-center justify-center whitespace-nowrap medium rounded-small leading-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 cursor-pointer";
 
 interface IMHButtonProps {
   children: ReactNode;
