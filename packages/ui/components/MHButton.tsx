@@ -32,13 +32,12 @@ const MHButton = ({
     BASE_BUTTON,
     COMPONENT_CLASS[size],
     variant === "primary" &&
-      "bg-primary text-white enabled:hover:bg-primary-hover enabled:active:bg-primary-pressed",
+      "bg-primary text-white enabled:hover:bg-primary-hover",
     variant === "secondary" &&
-      "border border-border bg-transparent text-foreground enabled:hover:bg-neutral10 enabled:active:bg-neutral20",
+      "border border-border bg-transparent text-foreground enabled:hover:bg-neutral10",
     variant === "ghost" &&
-      "bg-transparent text-foreground enabled:hover:bg-neutral10 enabled:active:bg-neutral20",
-    variant === "danger" &&
-      "bg-danger text-white enabled:hover:bg-red80 enabled:active:bg-red100",
+      "bg-transparent text-foreground enabled:hover:bg-neutral10",
+    variant === "danger" && "bg-danger text-white enabled:hover:bg-red80",
     isDisabled &&
       "cursor-not-allowed bg-disabled text-disabled-foreground border-disabled-border",
     isDisabled && variant === "secondary" && "border-0",
