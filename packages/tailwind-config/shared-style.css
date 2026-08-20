@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --width-layout: 1920px;
-  --width-content: 1440px;
+  --container-layout: 1920px;
+  --container-content: 1440px;
 
   --radius-full: 9999px;
   --radius-large: 40px;
