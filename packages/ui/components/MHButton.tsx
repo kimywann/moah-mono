@@ -3,7 +3,7 @@ import { COMPONENT_CLASS, type TComponentSize } from "../constants/component";
 import cn from "../utils/cn";
 
 const BASE_BUTTON =
-  "inline-flex items-center justify-center whitespace-nowrap medium rounded-small leading-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 cursor-pointer";
+  "inline-flex semibold items-center justify-center whitespace-nowrap medium rounded-small leading-body transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 cursor-pointer";
 
 interface IMHButtonProps {
   children: ReactNode;
@@ -32,13 +32,12 @@ const MHButton = ({
     BASE_BUTTON,
     COMPONENT_CLASS[size],
     variant === "primary" &&
-      "bg-primary text-white enabled:hover:bg-primary-hover enabled:active:bg-primary-pressed",
+      "bg-primary text-white enabled:hover:bg-primary-hover",
     variant === "secondary" &&
-      "border border-border bg-transparent text-foreground enabled:hover:bg-neutral10 enabled:active:bg-neutral20",
+      "border border-border bg-transparent text-foreground enabled:hover:bg-neutral10",
     variant === "ghost" &&
-      "bg-transparent text-foreground enabled:hover:bg-neutral10 enabled:active:bg-neutral20",
-    variant === "danger" &&
-      "bg-danger text-white enabled:hover:bg-red80 enabled:active:bg-red100",
+      "bg-transparent text-foreground enabled:hover:bg-neutral10",
+    variant === "danger" && "bg-danger text-white enabled:hover:bg-red80",
     isDisabled &&
       "cursor-not-allowed bg-disabled text-disabled-foreground border-disabled-border",
     isDisabled && variant === "secondary" && "border-0",

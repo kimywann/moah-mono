@@ -7,7 +7,7 @@
   --radius-full: 9999px;
   --radius-large: 40px;
   --radius-medium: 16px;
-  --radius-small: 8px;
+  --radius-small: 6px;
   --radius-tiny: 4px;
 
   --spacing-xs: 4px;
@@ -28,25 +28,23 @@
   --color-neutral40: #848a92;
   --color-neutral60: #535a64;
   --color-neutral80: #2e3540;
-  --color-neutral90: #191f28;
+  --color-neutral100: #191f28;
   --color-black: #000000;
+  
+  --color-mono10: #f6f7f9; /* input 배경 */
 
-  /* brand colors */
-  --color-brand0: #fff8f8;
-  --color-brand5: #ffe8e8;
-  --color-brand10: #ffd7d8;
-  --color-brand15: #ffc7c8;
-  --color-brand20: #ffb6b9;
-  --color-brand30: #ff949b;
-  --color-brand40: #ff6f7e;
-  --color-brand50: #fd4162;
-  --color-brand60: #d33551;
-  --color-brand70: #aa2a40;
-  --color-brand80: #831f30;
-  --color-brand90: #5e1521;
-  --color-brand100: #3b0b12;
+  --color-brand5: #F6F8FF;
+  --color-brand10: #ECEFFF;
+  --color-brand20: #DBE2FF;
+  --color-brand30: #BBC7FE;
+  --color-brand40: #86A0F5;
+  --color-brand50: #5E7BF0; /* 기본 CTA */
+  --color-brand60: #3E5CD7; /* hover 및 강조 텍스트 */
+  --color-brand70: #3048B3;
+  --color-brand80: #273887;
+  --color-brand90: #1D2A5D;
+  --color-brand100: #121C3B;
 
-  /* status colors: 5→100 white contrast ≈ 1.06 / 1.21 / 1.51 / 2 / 3 / 4.5 / 7 / 12 */
   /* red colors */
   --color-red5: #fff6f6;
   --color-red10: #ffe3e3;
@@ -108,7 +106,7 @@
   --color-muted: var(--color-neutral5);
   --color-disabled: var(--color-neutral10);
 
-  --color-foreground: var(--color-neutral90);
+  --color-foreground: var(--color-neutral100);
   --color-muted-foreground: var(--color-neutral60);
   --color-subtle-foreground: var(--color-neutral40);
   --color-disabled-foreground: var(--color-neutral40);
@@ -117,10 +115,10 @@
   --color-border-subtle: var(--color-neutral10);
   --color-border: var(--color-neutral20);
   --color-border-strong: var(--color-neutral40);
+  --color-field: var(--color-mono10);
 
   --color-primary: var(--color-brand50);
-  --color-primary-hover: var(--color-brand70);
-  --color-primary-pressed: var(--color-brand80);
+  --color-primary-hover: var(--color-brand60);
   --color-focus: var(--color-brand40);
 
   --color-disabled-border: var(--color-border);
@@ -170,6 +168,7 @@
   --font-light: 300;
   --font-regular: 400;
   --font-medium: 500;
+  --font-semibold: 600;
   --font-bold: 700;
   --font-black: 900;
 }
@@ -246,6 +245,9 @@
 }
 @utility medium {
   font-weight: var(--font-medium);
+}
+@utility semibold {
+  font-weight: var(--font-semibold);
 }
 @utility bold {
   font-weight: var(--font-bold);

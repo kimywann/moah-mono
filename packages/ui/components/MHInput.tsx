@@ -9,7 +9,7 @@ import cn from "../utils/cn";
 import MHIcon from "./MHIcon";
 
 const BASE_INPUT =
-  "inline-flex w-80 rounded-small border border-border bg-transparent text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-focus focus:ring-2 focus:ring-focus focus:ring-offset-2";
+  "inline-flex semibold w-80 rounded-small bg-field text-foreground outline-none transition-colors placeholder:text-neutral20 focus:border-focus focus:ring-2 focus:ring-focus";
 
 interface IMHInputProps {
   className?: string;
@@ -40,12 +40,14 @@ const MHInput = ({
   onChange,
   onClear,
   placeholder,
+  readOnly = false,
   size = "medium",
   type = "text",
   value,
 }: IMHInputProps) => {
   const isDisabled = disabled;
-  const isClear = Boolean(value) && Boolean(onClear) && !isDisabled;
+  const isClear =
+    Boolean(value) && Boolean(onClear) && !isDisabled && !readOnly;
 
   const inputClassName = cn(
     BASE_INPUT,
@@ -69,6 +71,7 @@ const MHInput = ({
         onBlur={onBlur}
         onChange={onChange}
         placeholder={placeholder}
+        readOnly={readOnly}
         type={type}
         value={value}
       />
