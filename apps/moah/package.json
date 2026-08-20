@@ -10,17 +10,19 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@moah/ui": "workspace:*",
+    "@tanstack/react-table": "^8.21.3",
+    "dayjs": "^1.11.23",
     "next": "16.2.12",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "@moah/ui": "workspace:*"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@moah/tailwind-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@moah/tailwind-config": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
