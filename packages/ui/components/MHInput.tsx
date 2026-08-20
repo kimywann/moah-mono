@@ -40,12 +40,14 @@ const MHInput = ({
   onChange,
   onClear,
   placeholder,
+  readOnly = false,
   size = "medium",
   type = "text",
   value,
 }: IMHInputProps) => {
   const isDisabled = disabled;
-  const isClear = Boolean(value) && Boolean(onClear) && !isDisabled;
+  const isClear =
+    Boolean(value) && Boolean(onClear) && !isDisabled && !readOnly;
 
   const inputClassName = cn(
     BASE_INPUT,
@@ -69,6 +71,7 @@ const MHInput = ({
         onBlur={onBlur}
         onChange={onChange}
         placeholder={placeholder}
+        readOnly={readOnly}
         type={type}
         value={value}
       />
