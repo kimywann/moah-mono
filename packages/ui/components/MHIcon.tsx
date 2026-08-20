@@ -1,4 +1,5 @@
 import {
+  ArrowUp,
   Check,
   ChevronDown,
   ClipboardList,
@@ -22,6 +23,7 @@ const ICONS = {
   squareKanban: SquareKanban,
   x: X,
   search: Search,
+  arrowUp: ArrowUp,
 } satisfies Record<string, LucideIcon>;
 
 interface IMHIconProps {

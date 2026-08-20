@@ -1,5 +1,5 @@
-import JobPostingSearch from "./JobPostingSearch";
+import JobPostingExtractor from "./components/JobPostingExtractor";
 
 export default function Home() {
-  return <JobPostingSearch />;
+  return <JobPostingExtractor />;
 }
