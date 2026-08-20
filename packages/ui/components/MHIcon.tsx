@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   ArrowUp,
   Check,
   ChevronDown,
@@ -14,6 +15,7 @@ import {
 import cn from "../utils/cn";
 
 const ICONS = {
+  arrowLeft: ArrowLeft,
   check: Check,
   chevronDown: ChevronDown,
   clipboardList: ClipboardList,
