@@ -9,7 +9,7 @@ import cn from "../utils/cn";
 import MHIcon from "./MHIcon";
 
 const BASE_INPUT =
-  "inline-flex w-80 rounded-small border border-border bg-transparent text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-focus focus:ring-2 focus:ring-focus focus:ring-offset-2";
+  "inline-flex semibold w-80 rounded-small bg-field text-foreground outline-none transition-colors placeholder:text-neutral20 focus:border-focus focus:ring-2 focus:ring-focus";
 
 interface IMHInputProps {
   className?: string;
