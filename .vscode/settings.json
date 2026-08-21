@@ -18,5 +18,6 @@
       "packages/ui/**",
       "packages/tailwind-config/**"
     ]
-  }
+  },
+  "js/ts.tsdk.path": "apps/api/node_modules/typescript/lib"
 }
