@@ -10,6 +10,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@moah/schema": "workspace:*",
     "@moah/ui": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "dayjs": "^1.11.23",
