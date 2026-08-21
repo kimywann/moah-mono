@@ -1,10 +1,11 @@
 {
-  "name": "@moah/schema",
+  "name": "@moah/contracts",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    "./jobPosting": "./jobPosting.ts"
+    "./schema/*": "./schema/*.ts",
+    "./type/*": "./type/*.ts"
   },
   "dependencies": {
     "zod": "^4.4.3"
