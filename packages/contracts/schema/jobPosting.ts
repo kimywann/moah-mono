@@ -12,7 +12,11 @@ export const jobPostingExtractionSchema = z.object({
   deadline: z.iso.date().nullable(),
   hiringProcess: z.array(z.string()),
   techStacks: z.array(z.string()),
-  url: z.url().nullable(),
+});
+
+export const jobPostingFormSchema = jobPostingExtractionSchema.extend({
+  url: z.union([z.url(), z.literal("")]),
 });
 
 export type TJobPostingExtraction = z.infer<typeof jobPostingExtractionSchema>;
+export type TJobPostingForm = z.infer<typeof jobPostingFormSchema>;
