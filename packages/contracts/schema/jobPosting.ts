@@ -1,8 +1,18 @@
 import { z } from "zod";
 
-export const jobPostingExtractionRequestSchema = z.object({
-  content: z.string().trim().min(1).max(5000),
-});
+export const jobPostingExtractionRequestSchema = z.discriminatedUnion(
+  "inputMethod",
+  [
+    z.object({
+      inputMethod: z.literal("url"),
+      url: z.url(),
+    }),
+    z.object({
+      inputMethod: z.literal("content"),
+      content: z.string().trim().min(1).max(5000),
+    }),
+  ],
+);
 
 export const jobPostingExtractionSchema = z.object({
   companyName: z.string().nullable(),
