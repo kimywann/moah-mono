@@ -17,7 +17,7 @@ const GEMINI_RESPONSE_SCHEMA = z.object({
   ),
 });
 
-const EXTRACTION_PROMPT = `주어진 채용 공고 원문에서 정보를 추출하세요.
+const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
 규칙:
 - 공고에 없는 단일 값은 null로 반환하고, 목록은 빈 배열로 반환합니다.
@@ -33,9 +33,10 @@ export class JobPostingService {
     @Inject(ConfigService) private readonly configService: ConfigService,
   ) {}
 
-  async extract(content: string) {
+  async extract(url: string) {
     const apiKey = this.configService.getOrThrow<string>("GEMINI_API_KEY");
     const apiURL = this.configService.getOrThrow<string>("GEMINI_API_URL");
+
     const response = await fetch(apiURL, {
       method: "POST",
       headers: {
@@ -47,9 +48,15 @@ export class JobPostingService {
           {
             parts: [
               {
-                text: `${EXTRACTION_PROMPT}\n\n채용 공고 원문:\n${content}`,
+                text: `${EXTRACTION_PROMPT}\n\n채용 공고 URL:\n${url}`,
               },
             ],
+          },
+        ],
+        // Gemini가 전달된 URL의 페이지 내용을 직접 조회하도록 설정
+        tools: [
+          {
+            url_context: {},
           },
         ],
         generationConfig: {
