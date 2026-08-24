@@ -3,3 +3,5 @@ node_modules
 .turbo
 AGENTS.md
 dist
+.env
+.env.*
