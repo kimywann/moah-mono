@@ -117,6 +117,7 @@ const JobPostingExtractor = () => {
 
       {isModalOpen && jobPosting && (
         <JobPostingPreviewModal
+          isLoggedIn={false}
           jobPosting={jobPosting}
           onClose={() => setIsModalOpen(false)}
         />
