@@ -1,11 +1,13 @@
 "use client";
 
+import type { TJobPostingForm } from "@moah/contracts/schema/jobPosting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
 import type { MouseEventHandler } from "react";
 
 interface IJobPostingPreviewModalProps {
+  jobPosting: TJobPostingForm;
   onClose?: MouseEventHandler<HTMLButtonElement>;
   onSave?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -34,6 +36,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="기업명을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.companyName ?? ""}
               />
             </div>
 
@@ -43,6 +46,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="포지션을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.position ?? ""}
               />
             </div>
 
@@ -52,6 +56,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="경력 조건을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.career ?? ""}
               />
             </div>
 
@@ -63,6 +68,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="근무 지역을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.location ?? ""}
               />
             </div>
 
@@ -70,7 +76,12 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               <span className="semibold display14 text-neutral40">
                 지원 마감일
               </span>
-              <MHInput isFullWidth name="deadline" readOnly type="date" />
+              <MHInput
+                isFullWidth
+                readOnly
+                type="date"
+                value={props.jobPosting.deadline ?? ""}
+              />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -81,6 +92,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="채용 절차를 입력해 주세요"
                 readOnly
+                value={props.jobPosting.hiringProcess.join(" → ")}
               />
             </div>
 
@@ -92,6 +104,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="기술 스택을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.techStacks.join(", ")}
               />
             </div>
 
@@ -104,6 +117,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 placeholder="URL을 입력해 주세요"
                 readOnly
                 type="url"
+                value={props.jobPosting.url}
               />
             </div>
           </div>
