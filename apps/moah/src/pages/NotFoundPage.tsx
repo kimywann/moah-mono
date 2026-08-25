@@ -1,17 +1,15 @@
-"use client";
-
 import MHButton from "@moah/ui/components/MHButton";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router";
 
-const NotFound = () => {
-  const router = useRouter();
+const NotFoundPage = () => {
+  const navigate = useNavigate();
 
   const handleGoBack = () => {
-    router.back();
+    navigate(-1);
   };
 
   const handleGoHome = () => {
-    router.push("/");
+    navigate("/");
   };
 
   return (
@@ -34,4 +32,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default NotFoundPage;

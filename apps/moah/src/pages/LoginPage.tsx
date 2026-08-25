@@ -1,18 +1,20 @@
-"use client";
-
 import MHIcon from "@moah/ui/components/MHIcon";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginPage = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async (credential: string) => {
+    if (!API_BASE_URL) {
+      throw new Error("API 주소가 설정되지 않았습니다.");
+    }
+
     const response = await fetch(`${API_BASE_URL}/auth/google`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,7 +25,7 @@ const LoginPage = () => {
       throw new Error("구글 로그인에 실패했습니다.");
     }
 
-    router.push("/");
+    navigate("/");
   };
 
   if (!GOOGLE_CLIENT_ID) {
@@ -48,7 +50,7 @@ const LoginPage = () => {
           <button
             aria-label="이전 페이지로"
             className="-ml-3 flex size-10 cursor-pointer items-center justify-center rounded-small focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-            onClick={() => router.back()}
+            onClick={() => navigate(-1)}
             type="button"
           >
             <MHIcon icon="arrowLeft" size={30} />

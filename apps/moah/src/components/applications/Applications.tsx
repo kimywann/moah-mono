@@ -1,9 +1,7 @@
-"use client";
-
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-import type { IApplication } from "@/app/type/application";
-import ApplicationTable from "./components/table/ApplicationTable";
+import ApplicationTable from "@/components/applications/ApplicationTable";
+import type { IApplication } from "@/shared/type/application";
 
 interface IApplicationsProps {
   applications: IApplication[];

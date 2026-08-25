@@ -1,5 +1,5 @@
-import type { IApplication } from "@/app/type/application";
-import Applications from "./Applications";
+import Applications from "@/components/applications/Applications";
+import type { IApplication } from "@/shared/type/application";
 
 const MOCK_APPLICATIONS: IApplication[] = [
   {
