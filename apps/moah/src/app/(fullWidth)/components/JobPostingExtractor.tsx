@@ -76,7 +76,9 @@ const JobPostingExtractor = () => {
     <section className="flex min-w-0 flex-1 flex-col items-center justify-center p-6">
       <div className="flex w-full flex-col items-center gap-10">
         <div className="flex max-w-200 flex-col items-center gap-3 text-center">
-          <h1 className="bold display40">길어진 취준, 복잡한 관리는 끝</h1>
+          <h1 className="bold display40">
+            길어지는 취업 준비, 복잡한 관리는 끝
+          </h1>
           <p className="display16 medium text-muted-foreground">
             공고 URL만 입력하면, 지원 관리는 모아가 정리합니다.
           </p>
