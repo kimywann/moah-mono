@@ -1,16 +1,25 @@
 "use client";
 
+import type { TJobPostingForm } from "@moah/contracts/schema/jobPosting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
+import { useRouter } from "next/navigation";
 import type { MouseEventHandler } from "react";
 
 interface IJobPostingPreviewModalProps {
+  isLoggedIn: boolean;
+  jobPosting: TJobPostingForm;
   onClose?: MouseEventHandler<HTMLButtonElement>;
-  onSave?: MouseEventHandler<HTMLButtonElement>;
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
+  const router = useRouter();
+
+  const handleSave = () => {
+    // TODO: 로그인 사용자의 채용 공고 저장 기능을 구현
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-6">
       <div className="flex max-h-[calc(100vh-48px)] w-full max-w-200 flex-col overflow-y-auto rounded-medium bg-background p-8 shadow-xs">
@@ -34,6 +43,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="기업명을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.companyName ?? ""}
               />
             </div>
 
@@ -43,6 +53,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="포지션을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.position ?? ""}
               />
             </div>
 
@@ -52,6 +63,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="경력 조건을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.career ?? ""}
               />
             </div>
 
@@ -63,6 +75,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="근무 지역을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.location ?? ""}
               />
             </div>
 
@@ -70,7 +83,12 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               <span className="semibold display14 text-neutral40">
                 지원 마감일
               </span>
-              <MHInput isFullWidth name="deadline" readOnly type="date" />
+              <MHInput
+                isFullWidth
+                readOnly
+                type="date"
+                value={props.jobPosting.deadline ?? ""}
+              />
             </div>
 
             <div className="flex flex-col gap-2">
@@ -81,6 +99,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="채용 절차를 입력해 주세요"
                 readOnly
+                value={props.jobPosting.hiringProcess.join(" → ")}
               />
             </div>
 
@@ -92,6 +111,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="기술 스택을 입력해 주세요"
                 readOnly
+                value={props.jobPosting.techStacks.join(", ")}
               />
             </div>
 
@@ -104,15 +124,26 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 placeholder="URL을 입력해 주세요"
                 readOnly
                 type="url"
+                value={props.jobPosting.url}
               />
             </div>
           </div>
         </div>
 
         <div className="mt-8">
-          <MHButton isFullWidth onClick={props.onSave} size="large">
-            공고 저장하기
-          </MHButton>
+          {props.isLoggedIn ? (
+            <MHButton isFullWidth onClick={handleSave} size="large">
+              공고 저장하기
+            </MHButton>
+          ) : (
+            <MHButton
+              isFullWidth
+              onClick={() => router.push("/login")}
+              size="large"
+            >
+              로그인 후 저장하기
+            </MHButton>
+          )}
         </div>
       </div>
     </div>

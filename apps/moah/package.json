@@ -12,6 +12,7 @@
   "dependencies": {
     "@moah/contracts": "workspace:*",
     "@moah/ui": "workspace:*",
+    "@react-oauth/google": "^0.13.5",
     "@tanstack/react-table": "^8.21.3",
     "dayjs": "^1.11.23",
     "next": "16.2.12",

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const jobPostingExtractionRequestSchema = z.object({
-  content: z.string().trim().min(1).max(5000),
+  url: z.url(),
 });
 
 export const jobPostingExtractionSchema = z.object({
