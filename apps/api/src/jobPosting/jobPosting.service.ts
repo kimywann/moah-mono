@@ -1,4 +1,4 @@
-import { jobPostingExtractionSchema } from "@moah/contracts/schema/jobPosting";
+import { jobPostingExtractionResponseSchema } from "@moah/contracts/schema/job-posting";
 import { BadGatewayException, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
@@ -61,7 +61,9 @@ export class JobPostingService {
         ],
         generationConfig: {
           responseMimeType: "application/json",
-          responseJsonSchema: z.toJSONSchema(jobPostingExtractionSchema),
+          responseJsonSchema: z.toJSONSchema(
+            jobPostingExtractionResponseSchema,
+          ),
         },
       }),
     });
@@ -91,7 +93,7 @@ export class JobPostingService {
     }
 
     const parsedJobPosting =
-      jobPostingExtractionSchema.safeParse(extractedJobPosting);
+      jobPostingExtractionResponseSchema.safeParse(extractedJobPosting);
 
     if (!parsedJobPosting.success) {
       throw new BadGatewayException("채용 공고 추출 결과가 올바르지 않습니다.");

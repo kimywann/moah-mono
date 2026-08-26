@@ -4,7 +4,7 @@ export const jobPostingExtractionRequestSchema = z.object({
   url: z.url(),
 });
 
-export const jobPostingExtractionSchema = z.object({
+export const jobPostingExtractionResponseSchema = z.object({
   companyName: z.string().nullable(),
   position: z.string().nullable(),
   career: z.string().nullable(),
@@ -14,9 +14,11 @@ export const jobPostingExtractionSchema = z.object({
   techStacks: z.array(z.string()),
 });
 
-export const jobPostingFormSchema = jobPostingExtractionSchema.extend({
+export const jobPostingFormSchema = jobPostingExtractionResponseSchema.extend({
   url: z.union([z.url(), z.literal("")]),
 });
 
-export type TJobPostingExtraction = z.infer<typeof jobPostingExtractionSchema>;
+export type TJobPostingExtraction = z.infer<
+  typeof jobPostingExtractionResponseSchema
+>;
 export type TJobPostingForm = z.infer<typeof jobPostingFormSchema>;

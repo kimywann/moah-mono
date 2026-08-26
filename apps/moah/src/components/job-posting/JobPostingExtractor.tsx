@@ -1,7 +1,7 @@
 import {
-  jobPostingExtractionSchema,
+  jobPostingExtractionResponseSchema,
   type TJobPostingForm,
-} from "@moah/contracts/schema/jobPosting";
+} from "@moah/contracts/schema/job-posting";
 import MHIcon from "@moah/ui/components/MHIcon";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useState } from "react";
@@ -52,7 +52,7 @@ const JobPostingExtractor = () => {
 
       const responseBody: unknown = await response.json();
       const parsedJobPosting =
-        jobPostingExtractionSchema.safeParse(responseBody);
+        jobPostingExtractionResponseSchema.safeParse(responseBody);
 
       if (!parsedJobPosting.success) {
         throw new Error("채용 공고 추출 결과가 올바르지 않습니다.");
