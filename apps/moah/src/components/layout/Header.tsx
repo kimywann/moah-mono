@@ -2,6 +2,9 @@ import type { MouseEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "@/contexts/AuthContext";
 
+const AUTH_BUTTON_CLASS =
+  "medium semibold inline-flex h-11 items-center justify-center whitespace-nowrap rounded-tiny bg-primary px-4 text-white leading-body transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2";
+
 const Header = () => {
   const { isAuthenticated, user, handleLogout } = useAuth();
   const navigate = useNavigate();
@@ -24,7 +27,7 @@ const Header = () => {
               src={user?.profileImage ?? ""}
             />
             <Link
-              className="medium semibold inline-flex h-11 items-center justify-center whitespace-nowrap rounded-tiny bg-primary px-4 text-white leading-body transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+              className={AUTH_BUTTON_CLASS}
               onClick={handleClickLogout}
               to="/"
             >
@@ -32,10 +35,7 @@ const Header = () => {
             </Link>
           </div>
         ) : (
-          <Link
-            className="display14 bold ml-auto inline-flex h-9 items-center justify-center rounded-tiny bg-primary px-4 text-white hover:bg-primary-hover"
-            to="/login"
-          >
+          <Link className={`ml-auto ${AUTH_BUTTON_CLASS}`} to="/login">
             로그인
           </Link>
         )}
