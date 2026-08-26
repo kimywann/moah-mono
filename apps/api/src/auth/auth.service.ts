@@ -1,7 +1,10 @@
+import { createHash, randomBytes } from "node:crypto";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { type LoginTicket, OAuth2Client } from "google-auth-library";
 import { PrismaService } from "../prisma/prisma.service";
+
+const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 7;
 
 @Injectable()
 export class AuthService {
@@ -14,6 +17,51 @@ export class AuthService {
   ) {
     this.googleClientId = configService.getOrThrow<string>("GOOGLE_CLIENT_ID");
     this.googleClient = new OAuth2Client(this.googleClientId);
+  }
+
+  async getCurrentUser(sessionToken?: string) {
+    if (!sessionToken) {
+      throw new UnauthorizedException("로그인이 필요합니다.");
+    }
+
+    const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
+    const session = await this.prismaService.session.findFirst({
+      where: {
+        tokenHash,
+        expiresAt: {
+          // 현재 시간보다 만료 시간이 뒤에 있는 세션만 찾기
+          gt: new Date(),
+        },
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            profileImage: true,
+          },
+        },
+      },
+    });
+
+    if (!session) {
+      throw new UnauthorizedException("로그인이 필요합니다.");
+    }
+
+    return session.user;
+  }
+
+  async logout(sessionToken?: string) {
+    if (!sessionToken) {
+      return;
+    }
+
+    const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
+
+    await this.prismaService.session.deleteMany({
+      where: { tokenHash },
+    });
   }
 
   async loginWithGoogle(credential: string) {
@@ -37,7 +85,6 @@ export class AuthService {
     const user = await this.prismaService.user.upsert({
       where: { googleId: payload.sub },
       update: {
-        email: payload.email,
         name: payload.name ?? null,
         profileImage: payload.picture ?? null,
       },
@@ -49,12 +96,27 @@ export class AuthService {
       },
     });
 
+    const rawSessionToken = randomBytes(32).toString("hex");
+    const tokenHash = createHash("sha256")
+      .update(rawSessionToken)
+      .digest("hex");
+
+    await this.prismaService.session.create({
+      data: {
+        tokenHash,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+      },
+    });
+
     return {
-      id: user.id,
-      googleId: user.googleId,
-      email: user.email,
-      name: user.name,
-      profileImage: user.profileImage,
+      sessionToken: rawSessionToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        profileImage: user.profileImage,
+      },
     };
   }
 }

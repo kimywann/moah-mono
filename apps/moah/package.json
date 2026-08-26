@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@moah/contracts": "workspace:*",
+    "@moah/shared": "workspace:*",
     "@moah/ui": "workspace:*",
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-table": "^8.21.3",
