@@ -1,7 +1,10 @@
+import { createHash, randomBytes } from "node:crypto";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { type LoginTicket, OAuth2Client } from "google-auth-library";
 import { PrismaService } from "../prisma/prisma.service";
+
+const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 7;
 
 @Injectable()
 export class AuthService {
@@ -48,11 +51,27 @@ export class AuthService {
       },
     });
 
+    const rawSessionToken = randomBytes(32).toString("hex");
+    const tokenHash = createHash("sha256")
+      .update(rawSessionToken)
+      .digest("hex");
+
+    await this.prismaService.session.create({
+      data: {
+        tokenHash,
+        userId: user.id,
+        expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+      },
+    });
+
     return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      profileImage: user.profileImage,
+      sessionToken: rawSessionToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        profileImage: user.profileImage,
+      },
     };
   }
 }
