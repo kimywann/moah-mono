@@ -2,29 +2,20 @@ import MHIcon from "@moah/ui/components/MHIcon";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { loginWithGoogle } from "@/api/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async (credential: string) => {
-    if (!API_BASE_URL) {
-      throw new Error("API 주소가 설정되지 않았습니다.");
-    }
+    const user = await loginWithGoogle(credential);
 
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential }),
-    });
-
-    if (!response.ok) {
-      throw new Error("구글 로그인에 실패했습니다.");
-    }
-
+    login(user);
     navigate("/");
   };
 
