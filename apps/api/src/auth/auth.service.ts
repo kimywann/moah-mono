@@ -19,6 +19,39 @@ export class AuthService {
     this.googleClient = new OAuth2Client(this.googleClientId);
   }
 
+  async getCurrentUser(sessionToken?: string) {
+    if (!sessionToken) {
+      throw new UnauthorizedException("로그인이 필요합니다.");
+    }
+
+    const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
+    const session = await this.prismaService.session.findFirst({
+      where: {
+        tokenHash,
+        expiresAt: {
+          // 현재 시간보다 만료 시간이 뒤에 있는 세션만 찾기
+          gt: new Date(),
+        },
+      },
+      select: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            profileImage: true,
+          },
+        },
+      },
+    });
+
+    if (!session) {
+      throw new UnauthorizedException("로그인이 필요합니다.");
+    }
+
+    return session.user;
+  }
+
   async loginWithGoogle(credential: string) {
     let ticket: LoginTicket;
 

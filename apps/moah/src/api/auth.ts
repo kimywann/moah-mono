@@ -9,3 +9,7 @@ export const loginWithGoogle = async (credential: string): Promise<User> => {
     }),
   });
 };
+
+export const getCurrentMe = async (): Promise<User> => {
+  return apiFetcher<User>("/auth/me");
+};

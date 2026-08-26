@@ -2,6 +2,8 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  Headers,
   Inject,
   Post,
   Res,
@@ -17,6 +19,16 @@ const googleLoginRequestSchema = z.object({
 @Controller("auth")
 export class AuthController {
   constructor(@Inject(AuthService) private readonly authService: AuthService) {}
+
+  @Get("me")
+  async getCurrentUser(@Headers("cookie") cookieHeader?: string) {
+    const sessionCookie = cookieHeader
+      ?.split(";")
+      .find((cookie) => cookie.trim().startsWith("session="));
+    const sessionToken = sessionCookie?.trim().slice("session=".length);
+
+    return this.authService.getCurrentUser(sessionToken);
+  }
 
   @Post("google")
   async googleLogin(
@@ -35,7 +47,6 @@ export class AuthController {
 
     response.cookie("session", result.sessionToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 1000 * 60 * 60 * 24 * 7,
