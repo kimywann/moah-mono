@@ -1,4 +1,4 @@
-import MHButton from "@moah/ui/components/MHButton";
+import type { MouseEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -6,7 +6,9 @@ const Header = () => {
   const { isAuthenticated, user, handleLogout } = useAuth();
   const navigate = useNavigate();
 
-  const handleClickLogout = async () => {
+  const handleClickLogout = async (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
     await handleLogout();
     navigate("/", { replace: true });
   };
@@ -21,7 +23,13 @@ const Header = () => {
               className="size-10 rounded-full object-cover"
               src={user?.profileImage ?? ""}
             />
-            <MHButton onClick={handleClickLogout}>로그아웃</MHButton>
+            <Link
+              className="medium semibold inline-flex h-11 items-center justify-center whitespace-nowrap rounded-tiny bg-primary px-4 text-white leading-body transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+              onClick={handleClickLogout}
+              to="/"
+            >
+              로그아웃
+            </Link>
           </div>
         ) : (
           <Link
