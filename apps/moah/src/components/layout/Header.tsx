@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, handleLogout } = useAuth();
 
   return (
     <header className="h-16 w-full shrink-0">
@@ -15,7 +15,7 @@ const Header = () => {
               className="size-10 rounded-full object-cover"
               src={user?.profileImage ?? ""}
             />
-            <MHButton onClick={logout}>로그아웃</MHButton>
+            <MHButton onClick={handleLogout}>로그아웃</MHButton>
           </div>
         ) : (
           <Link
