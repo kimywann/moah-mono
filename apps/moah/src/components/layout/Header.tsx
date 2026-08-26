@@ -1,9 +1,15 @@
 import MHButton from "@moah/ui/components/MHButton";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const { isAuthenticated, user, handleLogout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleClickLogout = async () => {
+    await handleLogout();
+    navigate("/", { replace: true });
+  };
 
   return (
     <header className="h-16 w-full shrink-0">
@@ -15,7 +21,7 @@ const Header = () => {
               className="size-10 rounded-full object-cover"
               src={user?.profileImage ?? ""}
             />
-            <MHButton onClick={handleLogout}>로그아웃</MHButton>
+            <MHButton onClick={handleClickLogout}>로그아웃</MHButton>
           </div>
         ) : (
           <Link
