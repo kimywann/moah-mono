@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useContext, useState } from "react";
+import { logout } from "@/api/auth";
 import { INIT_AUTH_CONTEXT } from "@/shared/constants/auth";
 import type { User } from "@/shared/type/user";
 
@@ -6,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user?: User;
   login: (user: User) => void;
-  logout: () => void;
+  handleLogout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>(INIT_AUTH_CONTEXT);
@@ -42,7 +43,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const logout = () => {
+  const handleLogout = async () => {
+    await logout();
+
     setIsAuthenticated(false);
     setUser(undefined);
     localStorage.removeItem("isAuthenticated");
@@ -50,7 +53,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, login, handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );

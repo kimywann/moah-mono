@@ -13,3 +13,9 @@ export const loginWithGoogle = async (credential: string): Promise<User> => {
 export const getCurrentMe = async (): Promise<User> => {
   return apiFetcher<User>("/auth/me");
 };
+
+export const logout = async (): Promise<void> => {
+  await apiFetcher<void>("/auth/logout", {
+    method: "POST",
+  });
+};

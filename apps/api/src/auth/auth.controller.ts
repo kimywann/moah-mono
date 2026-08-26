@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   Headers,
+  HttpCode,
+  HttpStatus,
   Inject,
   Post,
   Res,
@@ -30,6 +32,23 @@ export class AuthController {
     return this.authService.getCurrentUser(sessionToken);
   }
 
+  @Post("logout")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(
+    @Headers("cookie") cookieHeader: string | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const sessionToken = this.getSessionToken(cookieHeader);
+
+    await this.authService.logout(sessionToken);
+
+    response.clearCookie("session", {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+  }
+
   @Post("google")
   async googleLogin(
     @Body() body: unknown,
@@ -53,5 +72,13 @@ export class AuthController {
     });
 
     return result.user;
+  }
+
+  private getSessionToken(cookieHeader?: string) {
+    const sessionCookie = cookieHeader
+      ?.split(";")
+      .find((cookie) => cookie.trim().startsWith("session="));
+
+    return sessionCookie?.trim().slice("session=".length);
   }
 }

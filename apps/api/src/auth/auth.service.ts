@@ -52,6 +52,18 @@ export class AuthService {
     return session.user;
   }
 
+  async logout(sessionToken?: string) {
+    if (!sessionToken) {
+      return;
+    }
+
+    const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
+
+    await this.prismaService.session.deleteMany({
+      where: { tokenHash },
+    });
+  }
+
   async loginWithGoogle(credential: string) {
     let ticket: LoginTicket;
 
