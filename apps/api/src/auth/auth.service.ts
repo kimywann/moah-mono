@@ -37,7 +37,6 @@ export class AuthService {
     const user = await this.prismaService.user.upsert({
       where: { googleId: payload.sub },
       update: {
-        email: payload.email,
         name: payload.name ?? null,
         profileImage: payload.picture ?? null,
       },
@@ -51,7 +50,6 @@ export class AuthService {
 
     return {
       id: user.id,
-      googleId: user.googleId,
       email: user.email,
       name: user.name,
       profileImage: user.profileImage,
