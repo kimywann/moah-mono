@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "../config/config";
+import type { IApiResponse } from "../type/api";
 import { createQueryString } from "./url";
 
 export interface IFetchOptions extends RequestInit {
@@ -8,7 +9,7 @@ export interface IFetchOptions extends RequestInit {
 export const apiFetcher = async <T = undefined>(
   url: string,
   options?: IFetchOptions,
-): Promise<T> => {
+): Promise<IApiResponse<T>> => {
   const { searchParams, ...restOptions } = options || {};
   const queryString = searchParams ? createQueryString(searchParams) : "";
   const fullUrl = `${API_BASE_URL}${url}${queryString ? `?${queryString}` : ""}`;

@@ -29,11 +29,16 @@ export class AuthController {
       .find((cookie) => cookie.trim().startsWith("session="));
     const sessionToken = sessionCookie?.trim().slice("session=".length);
 
-    return this.authService.getCurrentUser(sessionToken);
+    const user = await this.authService.getCurrentUser(sessionToken);
+
+    return {
+      success: true,
+      data: user,
+    };
   }
 
   @Post("logout")
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async logout(
     @Headers("cookie") cookieHeader: string | undefined,
     @Res({ passthrough: true }) response: Response,
@@ -47,6 +52,8 @@ export class AuthController {
       sameSite: "lax",
       path: "/",
     });
+
+    return { success: true };
   }
 
   @Post("google")
@@ -71,7 +78,10 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    return result.user;
+    return {
+      success: true,
+      data: result.user,
+    };
   }
 
   private getSessionToken(cookieHeader?: string) {

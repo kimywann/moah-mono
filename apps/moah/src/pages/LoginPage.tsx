@@ -13,9 +13,13 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async (credential: string) => {
-    const user = await loginWithGoogle(credential);
+    const response = await loginWithGoogle(credential);
 
-    login(user);
+    if (!response.data) {
+      throw new Error("구글 로그인 정보를 확인할 수 없습니다.");
+    }
+
+    login(response.data);
     navigate("/");
   };
 

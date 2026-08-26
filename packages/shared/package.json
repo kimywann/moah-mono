@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./config/*": "./config/*.ts",
+    "./type/*": "./type/*.ts",
     "./utils/*": "./utils/*.ts"
   }
 }
