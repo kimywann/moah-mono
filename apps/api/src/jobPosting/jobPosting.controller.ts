@@ -1,4 +1,4 @@
-import { jobPostingExtractionRequestSchema } from "@moah/contracts/schema/jobPosting";
+import { jobPostingExtractionRequestSchema } from "@moah/contracts/schema/job-posting";
 import {
   BadRequestException,
   Body,

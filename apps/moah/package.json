@@ -1,13 +1,15 @@
 {
   "name": "moah",
-  "version": "0.1.0",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "preview": "vite preview",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "@moah/contracts": "workspace:*",
@@ -15,9 +17,9 @@
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-table": "^8.21.3",
     "dayjs": "^1.11.23",
-    "next": "16.2.12",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router": "^8.3.0"
   },
   "devDependencies": {
     "@moah/tailwind-config": "workspace:*",
@@ -25,8 +27,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
+    "@vitejs/plugin-react": "^6.1.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "^8.2.2"
   }
 }

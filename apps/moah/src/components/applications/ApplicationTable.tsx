@@ -7,7 +7,10 @@ import type {
   SortingState,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import type { IApplication, TApplicationStage } from "@/app/type/application";
+import type {
+  IApplication,
+  TApplicationStage,
+} from "@/shared/type/application";
 
 type TBadgeVariant =
   | "neutral"

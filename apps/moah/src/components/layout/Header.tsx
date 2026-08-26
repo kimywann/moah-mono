@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router";
 
 const Header = () => {
   return (
@@ -6,7 +6,7 @@ const Header = () => {
       <div className="flex h-full w-full items-center px-6">
         <Link
           className="display14 bold ml-auto inline-flex h-9 items-center justify-center rounded-tiny bg-primary px-4 text-white hover:bg-primary-hover"
-          href="/login"
+          to="/login"
         >
           로그인
         </Link>

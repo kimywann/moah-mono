@@ -1,11 +1,9 @@
-"use client";
-
 import type { TJobPostingForm } from "@moah/contracts/schema/jobPosting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
-import { useRouter } from "next/navigation";
 import type { MouseEventHandler } from "react";
+import { useNavigate } from "react-router";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
@@ -14,7 +12,7 @@ interface IJobPostingPreviewModalProps {
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleSave = () => {
     // TODO: 로그인 사용자의 채용 공고 저장 기능을 구현
@@ -138,7 +136,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
           ) : (
             <MHButton
               isFullWidth
-              onClick={() => router.push("/login")}
+              onClick={() => navigate("/login")}
               size="large"
             >
               로그인 후 저장하기

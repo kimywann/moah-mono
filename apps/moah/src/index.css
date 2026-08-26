@@ -1,5 +1,5 @@
 @import "@moah/tailwind-config/shared-style.css";
-@source "../../../../packages/ui";
+@source "../../../packages/ui";
 
 @layer base {
   :root {
