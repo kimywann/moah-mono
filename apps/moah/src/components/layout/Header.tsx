@@ -13,7 +13,7 @@ const Header = () => {
     event.preventDefault();
 
     await handleLogout();
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -29,7 +29,7 @@ const Header = () => {
             <Link
               className={AUTH_BUTTON_CLASS}
               onClick={handleClickLogout}
-              to="/"
+              to="/login"
             >
               로그아웃
             </Link>
