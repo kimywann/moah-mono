@@ -1,6 +1,8 @@
 import {
   ArrowLeft,
   ArrowUp,
+  Briefcase,
+  Calendar,
   Check,
   ChevronDown,
   ClipboardList,
@@ -9,6 +11,7 @@ import {
   LayoutDashboard,
   LoaderCircle,
   type LucideIcon,
+  MapPin,
   Search,
   SquareKanban,
   X,
@@ -17,6 +20,8 @@ import cn from "../utils/cn";
 
 const ICONS = {
   arrowLeft: ArrowLeft,
+  briefcase: Briefcase,
+  calendar: Calendar,
   check: Check,
   chevronDown: ChevronDown,
   clipboardList: ClipboardList,
@@ -24,6 +29,7 @@ const ICONS = {
   house: House,
   layoutDashboard: LayoutDashboard,
   loaderCircle: LoaderCircle,
+  mapPin: MapPin,
   squareKanban: SquareKanban,
   x: X,
   search: Search,
