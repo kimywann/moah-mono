@@ -9,16 +9,69 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  googleId     String   @unique
-  email        String   @unique
+  id           String        @id @default(uuid())
+  googleId     String        @unique
+  email        String        @unique
   name         String?
   profileImage String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   sessions     Session[]
+  applications Application[]
 
   @@map("users")
+}
+
+enum ApplicationStage {
+  READY
+  APPLIED
+  INTERVIEW
+  PASSED
+  REJECTED
+}
+
+enum JobPostingPlatform {
+  SARAMIN
+  JOB_KOREA
+  JOB_PLANET
+  ZIGHANG
+  ROCKET_PUNCH
+  WORK24
+  OTHER
+}
+
+model Application {
+  id           String           @id @default(uuid())
+  userId       String
+  jobPostingId String
+  stage        ApplicationStage @default(READY)
+  createdAt    DateTime         @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobPosting JobPosting @relation(fields: [jobPostingId], references: [id])
+
+  @@unique([userId, jobPostingId])
+  @@map("applications")
+}
+
+model JobPosting {
+  id            String             @id @default(uuid())
+  sourceUrl     String             @unique
+  platform      JobPostingPlatform @default(OTHER)
+  companyName   String?
+  position      String?
+  career        String?
+  location      String?
+  deadline      DateTime?          @db.Date
+  hiringProcess String[]           @default([])
+  techStacks    String[]           @default([])
+  extractedAt   DateTime
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  applications Application[]
+
+  @@map("job_postings")
 }
 
 model Session {
