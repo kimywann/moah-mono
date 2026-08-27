@@ -41,6 +41,13 @@ enum JobPostingPlatform {
   OTHER
 }
 
+enum JobPostingDeadlineType {
+  DATE
+  ROLLING
+  UNTIL_FILLED
+  UNKNOWN
+}
+
 model Application {
   id            String           @id @default(uuid())
   userId        String
@@ -58,18 +65,19 @@ model Application {
 }
 
 model JobPosting {
-  id          String             @id @default(uuid())
-  url         String             @unique
-  platform    JobPostingPlatform @default(OTHER)
-  companyName String?
-  title       String?
-  position    String?
-  career      String?
-  location    String?
-  deadline    DateTime?          @db.Date
-  extractedAt DateTime
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id           String                 @id @default(uuid())
+  url          String                 @unique
+  platform     JobPostingPlatform     @default(OTHER)
+  companyName  String?
+  title        String?
+  position     String?
+  career       String?
+  location     String?
+  deadline     DateTime?              @db.Date
+  deadlineType JobPostingDeadlineType @default(UNKNOWN)
+  extractedAt  DateTime
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
 
   applications Application[]
 
