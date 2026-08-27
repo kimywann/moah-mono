@@ -8,14 +8,14 @@ import type {
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import type {
-  IApplication,
+  IApplicationList,
   TApplicationStage,
 } from "@/shared/type/application";
 
 type TBadgeVariant = "neutral" | "primary" | "success" | "danger" | "info";
 
 interface IApplicationTableProps {
-  applications: IApplication[];
+  applications: IApplicationList[];
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
@@ -46,7 +46,7 @@ const STAGE_DISPLAY = {
   { label: string; variant: TBadgeVariant }
 >;
 
-const columns: ColumnDef<IApplication>[] = [
+const columns: ColumnDef<IApplicationList>[] = [
   {
     accessorKey: "companyName",
     enableSorting: false,

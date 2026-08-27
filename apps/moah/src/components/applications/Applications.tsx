@@ -1,10 +1,10 @@
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import ApplicationTable from "@/components/applications/ApplicationTable";
-import type { IApplication } from "@/shared/type/application";
+import type { IApplicationList } from "@/shared/type/application";
 
 interface IApplicationsProps {
-  applications: IApplication[];
+  applications: IApplicationList[];
 }
 
 const Applications = (props: IApplicationsProps) => {
