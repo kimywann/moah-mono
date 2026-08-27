@@ -2,8 +2,9 @@ import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
-import type { MouseEventHandler } from "react";
+import { type MouseEventHandler, useState } from "react";
 import { useNavigate } from "react-router";
+import { saveJobPosting } from "@/api/job-posting";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
@@ -13,9 +14,26 @@ interface IJobPostingPreviewModalProps {
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
-    // TODO: 로그인 사용자의 채용 공고 저장 기능을 구현
+  const handleSave = async () => {
+    if (isSaving) {
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+
+      const response = await saveJobPosting(props.jobPosting);
+
+      if (!response.success) {
+        throw new Error("채용 공고 저장에 실패했습니다.");
+      }
+    } catch {
+      window.alert("채용 공고를 저장하지 못했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -130,8 +148,13 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
 
         <div className="mt-8">
           {props.isLoggedIn ? (
-            <MHButton isFullWidth onClick={handleSave} size="large">
-              공고 저장하기
+            <MHButton
+              disabled={isSaving}
+              isFullWidth
+              onClick={handleSave}
+              size="large"
+            >
+              {isSaving ? "공고 저장 중..." : "공고 저장하기"}
             </MHButton>
           ) : (
             <MHButton
