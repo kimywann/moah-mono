@@ -5,6 +5,7 @@ import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import RecruitPage from "@/pages/RecruitPage";
 
 const Router = () => {
   return (
@@ -15,6 +16,7 @@ const Router = () => {
 
           <Route element={<ContentLayout />}>
             <Route element={<ApplicationsPage />} path="applications" />
+            <Route element={<RecruitPage />} path="recruit" />
           </Route>
         </Route>
 
