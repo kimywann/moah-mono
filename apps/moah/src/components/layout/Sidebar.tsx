@@ -6,8 +6,15 @@ const NAV_CLASS =
 
 const Sidebar = () => {
   return (
-    <aside className="flex w-30 shrink-0 flex-col justify-center border-neutral10 border-r">
-      <nav aria-label="주요 메뉴" className="flex w-full flex-col gap-3 px-5">
+    <aside className="flex w-30 shrink-0 flex-col border-neutral10 border-r">
+      <div className="flex items-center justify-center px-5 py-6">
+        <div aria-hidden="true" className="size-10 rounded-full bg-primary" />
+      </div>
+
+      <nav
+        aria-label="주요 메뉴"
+        className="mt-10 flex w-full flex-col gap-4 px-5"
+      >
         <Link className={NAV_CLASS} to="/">
           <MHIcon icon="house" size={20} />
           <span className="display14 medium">홈</span>
