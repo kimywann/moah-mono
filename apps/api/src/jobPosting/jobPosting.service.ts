@@ -1,7 +1,17 @@
-import { jobPostingExtractionResponseSchema } from "@moah/contracts/schema/job-posting";
-import { BadGatewayException, Inject, Injectable } from "@nestjs/common";
+import {
+  jobPostingExtractionResponseSchema,
+  type TJobPostingForm,
+} from "@moah/contracts/schema/job-posting";
+import {
+  BadGatewayException,
+  ConflictException,
+  Inject,
+  Injectable,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
+import { type JobPostingPlatform, Prisma } from "../generated/prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
 
 const GEMINI_RESPONSE_SCHEMA = z.object({
   candidates: z.array(
@@ -31,6 +41,7 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
 export class JobPostingService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {}
 
   async extract(url: string) {
@@ -100,5 +111,88 @@ export class JobPostingService {
     }
 
     return parsedJobPosting.data;
+  }
+
+  async save(userId: string, jobPosting: TJobPostingForm) {
+    const platform = this.getPlatform(jobPosting.url);
+    const deadline = jobPosting.deadline
+      ? new Date(`${jobPosting.deadline}T00:00:00.000Z`)
+      : null;
+    const savedJobPosting = await this.prismaService.jobPosting.upsert({
+      where: { url: jobPosting.url },
+      create: {
+        url: jobPosting.url,
+        platform,
+        companyName: jobPosting.companyName,
+        position: jobPosting.position,
+        career: jobPosting.career,
+        location: jobPosting.location,
+        deadline,
+        hiringProcess: jobPosting.hiringProcess,
+        techStacks: jobPosting.techStacks,
+        extractedAt: new Date(),
+      },
+      update: {},
+    });
+
+    try {
+      return await this.prismaService.application.create({
+        data: {
+          userId,
+          jobPostingId: savedJobPosting.id,
+          stage: "READY",
+        },
+        select: {
+          id: true,
+          jobPostingId: true,
+          stage: true,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new ConflictException("이미 지원 목록에 저장된 채용 공고입니다.");
+      }
+
+      throw error;
+    }
+  }
+
+  private getPlatform(url: string): JobPostingPlatform {
+    const hostname = new URL(url).hostname.toLowerCase();
+
+    if (this.isPlatformHostname(hostname, "saramin.co.kr")) {
+      return "SARAMIN";
+    }
+
+    if (this.isPlatformHostname(hostname, "jobkorea.co.kr")) {
+      return "JOB_KOREA";
+    }
+
+    if (this.isPlatformHostname(hostname, "jobplanet.co.kr")) {
+      return "JOB_PLANET";
+    }
+
+    if (this.isPlatformHostname(hostname, "zighang.com")) {
+      return "ZIGHANG";
+    }
+
+    if (this.isPlatformHostname(hostname, "rocketpunch.com")) {
+      return "ROCKET_PUNCH";
+    }
+
+    if (this.isPlatformHostname(hostname, "work24.go.kr")) {
+      return "WORK24";
+    }
+
+    return "OTHER";
+  }
+
+  private isPlatformHostname(hostname: string, platformHostname: string) {
+    return (
+      hostname === platformHostname || hostname.endsWith(`.${platformHostname}`)
+    );
   }
 }
