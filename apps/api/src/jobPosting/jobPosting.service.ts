@@ -33,11 +33,6 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
 - 공고에 없는 단일 값은 null로 반환하고, 목록은 빈 배열로 반환합니다.
 - deadline은 YYYY-MM-DD 형식으로 반환합니다.
 - 날짜를 확실히 알 수 없다면 null로 반환합니다.
-- hiringProcess는 실제 진행 순서대로 반환합니다.
-- '채용 전형', '채용 절차', '전형 과정' 섹션을 반드시 확인하세요.
-- 화살표(>, →)로 구분된 텍스트는 각 단계를 분리해 hiringProcess 배열에 순서대로 넣으세요.
-- 예: [서류 지원 ＞ 과제 ＞ 1차 인터뷰(실무진) ＞ 최종 결과 발표]는 ["서류 지원", "과제", "1차 인터뷰(실무진)", "최종 결과 발표"]로 반환합니다.
-- techStacks에는 공고에 명시된 기술만 포함합니다.
 - 원문에 없는 내용을 추측하지 마세요.`;
 
 @Injectable()
@@ -131,8 +126,6 @@ export class JobPostingService {
         career: jobPosting.career,
         location: jobPosting.location,
         deadline,
-        hiringProcess: jobPosting.hiringProcess,
-        techStacks: jobPosting.techStacks,
         extractedAt: new Date(),
       },
       update: { platform },

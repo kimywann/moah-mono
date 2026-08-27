@@ -42,11 +42,13 @@ enum JobPostingPlatform {
 }
 
 model Application {
-  id           String           @id @default(uuid())
-  userId       String
-  jobPostingId String
-  stage        ApplicationStage @default(READY)
-  createdAt    DateTime         @default(now())
+  id            String           @id @default(uuid())
+  userId        String
+  jobPostingId  String
+  stage         ApplicationStage @default(READY)
+  hiringProcess String[]         @default([])
+  techStacks    String[]         @default([])
+  createdAt     DateTime         @default(now())
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobPosting JobPosting @relation(fields: [jobPostingId], references: [id])
@@ -56,19 +58,17 @@ model Application {
 }
 
 model JobPosting {
-  id            String             @id @default(uuid())
-  url           String             @unique
-  platform      JobPostingPlatform @default(OTHER)
-  companyName   String?
-  position      String?
-  career        String?
-  location      String?
-  deadline      DateTime?          @db.Date
-  hiringProcess String[]           @default([])
-  techStacks    String[]           @default([])
-  extractedAt   DateTime
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id          String             @id @default(uuid())
+  url         String             @unique
+  platform    JobPostingPlatform @default(OTHER)
+  companyName String?
+  position    String?
+  career      String?
+  location    String?
+  deadline    DateTime?          @db.Date
+  extractedAt DateTime
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   applications Application[]
 
