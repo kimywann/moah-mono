@@ -6,16 +6,18 @@ const NAV_CLASS =
 
 const Sidebar = () => {
   return (
-    <aside className="flex w-30 shrink-0 flex-col justify-center border-neutral10 border-r">
-      <nav aria-label="주요 메뉴" className="flex w-full flex-col gap-3 px-5">
+    <aside className="flex w-30 shrink-0 flex-col border-neutral10 border-r">
+      <div className="flex items-center justify-center px-5 py-6">
+        <div aria-hidden="true" className="size-10 rounded-full bg-primary" />
+      </div>
+
+      <nav
+        aria-label="주요 메뉴"
+        className="mt-10 flex w-full flex-col gap-4 px-5"
+      >
         <Link className={NAV_CLASS} to="/">
           <MHIcon icon="house" size={20} />
           <span className="display14 medium">홈</span>
-        </Link>
-
-        <Link className={NAV_CLASS} to="/dashboard">
-          <MHIcon icon="layoutDashboard" size={20} />
-          <span className="display14 medium">대시보드</span>
         </Link>
 
         <Link className={NAV_CLASS} to="/applications">
@@ -23,10 +25,15 @@ const Sidebar = () => {
           <span className="display14 medium">지원 목록</span>
         </Link>
 
-        <Link className={NAV_CLASS} to="/board">
+        <Link className={NAV_CLASS} to="/recruit">
+          <MHIcon icon="layoutDashboard" size={20} />
+          <span className="display14 medium">채용 공고</span>
+        </Link>
+
+        {/* <Link className={NAV_CLASS} to="/board">
           <MHIcon icon="squareKanban" size={20} />
           <span className="display14 medium">칸반 보드</span>
-        </Link>
+        </Link> */}
       </nav>
     </aside>
   );

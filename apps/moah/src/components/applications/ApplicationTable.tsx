@@ -6,55 +6,49 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
-import dayjs from "dayjs";
+import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
-  IApplication,
+  IApplicationList,
   TApplicationStage,
+  TJobPostingPlatform,
 } from "@/shared/type/application";
+import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
 
-type TBadgeVariant =
-  | "neutral"
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
+type TBadgeVariant = "neutral" | "primary" | "success" | "danger" | "info";
 
 interface IApplicationTableProps {
-  applications: IApplication[];
+  applications: IApplicationList[];
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
 
-interface IStageDisplay {
-  label: string;
-  variant: TBadgeVariant;
-}
-
-const STAGE_DISPLAY: Record<TApplicationStage, IStageDisplay> = {
-  applied: {
+const STAGE_DISPLAY = {
+  READY: {
+    label: "지원 준비 중",
+    variant: "neutral",
+  },
+  APPLIED: {
     label: "지원 완료",
     variant: "info",
   },
-  document: {
-    label: "서류 전형",
-    variant: "warning",
-  },
-  interview: {
-    label: "면접 진행",
+  INTERVIEW: {
+    label: "면접",
     variant: "primary",
   },
-  offer: {
-    label: "최종 합격",
+  PASSED: {
+    label: "합격",
     variant: "success",
   },
-  rejected: {
+  REJECTED: {
     label: "불합격",
-    variant: "neutral",
+    variant: "danger",
   },
-};
+} satisfies Record<
+  TApplicationStage,
+  { label: string; variant: TBadgeVariant }
+>;
 
-const columns: ColumnDef<IApplication>[] = [
+const columns: ColumnDef<IApplicationList>[] = [
   {
     accessorKey: "companyName",
     enableSorting: false,
@@ -72,9 +66,25 @@ const columns: ColumnDef<IApplication>[] = [
     ),
   },
   {
-    accessorKey: "career",
+    accessorKey: "minYears",
     enableSorting: false,
     header: "경력",
+    cell: ({ row }) => getCareerLabel(row.original),
+  },
+  {
+    accessorKey: "location",
+    enableSorting: false,
+    header: "지역",
+  },
+  {
+    accessorKey: "platform",
+    enableSorting: false,
+    header: "플랫폼",
+    cell: ({ getValue }) => (
+      <span className="regular">
+        {PLATFORM_LABEL[getValue<TJobPostingPlatform>()]}
+      </span>
+    ),
   },
   {
     accessorKey: "stage",
@@ -94,11 +104,7 @@ const columns: ColumnDef<IApplication>[] = [
     accessorKey: "deadline",
     enableSorting: true,
     header: "마감일",
-    cell: ({ getValue }) => {
-      const deadline = getValue<string | null>();
-
-      return deadline ? dayjs(deadline).format("YYYY-MM-DD") : "상시 채용";
-    },
+    cell: ({ row }) => getDeadlineLabel(row.original),
   },
   {
     accessorKey: "detail",
@@ -115,7 +121,7 @@ const columns: ColumnDef<IApplication>[] = [
 const ApplicationTable = (props: IApplicationTableProps) => {
   return (
     <MHTable
-      caption="지원 목록"
+      caption="지원 현황"
       columns={columns}
       data={props.applications}
       getRowId={(application) => application.id}

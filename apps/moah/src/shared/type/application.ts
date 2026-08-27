@@ -1,17 +1,37 @@
-type TApplicationStage =
-  | "applied"
-  | "document"
-  | "interview"
-  | "offer"
-  | "rejected";
+export type TApplicationStage =
+  | "READY"
+  | "APPLIED"
+  | "INTERVIEW"
+  | "PASSED"
+  | "REJECTED";
 
-interface IApplication {
-  career: string;
-  companyName: string;
+export type TJobPostingPlatform =
+  | "SARAMIN"
+  | "JOB_KOREA"
+  | "JOB_PLANET"
+  | "ZIGHANG"
+  | "ROCKET_PUNCH"
+  | "WORK24"
+  | "WANTED"
+  | "OTHER";
+
+export type TJobPostingDeadlineType =
+  | "DATE"
+  | "ROLLING"
+  | "UNTIL_FILLED"
+  | "UNKNOWN";
+
+export interface IApplicationList {
   deadline: string | null;
+  deadlineType: TJobPostingDeadlineType;
   id: string;
-  position: string;
+  jobPostingId: string;
+  companyName: string | null;
+  location: string | null;
+  minYears: number | null;
+  maxYears: number | null;
+  platform: TJobPostingPlatform;
+  position: string | null;
   stage: TApplicationStage;
+  url: string;
 }
-
-export type { IApplication, TApplicationStage };

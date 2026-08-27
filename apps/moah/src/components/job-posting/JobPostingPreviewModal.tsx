@@ -1,21 +1,62 @@
-import type { TJobPostingForm } from "@moah/contracts/schema/jobPosting";
+import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
-import type { MouseEventHandler } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { saveJobPosting } from "@/api/job-posting";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
   jobPosting: TJobPostingForm;
-  onClose?: MouseEventHandler<HTMLButtonElement>;
+  onClose?: () => void;
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
+  const careerValue =
+    props.jobPosting.minYears === null && props.jobPosting.maxYears === null
+      ? "경력 조건 미정"
+      : props.jobPosting.minYears === 0 && props.jobPosting.maxYears === 0
+        ? "신입"
+        : props.jobPosting.minYears === 0 && props.jobPosting.maxYears === null
+          ? "경력 무관"
+          : props.jobPosting.maxYears === null
+            ? `경력 ${props.jobPosting.minYears}년 이상`
+            : props.jobPosting.minYears === props.jobPosting.maxYears
+              ? `경력 ${props.jobPosting.minYears}년`
+              : `경력 ${props.jobPosting.minYears}~${props.jobPosting.maxYears}년`;
+  const deadlineValue =
+    props.jobPosting.deadlineType === "ROLLING"
+      ? "상시 채용"
+      : props.jobPosting.deadlineType === "UNTIL_FILLED"
+        ? "채용 시 마감"
+        : props.jobPosting.deadlineType === "UNKNOWN"
+          ? "마감 정보 없음"
+          : (props.jobPosting.deadline ?? "마감 정보 없음");
+  const isDateDeadline = props.jobPosting.deadlineType === "DATE";
 
-  const handleSave = () => {
-    // TODO: 로그인 사용자의 채용 공고 저장 기능을 구현
+  const handleSave = async () => {
+    if (isSaving) {
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+
+      const response = await saveJobPosting(props.jobPosting);
+
+      if (!response.success) {
+        throw new Error("채용 공고 저장에 실패했습니다.");
+      }
+
+      props.onClose?.();
+    } catch {
+      window.alert("채용 공고를 저장하지 못했습니다. 다시 시도해 주세요.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -61,7 +102,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="경력 조건을 입력해 주세요"
                 readOnly
-                value={props.jobPosting.career ?? ""}
+                value={careerValue}
               />
             </div>
 
@@ -84,32 +125,8 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               <MHInput
                 isFullWidth
                 readOnly
-                type="date"
-                value={props.jobPosting.deadline ?? ""}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">
-                채용 절차
-              </span>
-              <MHInput
-                isFullWidth
-                placeholder="채용 절차를 입력해 주세요"
-                readOnly
-                value={props.jobPosting.hiringProcess.join(" → ")}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 sm:col-span-2">
-              <span className="semibold display14 text-neutral40">
-                기술 스택
-              </span>
-              <MHInput
-                isFullWidth
-                placeholder="기술 스택을 입력해 주세요"
-                readOnly
-                value={props.jobPosting.techStacks.join(", ")}
+                type={isDateDeadline ? "date" : "text"}
+                value={deadlineValue}
               />
             </div>
 
@@ -130,8 +147,13 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
 
         <div className="mt-8">
           {props.isLoggedIn ? (
-            <MHButton isFullWidth onClick={handleSave} size="large">
-              공고 저장하기
+            <MHButton
+              disabled={isSaving}
+              isFullWidth
+              onClick={handleSave}
+              size="large"
+            >
+              {isSaving ? "공고 저장 중..." : "공고 저장하기"}
             </MHButton>
           ) : (
             <MHButton
