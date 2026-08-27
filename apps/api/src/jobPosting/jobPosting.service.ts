@@ -80,6 +80,30 @@ export class JobPostingService {
     @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {}
 
+  async findAll() {
+    const jobPostings = await this.prismaService.jobPosting.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        url: true,
+        platform: true,
+        companyName: true,
+        title: true,
+        position: true,
+        minYears: true,
+        maxYears: true,
+        location: true,
+        deadline: true,
+        deadlineType: true,
+      },
+    });
+
+    return jobPostings.map((jobPosting) => ({
+      ...jobPosting,
+      deadline: jobPosting.deadline?.toISOString().slice(0, 10) ?? null,
+    }));
+  }
+
   async extract(url: string) {
     const apiKey = this.configService.getOrThrow<string>("GEMINI_API_KEY");
     const apiURL = this.configService.getOrThrow<string>("GEMINI_API_URL");

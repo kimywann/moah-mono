@@ -6,6 +6,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Headers,
   Inject,
   Post,
@@ -51,6 +52,14 @@ export class JobPostingController {
     return {
       success: true,
       data: application,
+    };
+  }
+
+  @Get()
+  async findAll() {
+    return {
+      success: true,
+      data: await this.jobPostingService.findAll(),
     };
   }
 
