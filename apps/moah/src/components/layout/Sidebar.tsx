@@ -13,20 +13,20 @@ const Sidebar = () => {
           <span className="display14 medium">홈</span>
         </Link>
 
-        <Link className={NAV_CLASS} to="/dashboard">
-          <MHIcon icon="layoutDashboard" size={20} />
-          <span className="display14 medium">대시보드</span>
-        </Link>
-
         <Link className={NAV_CLASS} to="/applications">
           <MHIcon icon="clipboardList" size={20} />
           <span className="display14 medium">지원 목록</span>
         </Link>
 
-        <Link className={NAV_CLASS} to="/board">
+        <Link className={NAV_CLASS} to="/recruit">
+          <MHIcon icon="layoutDashboard" size={20} />
+          <span className="display14 medium">채용 공고</span>
+        </Link>
+
+        {/* <Link className={NAV_CLASS} to="/board">
           <MHIcon icon="squareKanban" size={20} />
           <span className="display14 medium">칸반 보드</span>
-        </Link>
+        </Link> */}
       </nav>
     </aside>
   );
