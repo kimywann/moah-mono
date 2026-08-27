@@ -32,6 +32,13 @@ export const JOB_POSTING_POSITIONS = [
   "기타",
 ] as const;
 
+export const JOB_POSTING_DEADLINE_TYPES = [
+  "DATE",
+  "ROLLING",
+  "UNTIL_FILLED",
+  "UNKNOWN",
+] as const;
+
 const URL_PROTOCOL_PATTERN = /^[a-zA-Z][a-zA-Z\d+.-]*:\/\//;
 
 const normalizeJobPostingURL = (url: string) => {
@@ -79,6 +86,7 @@ export const jobPostingExtractionResponseSchema = z.object({
   career: z.string().nullable(),
   location: z.string().nullable(),
   deadline: z.iso.date().nullable(),
+  deadlineType: z.enum(JOB_POSTING_DEADLINE_TYPES),
 });
 
 export const jobPostingFormSchema = jobPostingExtractionResponseSchema.extend({
@@ -90,3 +98,5 @@ export type TJobPostingExtraction = z.infer<
 >;
 export type TJobPostingForm = z.infer<typeof jobPostingFormSchema>;
 export type TJobPostingPosition = (typeof JOB_POSTING_POSITIONS)[number];
+export type TJobPostingDeadlineType =
+  (typeof JOB_POSTING_DEADLINE_TYPES)[number];

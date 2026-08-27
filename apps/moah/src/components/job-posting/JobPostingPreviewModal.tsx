@@ -15,6 +15,15 @@ interface IJobPostingPreviewModalProps {
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const deadlineValue =
+    props.jobPosting.deadlineType === "ROLLING"
+      ? "상시 채용"
+      : props.jobPosting.deadlineType === "UNTIL_FILLED"
+        ? "채용 시 마감"
+        : props.jobPosting.deadlineType === "UNKNOWN"
+          ? "마감 정보 없음"
+          : (props.jobPosting.deadline ?? "마감 정보 없음");
+  const isDateDeadline = props.jobPosting.deadlineType === "DATE";
 
   const handleSave = async () => {
     if (isSaving) {
@@ -102,8 +111,8 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               <MHInput
                 isFullWidth
                 readOnly
-                type={props.jobPosting.deadline ? "date" : "text"}
-                value={props.jobPosting.deadline ?? "상시 채용"}
+                type={isDateDeadline ? "date" : "text"}
+                value={deadlineValue}
               />
             </div>
 

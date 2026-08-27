@@ -30,8 +30,11 @@ const GEMINI_RESPONSE_SCHEMA = z.object({
 const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
   - 원문에 없는 정보를 추측하지 마세요.
-  - deadline은 YYYY-MM-DD 형식으로 반환합니다. 상시 채용이라면 상시 채용으로 반환합니다.
-  - 날짜를 확실히 알 수 없다면 deadline은 null로 반환합니다.
+  - deadline은 YYYY-MM-DD 형식으로 반환합니다. 날짜가 없으면 null로 반환합니다.
+  - deadlineType은 DATE, ROLLING, UNTIL_FILLED, UNKNOWN 중 하나로 반환합니다.
+  - 날짜가 명시되면 deadlineType은 DATE로 반환합니다.
+  - 상시 채용이면 deadlineType은 ROLLING, 채용 시 마감이면 UNTIL_FILLED로 반환합니다.
+  - 마감 방식과 날짜를 확인할 수 없으면 deadlineType은 UNKNOWN으로 반환합니다.
 
   [원문 제목]
   - title은 공고에 표시된 원문 제목을 수정하거나 요약하지 않고 그대로 반환합니다.
@@ -157,13 +160,19 @@ export class JobPostingService {
         url: jobPosting.url,
         platform,
         companyName: jobPosting.companyName,
+        title: jobPosting.title,
         position: jobPosting.position,
         career: jobPosting.career,
         location: jobPosting.location,
         deadline,
+        deadlineType: jobPosting.deadlineType,
         extractedAt: new Date(),
       },
-      update: { platform },
+      update: {
+        platform,
+        title: jobPosting.title,
+        deadlineType: jobPosting.deadlineType,
+      },
     });
 
     try {
