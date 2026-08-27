@@ -21,7 +21,7 @@ export type TJobPostingDeadlineType =
   | "UNTIL_FILLED"
   | "UNKNOWN";
 
-export interface IApplication {
+export interface IApplicationList {
   deadline: string | null;
   deadlineType: TJobPostingDeadlineType;
   id: string;
