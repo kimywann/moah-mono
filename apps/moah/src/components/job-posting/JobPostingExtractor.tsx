@@ -5,11 +5,13 @@ import {
 import MHIcon from "@moah/ui/components/MHIcon";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const JobPostingExtractor = () => {
+  const { isAuthenticated } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [jobPosting, setJobPosting] = useState<TJobPostingForm | null>(null);
@@ -117,7 +119,7 @@ const JobPostingExtractor = () => {
 
       {isModalOpen && jobPosting && (
         <JobPostingPreviewModal
-          isLoggedIn={false}
+          isLoggedIn={isAuthenticated}
           jobPosting={jobPosting}
           onClose={() => setIsModalOpen(false)}
         />
