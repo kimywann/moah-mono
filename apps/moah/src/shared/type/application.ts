@@ -1,9 +1,9 @@
 type TApplicationStage =
-  | "applied"
-  | "document"
-  | "interview"
-  | "offer"
-  | "rejected";
+  | "READY"
+  | "APPLIED"
+  | "INTERVIEW"
+  | "PASSED"
+  | "REJECTED";
 
 interface IApplication {
   career: string;

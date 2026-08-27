@@ -7,7 +7,7 @@ const MOCK_APPLICATIONS: IApplication[] = [
     companyName: "모아",
     position: "Frontend Developer",
     career: "경력 3년 이상",
-    stage: "document",
+    stage: "READY",
     deadline: "2026-08-25",
   },
 ];
