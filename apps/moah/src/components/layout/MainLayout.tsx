@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
+import Footer from "./Footer";
 
 const MainLayout = () => {
   return (
@@ -10,9 +11,11 @@ const MainLayout = () => {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />
 
-        <main className="flex min-w-0 flex-1">
+        <main className="flex min-h-[calc(100vh-4rem)] min-w-0 flex-1">
           <Outlet />
         </main>
+
+        <Footer />
       </div>
     </div>
   );
