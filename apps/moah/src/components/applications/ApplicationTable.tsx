@@ -12,13 +12,7 @@ import type {
   TApplicationStage,
 } from "@/shared/type/application";
 
-type TBadgeVariant =
-  | "neutral"
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
+type TBadgeVariant = "neutral" | "primary" | "success" | "danger" | "info";
 
 interface IApplicationTableProps {
   applications: IApplication[];
@@ -26,33 +20,31 @@ interface IApplicationTableProps {
   sorting: SortingState;
 }
 
-interface IStageDisplay {
-  label: string;
-  variant: TBadgeVariant;
-}
-
-const STAGE_DISPLAY: Record<TApplicationStage, IStageDisplay> = {
-  applied: {
+const STAGE_DISPLAY = {
+  READY: {
+    label: "지원 준비 중",
+    variant: "neutral",
+  },
+  APPLIED: {
     label: "지원 완료",
     variant: "info",
   },
-  document: {
-    label: "서류 전형",
-    variant: "warning",
-  },
-  interview: {
-    label: "면접 진행",
+  INTERVIEW: {
+    label: "면접",
     variant: "primary",
   },
-  offer: {
-    label: "최종 합격",
+  PASSED: {
+    label: "합격",
     variant: "success",
   },
-  rejected: {
+  REJECTED: {
     label: "불합격",
-    variant: "neutral",
+    variant: "danger",
   },
-};
+} satisfies Record<
+  TApplicationStage,
+  { label: string; variant: TBadgeVariant }
+>;
 
 const columns: ColumnDef<IApplication>[] = [
   {
