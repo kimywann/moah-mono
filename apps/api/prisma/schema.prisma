@@ -49,18 +49,26 @@ enum JobPostingDeadlineType {
 }
 
 model Application {
-  id            String           @id @default(uuid())
+  id            String                 @id @default(uuid())
   userId        String
-  jobPostingId  String
-  stage         ApplicationStage @default(READY)
-  hiringProcess String[]         @default([])
-  techStacks    String[]         @default([])
-  createdAt     DateTime         @default(now())
+  stage         ApplicationStage       @default(READY)
+  url           String
+  platform      JobPostingPlatform     @default(OTHER)
+  companyName   String?
+  position      String?
+  minYears      Int?
+  maxYears      Int?
+  location      String?
+  deadline      DateTime?              @db.Date
+  deadlineType  JobPostingDeadlineType @default(UNKNOWN)
+  hiringProcess String[]               @default([])
+  techStacks    String[]               @default([])
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
 
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  jobPosting JobPosting @relation(fields: [jobPostingId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, jobPostingId])
+  @@unique([userId, url])
   @@map("applications")
 }
 
@@ -71,15 +79,14 @@ model JobPosting {
   companyName  String?
   title        String?
   position     String?
-  career       String?
+  minYears     Int?
+  maxYears     Int?
   location     String?
   deadline     DateTime?              @db.Date
   deadlineType JobPostingDeadlineType @default(UNKNOWN)
   extractedAt  DateTime
   createdAt    DateTime               @default(now())
   updatedAt    DateTime               @updatedAt
-
-  applications Application[]
 
   @@map("job_postings")
 }

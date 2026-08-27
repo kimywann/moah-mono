@@ -63,13 +63,13 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
   - 허용 목록에 해당하는 직무가 없으면 "기타"를 반환합니다.
 
   [경력 연차]
-  - minCareerYears와 maxCareerYears에는 지원 가능한 경력 연차 범위를 정수로 반환합니다.
-  - 신입, 신입 가능 → minCareerYears: 0, maxCareerYears: 0
-  - 경력무관, 신입·경력, 경력 제한 없음 → minCareerYears: 0, maxCareerYears: null
-  - "N년" → minCareerYears: N, maxCareerYears: N
-  - "N~M년" → minCareerYears: N, maxCareerYears: M
-  - "N년 이상" → minCareerYears: N, maxCareerYears: null
-  - "N년 이하" → minCareerYears: 0, maxCareerYears: N
+  - minYears와 maxYears에는 지원 가능한 경력 연차 범위를 정수로 반환합니다.
+  - 신입, 신입 가능 → minYears: 0, maxYears: 0
+  - 경력무관, 신입·경력, 경력 제한 없음 → minYears: 0, maxYears: null
+  - "N년" → minYears: N, maxYears: N
+  - "N~M년" → minYears: N, maxYears: M
+  - "N년 이상" → minYears: N, maxYears: null
+  - "N년 이하" → minYears: 0, maxYears: N
   - 경력 조건을 확인할 수 없거나 해석이 모호하면 두 값 모두 null로 반환합니다.
   - 연차가 아닌 경력 표현은 추측하지 마세요.`;
 
@@ -154,7 +154,7 @@ export class JobPostingService {
     const deadline = jobPosting.deadline
       ? new Date(`${jobPosting.deadline}T00:00:00.000Z`)
       : null;
-    const savedJobPosting = await this.prismaService.jobPosting.upsert({
+    await this.prismaService.jobPosting.upsert({
       where: { url: jobPosting.url },
       create: {
         url: jobPosting.url,
@@ -162,7 +162,8 @@ export class JobPostingService {
         companyName: jobPosting.companyName,
         title: jobPosting.title,
         position: jobPosting.position,
-        career: jobPosting.career,
+        minYears: jobPosting.minYears,
+        maxYears: jobPosting.maxYears,
         location: jobPosting.location,
         deadline,
         deadlineType: jobPosting.deadlineType,
@@ -179,12 +180,19 @@ export class JobPostingService {
       return await this.prismaService.application.create({
         data: {
           userId,
-          jobPostingId: savedJobPosting.id,
           stage: "READY",
+          url: jobPosting.url,
+          platform,
+          companyName: jobPosting.companyName,
+          position: jobPosting.position,
+          minYears: jobPosting.minYears,
+          maxYears: jobPosting.maxYears,
+          location: jobPosting.location,
+          deadline,
+          deadlineType: jobPosting.deadlineType,
         },
         select: {
           id: true,
-          jobPostingId: true,
           stage: true,
         },
       });

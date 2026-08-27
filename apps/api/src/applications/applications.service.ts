@@ -13,26 +13,19 @@ export class ApplicationsService {
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
-        jobPostingId: true,
         stage: true,
-        jobPosting: {
-          select: {
-            companyName: true,
-            position: true,
-            career: true,
-            location: true,
-            deadline: true,
-            deadlineType: true,
-            platform: true,
-            url: true,
-          },
-        },
+        url: true,
+        platform: true,
+        companyName: true,
+        position: true,
+        minYears: true,
+        maxYears: true,
+        location: true,
+        deadline: true,
+        deadlineType: true,
       },
     });
 
-    return applications.map(({ jobPosting, ...application }) => ({
-      ...application,
-      ...jobPosting,
-    }));
+    return applications;
   }
 }

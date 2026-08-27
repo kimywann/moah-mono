@@ -2,19 +2,31 @@ import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
-import { type MouseEventHandler, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { saveJobPosting } from "@/api/job-posting";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
   jobPosting: TJobPostingForm;
-  onClose?: MouseEventHandler<HTMLButtonElement>;
+  onClose?: () => void;
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const careerValue =
+    props.jobPosting.minYears === null && props.jobPosting.maxYears === null
+      ? "경력 조건 미정"
+      : props.jobPosting.minYears === 0 && props.jobPosting.maxYears === 0
+        ? "신입"
+        : props.jobPosting.minYears === 0 && props.jobPosting.maxYears === null
+          ? "경력 무관"
+          : props.jobPosting.maxYears === null
+            ? `경력 ${props.jobPosting.minYears}년 이상`
+            : props.jobPosting.minYears === props.jobPosting.maxYears
+              ? `경력 ${props.jobPosting.minYears}년`
+              : `경력 ${props.jobPosting.minYears}~${props.jobPosting.maxYears}년`;
   const deadlineValue =
     props.jobPosting.deadlineType === "ROLLING"
       ? "상시 채용"
@@ -38,6 +50,8 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
       if (!response.success) {
         throw new Error("채용 공고 저장에 실패했습니다.");
       }
+
+      props.onClose?.();
     } catch {
       window.alert("채용 공고를 저장하지 못했습니다. 다시 시도해 주세요.");
     } finally {
@@ -88,7 +102,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 isFullWidth
                 placeholder="경력 조건을 입력해 주세요"
                 readOnly
-                value={props.jobPosting.career ?? ""}
+                value={careerValue}
               />
             </div>
 

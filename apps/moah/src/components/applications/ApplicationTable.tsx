@@ -64,9 +64,37 @@ const columns: ColumnDef<IApplication>[] = [
     ),
   },
   {
-    accessorKey: "career",
+    accessorKey: "minYears",
     enableSorting: false,
     header: "경력",
+    cell: ({ row }) => {
+      const { minYears, maxYears } = row.original;
+
+      if (minYears === null && maxYears === null) {
+        return "경력 조건 미정";
+      }
+
+      if (minYears === 0 && maxYears === 0) {
+        return "신입";
+      }
+
+      if (minYears === 0 && maxYears === null) {
+        return "경력 무관";
+      }
+
+      if (maxYears === null) {
+        return `경력 ${minYears}년 이상`;
+      }
+
+      return minYears === maxYears
+        ? `경력 ${minYears}년`
+        : `경력 ${minYears}~${maxYears}년`;
+    },
+  },
+  {
+    accessorKey: "location",
+    enableSorting: false,
+    header: "지역",
   },
   {
     accessorKey: "stage",
@@ -86,10 +114,23 @@ const columns: ColumnDef<IApplication>[] = [
     accessorKey: "deadline",
     enableSorting: true,
     header: "마감일",
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
       const deadline = getValue<string | null>();
+      const deadlineType = row.original.deadlineType;
 
-      return deadline ? dayjs(deadline).format("YYYY-MM-DD") : "상시 채용";
+      if (deadlineType === "ROLLING") {
+        return "상시 채용";
+      }
+
+      if (deadlineType === "UNTIL_FILLED") {
+        return "채용 시 마감";
+      }
+
+      if (deadlineType === "UNKNOWN") {
+        return "마감 정보 없음";
+      }
+
+      return deadline ? dayjs(deadline).format("YYYY-MM-DD") : "마감 정보 없음";
     },
   },
   {
@@ -107,7 +148,7 @@ const columns: ColumnDef<IApplication>[] = [
 const ApplicationTable = (props: IApplicationTableProps) => {
   return (
     <MHTable
-      caption="지원 목록"
+      caption="지원 현황"
       columns={columns}
       data={props.applications}
       getRowId={(application) => application.id}
