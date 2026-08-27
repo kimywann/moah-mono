@@ -6,11 +6,13 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
-import dayjs from "dayjs";
+import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
   TApplicationStage,
+  TJobPostingPlatform,
 } from "@/shared/type/application";
+import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
 
 type TBadgeVariant = "neutral" | "primary" | "success" | "danger" | "info";
 
@@ -67,34 +69,22 @@ const columns: ColumnDef<IApplicationList>[] = [
     accessorKey: "minYears",
     enableSorting: false,
     header: "경력",
-    cell: ({ row }) => {
-      const { minYears, maxYears } = row.original;
-
-      if (minYears === null && maxYears === null) {
-        return "경력 조건 미정";
-      }
-
-      if (minYears === 0 && maxYears === 0) {
-        return "신입";
-      }
-
-      if (minYears === 0 && maxYears === null) {
-        return "경력 무관";
-      }
-
-      if (maxYears === null) {
-        return `경력 ${minYears}년 이상`;
-      }
-
-      return minYears === maxYears
-        ? `경력 ${minYears}년`
-        : `경력 ${minYears}~${maxYears}년`;
-    },
+    cell: ({ row }) => getCareerLabel(row.original),
   },
   {
     accessorKey: "location",
     enableSorting: false,
     header: "지역",
+  },
+  {
+    accessorKey: "platform",
+    enableSorting: false,
+    header: "플랫폼",
+    cell: ({ getValue }) => (
+      <span className="regular">
+        {PLATFORM_LABEL[getValue<TJobPostingPlatform>()]}
+      </span>
+    ),
   },
   {
     accessorKey: "stage",
@@ -114,24 +104,7 @@ const columns: ColumnDef<IApplicationList>[] = [
     accessorKey: "deadline",
     enableSorting: true,
     header: "마감일",
-    cell: ({ getValue, row }) => {
-      const deadline = getValue<string | null>();
-      const deadlineType = row.original.deadlineType;
-
-      if (deadlineType === "ROLLING") {
-        return "상시 채용";
-      }
-
-      if (deadlineType === "UNTIL_FILLED") {
-        return "채용 시 마감";
-      }
-
-      if (deadlineType === "UNKNOWN") {
-        return "마감 정보 없음";
-      }
-
-      return deadline ? dayjs(deadline).format("YYYY-MM-DD") : "마감 정보 없음";
-    },
+    cell: ({ row }) => getDeadlineLabel(row.original),
   },
   {
     accessorKey: "detail",
