@@ -29,11 +29,46 @@ const GEMINI_RESPONSE_SCHEMA = z.object({
 
 const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
-규칙:
-- 공고에 없는 단일 값은 null로 반환하고, 목록은 빈 배열로 반환합니다.
-- deadline은 YYYY-MM-DD 형식으로 반환합니다.
-- 날짜를 확실히 알 수 없다면 null로 반환합니다.
-- 원문에 없는 내용을 추측하지 마세요.`;
+  - 원문에 없는 정보를 추측하지 마세요.
+  - deadline은 YYYY-MM-DD 형식으로 반환합니다. 상시 채용이라면 상시 채용으로 반환합니다.
+  - 날짜를 확실히 알 수 없다면 deadline은 null로 반환합니다.
+
+  [원문 제목]
+  - title은 공고에 표시된 원문 제목을 수정하거나 요약하지 않고 그대로 반환합니다.
+
+  [포지션 정규화]
+  - position은 공고 제목을 그대로 복사하지 말고, 핵심 직무를 상위 카테고리로 정규화합니다.
+  - position은 반드시 다음 허용 목록 중 하나로 반환합니다:
+    프론트엔드, 백엔드, 풀스택, 모바일, 데이터, AI, DevOps, QA, 보안, 게임, 임베디드, 영업, 디자인,
+    마케팅, PM/PO, 기획, 기타.
+  - FE, frontend, Frontend, 프론트엔드 개발자 → "프론트엔드"
+  - Python, Java, Kotlin, 서버 개발자, Backend, 백엔드 개발자 → "백엔드"
+  - Full Stack, 풀스택 개발자 → "풀스택"
+  - iOS, Android, React Native, Flutter 개발자 → "모바일"
+  - 데이터 엔지니어, 데이터 분석가, 데이터 사이언티스트 → "데이터"
+  - 머신러닝, 딥러닝, AI 엔지니어 → "AI"
+  - 인프라, 클라우드, SRE → "DevOps"
+  - QA, 테스트 엔지니어 → "QA"
+  - 보안 엔지니어, 정보보안 → "보안"
+  - 게임 클라이언트, 게임 서버, 게임 개발자 → "게임"
+  - 임베디드, 펌웨어 → "임베디드"
+  - Sales, Account Executive, 영업 담당자 → "영업"
+  - UI/UX, 프로덕트, 그래픽, 브랜드 디자이너 → "디자인"
+  - 퍼포먼스, 콘텐츠, 디지털, 브랜드 마케터 → "마케팅"
+  - Product Manager, Product Owner, PM, PO → "PM/PO"
+  - 서비스 기획자, 사업 기획자, 운영 기획자 → "기획"
+  - 허용 목록에 해당하는 직무가 없으면 "기타"를 반환합니다.
+
+  [경력 연차]
+  - minCareerYears와 maxCareerYears에는 지원 가능한 경력 연차 범위를 정수로 반환합니다.
+  - 신입, 신입 가능 → minCareerYears: 0, maxCareerYears: 0
+  - 경력무관, 신입·경력, 경력 제한 없음 → minCareerYears: 0, maxCareerYears: null
+  - "N년" → minCareerYears: N, maxCareerYears: N
+  - "N~M년" → minCareerYears: N, maxCareerYears: M
+  - "N년 이상" → minCareerYears: N, maxCareerYears: null
+  - "N년 이하" → minCareerYears: 0, maxCareerYears: N
+  - 경력 조건을 확인할 수 없거나 해석이 모호하면 두 값 모두 null로 반환합니다.
+  - 연차가 아닌 경력 표현은 추측하지 마세요.`;
 
 @Injectable()
 export class JobPostingService {
