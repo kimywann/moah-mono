@@ -15,7 +15,7 @@ export const jobPostingExtractionResponseSchema = z.object({
 });
 
 export const jobPostingFormSchema = jobPostingExtractionResponseSchema.extend({
-  url: z.union([z.url(), z.literal("")]),
+  url: z.url(),
 });
 
 export type TJobPostingExtraction = z.infer<
