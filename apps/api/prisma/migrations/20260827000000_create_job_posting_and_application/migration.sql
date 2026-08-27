@@ -7,7 +7,7 @@ CREATE TYPE "JobPostingPlatform" AS ENUM ('SARAMIN', 'JOB_KOREA', 'JOB_PLANET', 
 -- CreateTable
 CREATE TABLE "job_postings" (
     "id" TEXT NOT NULL,
-    "sourceUrl" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
     "platform" "JobPostingPlatform" NOT NULL DEFAULT 'OTHER',
     "companyName" TEXT,
     "position" TEXT,
@@ -35,7 +35,7 @@ CREATE TABLE "applications" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "job_postings_sourceUrl_key" ON "job_postings"("sourceUrl");
+CREATE UNIQUE INDEX "job_postings_url_key" ON "job_postings"("url");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "applications_userId_jobPostingId_key" ON "applications"("userId", "jobPostingId");

@@ -56,7 +56,7 @@ model Application {
 
 model JobPosting {
   id            String             @id @default(uuid())
-  sourceUrl     String             @unique
+  url           String             @unique
   platform      JobPostingPlatform @default(OTHER)
   companyName   String?
   position      String?
