@@ -37,6 +37,7 @@ enum JobPostingPlatform {
   ZIGHANG
   ROCKET_PUNCH
   WORK24
+  WANTED
   OTHER
 }
 

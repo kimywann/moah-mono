@@ -132,7 +132,7 @@ export class JobPostingService {
         techStacks: jobPosting.techStacks,
         extractedAt: new Date(),
       },
-      update: {},
+      update: { platform },
     });
 
     try {
@@ -185,6 +185,10 @@ export class JobPostingService {
 
     if (this.isPlatformHostname(hostname, "work24.go.kr")) {
       return "WORK24";
+    }
+
+    if (this.isPlatformHostname(hostname, "wanted.co.kr")) {
+      return "WANTED";
     }
 
     return "OTHER";
