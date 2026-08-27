@@ -1,4 +1,4 @@
-import type { TJobPostingForm } from "@moah/contracts/schema/jobPosting";
+import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
