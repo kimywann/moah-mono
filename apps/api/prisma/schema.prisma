@@ -62,6 +62,7 @@ model JobPosting {
   url         String             @unique
   platform    JobPostingPlatform @default(OTHER)
   companyName String?
+  title       String?
   position    String?
   career      String?
   location    String?
