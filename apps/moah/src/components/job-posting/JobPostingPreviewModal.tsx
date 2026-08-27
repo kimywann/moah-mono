@@ -102,8 +102,8 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               <MHInput
                 isFullWidth
                 readOnly
-                type="date"
-                value={props.jobPosting.deadline ?? ""}
+                type={props.jobPosting.deadline ? "date" : "text"}
+                value={props.jobPosting.deadline ?? "상시 채용"}
               />
             </div>
 
