@@ -1,4 +1,14 @@
-import { Controller, Get, Headers, Inject } from "@nestjs/common";
+import { applicationUpdateSchema } from "@moah/contracts/schema/application";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Inject,
+  Param,
+  Patch,
+} from "@nestjs/common";
 import { AuthService } from "../auth/auth.service";
 import { ApplicationsService } from "./applications.service";
 
@@ -19,6 +29,33 @@ export class ApplicationsController {
     return {
       success: true,
       data: await this.applicationsService.findAllByUserId(user.id),
+    };
+  }
+
+  @Patch(":id")
+  async update(
+    @Param("id") applicationId: string,
+    @Body() body: unknown,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const request = applicationUpdateSchema.safeParse(body);
+
+    if (!request.success) {
+      throw new BadRequestException("수정할 지원 정보를 확인해 주세요.");
+    }
+
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+    const application = await this.applicationsService.update(
+      user.id,
+      applicationId,
+      request.data,
+    );
+
+    return {
+      success: true,
+      data: application,
     };
   }
 
