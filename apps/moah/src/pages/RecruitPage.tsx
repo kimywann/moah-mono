@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getJobPostingList } from "@/api/job-posting";
 import JobPostingCard from "@/components/job-posting/JobPostingCard";
+import HeroBanner from "@/components/layout/HeroBanner";
+import hero from "@/shared/assets/job-posings-hero.png";
 import type { IJobPostingList } from "@/shared/type/job-posting";
 
 const RecruitPage = () => {
@@ -46,14 +48,15 @@ const RecruitPage = () => {
 
   return (
     <section className="w-full">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div>
-          <h1 className="bold display28 text-foreground">채용 공고</h1>
-          <p className="medium display14 mt-2 text-muted-foreground">
-            관심 있는 채용 공고를 확인하고 지원해 보세요.
-          </p>
-        </div>
+      <div className="mb-6">
+        <HeroBanner
+          backgroundImage={hero}
+          description="관심 있는 채용 공고를 확인하고 지원해 보세요."
+          title="채용 공고"
+        />
+      </div>
 
+      <div className="mb-3 flex justify-end">
         <p className="medium display14 text-muted-foreground">
           총 {jobPostings.length}건
         </p>
