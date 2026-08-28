@@ -1,3 +1,7 @@
+import {
+  JOB_POSTING_DEADLINE_TYPES,
+  JOB_POSTING_POSITIONS,
+} from "@moah/shared/constants/job-posting";
 import { z } from "zod";
 
 interface IRestrictedJobPostingPlatform {
@@ -11,33 +15,6 @@ const RESTRICTED_JOB_POSTING_PLATFORMS: IRestrictedJobPostingPlatform[] = [
     label: "원티드",
   },
 ];
-
-export const JOB_POSTING_POSITIONS = [
-  "프론트엔드",
-  "백엔드",
-  "풀스택",
-  "모바일",
-  "데이터",
-  "AI",
-  "DevOps",
-  "QA",
-  "보안",
-  "게임",
-  "임베디드",
-  "영업",
-  "디자인",
-  "마케팅",
-  "PM/PO",
-  "기획",
-  "기타",
-] as const;
-
-export const JOB_POSTING_DEADLINE_TYPES = [
-  "DATE",
-  "ROLLING",
-  "UNTIL_FILLED",
-  "UNKNOWN",
-] as const;
 
 const URL_PROTOCOL_PATTERN = /^[a-zA-Z][a-zA-Z\d+.-]*:\/\//;
 

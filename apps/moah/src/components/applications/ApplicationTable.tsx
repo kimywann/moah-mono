@@ -1,3 +1,4 @@
+import { APPLICATION_STAGES } from "@moah/shared/constants/application";
 import MHBadge from "@moah/ui/components/MHBadge";
 import MHButton from "@moah/ui/components/MHButton";
 import type { IMHDropdownOption } from "@moah/ui/components/MHDropdown";
@@ -58,13 +59,11 @@ const STAGE_DISPLAY = {
   { label: string; variant: TBadgeVariant }
 >;
 
-const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] = [
-  { label: STAGE_DISPLAY.READY.label, value: "READY" },
-  { label: STAGE_DISPLAY.APPLIED.label, value: "APPLIED" },
-  { label: STAGE_DISPLAY.INTERVIEW.label, value: "INTERVIEW" },
-  { label: STAGE_DISPLAY.PASSED.label, value: "PASSED" },
-  { label: STAGE_DISPLAY.REJECTED.label, value: "REJECTED" },
-];
+const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] =
+  APPLICATION_STAGES.map((stage) => ({
+    label: STAGE_DISPLAY[stage].label,
+    value: stage,
+  }));
 
 interface IApplicationStageDropdownProps {
   stage: TApplicationStage;
