@@ -1,11 +1,15 @@
 import MHBadge from "@moah/ui/components/MHBadge";
 import MHButton from "@moah/ui/components/MHButton";
+import type { IMHDropdownOption } from "@moah/ui/components/MHDropdown";
+import MHDropdown from "@moah/ui/components/MHDropdown";
+import MHIcon from "@moah/ui/components/MHIcon";
 import MHTable from "@moah/ui/components/MHTable";
 import type {
   ColumnDef,
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
+import { useState } from "react";
 import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
@@ -14,7 +18,13 @@ import type {
 } from "@/shared/type/application";
 import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
 
-type TBadgeVariant = "neutral" | "primary" | "success" | "danger" | "info";
+type TBadgeVariant =
+  | "neutral"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info";
 
 interface IApplicationTableProps {
   applications: IApplicationList[];
@@ -33,7 +43,7 @@ const STAGE_DISPLAY = {
   },
   INTERVIEW: {
     label: "면접",
-    variant: "primary",
+    variant: "warning",
   },
   PASSED: {
     label: "합격",
@@ -47,6 +57,55 @@ const STAGE_DISPLAY = {
   TApplicationStage,
   { label: string; variant: TBadgeVariant }
 >;
+
+const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] = [
+  { label: STAGE_DISPLAY.READY.label, value: "READY" },
+  { label: STAGE_DISPLAY.APPLIED.label, value: "APPLIED" },
+  { label: STAGE_DISPLAY.INTERVIEW.label, value: "INTERVIEW" },
+  { label: STAGE_DISPLAY.PASSED.label, value: "PASSED" },
+  { label: STAGE_DISPLAY.REJECTED.label, value: "REJECTED" },
+];
+
+interface IApplicationStageDropdownProps {
+  stage: TApplicationStage;
+}
+
+const ApplicationStageDropdown = ({
+  stage: initialStage,
+}: IApplicationStageDropdownProps) => {
+  const [stage, setStage] = useState(initialStage);
+  const stageDisplay = STAGE_DISPLAY[stage];
+
+  return (
+    <MHDropdown
+      onChange={setStage}
+      options={APPLICATION_STAGE_OPTIONS}
+      trigger={(isOpen) => (
+        <button
+          aria-label="지원 단계 변경"
+          className="cursor-pointer rounded-tiny focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+          type="button"
+        >
+          <MHBadge
+            className="regular"
+            icon={
+              <MHIcon
+                className={isOpen ? "rotate-180" : ""}
+                icon="chevronDown"
+                size={14}
+              />
+            }
+            size="md"
+            variant={stageDisplay.variant}
+          >
+            {stageDisplay.label}
+          </MHBadge>
+        </button>
+      )}
+      value={stage}
+    />
+  );
+};
 
 const columns: ColumnDef<IApplicationList>[] = [
   {
@@ -90,15 +149,9 @@ const columns: ColumnDef<IApplicationList>[] = [
     accessorKey: "stage",
     enableSorting: false,
     header: "지원 단계",
-    cell: ({ getValue }) => {
-      const stage = STAGE_DISPLAY[getValue<TApplicationStage>()];
-
-      return (
-        <MHBadge size="md" variant={stage.variant} className="regular">
-          {stage.label}
-        </MHBadge>
-      );
-    },
+    cell: ({ getValue }) => (
+      <ApplicationStageDropdown stage={getValue<TApplicationStage>()} />
+    ),
   },
   {
     accessorKey: "deadline",
