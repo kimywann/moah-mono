@@ -32,6 +32,12 @@ const JobPostingExtractor = () => {
     setErrorMessage("");
   };
 
+  const handleSaveSuccess = () => {
+    setURL("");
+    setJobPosting(null);
+    setIsModalOpen(false);
+  };
+
   const handleSubmit: SubmitEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
@@ -165,6 +171,7 @@ const JobPostingExtractor = () => {
           isLoggedIn={isAuthenticated}
           jobPosting={jobPosting}
           onClose={() => setIsModalOpen(false)}
+          onSaveSuccess={handleSaveSuccess}
         />
       )}
     </section>

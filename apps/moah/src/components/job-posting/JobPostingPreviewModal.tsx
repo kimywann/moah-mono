@@ -12,6 +12,7 @@ interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
   jobPosting: TJobPostingForm;
   onClose?: () => void;
+  onSaveSuccess: () => void;
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
@@ -59,7 +60,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
       });
 
       toast.success("지원 목록에 추가했어요.");
-      props.onClose?.();
+      props.onSaveSuccess();
     } catch {
       toast.error("공고를 저장하지 못했습니다. 다시 시도해 주세요.");
     } finally {
