@@ -29,6 +29,7 @@ const ApplicationsPage = () => {
 
       return response.data;
     },
+    staleTime: Infinity,
   });
 
   const updateApplicationMutation = useMutation<
