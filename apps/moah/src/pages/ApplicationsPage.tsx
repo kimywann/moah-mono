@@ -1,3 +1,4 @@
+import { toast } from "@moah/ui/components/MHToaster";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApplicationList, updateApplication } from "@/api/application";
 import Applications from "@/components/applications/Applications";
@@ -49,7 +50,7 @@ const ApplicationsPage = () => {
     },
     onError: (_error, _variables, context) => {
       queryClient.setQueryData(["applications"], context?.previousApplications);
-      window.alert("지원 단계를 수정하지 못했습니다. 다시 시도해 주세요.");
+      toast.error("지원 단계를 수정하지 못했습니다. 다시 시도해 주세요.");
     },
     onMutate: async ({ id, stage }) => {
       await queryClient.cancelQueries({

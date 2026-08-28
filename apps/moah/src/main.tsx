@@ -1,3 +1,4 @@
+import MHToaster from "@moah/ui/components/MHToaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
@@ -19,6 +20,7 @@ createRoot(rootElement).render(
       <AuthProvider>
         <App />
       </AuthProvider>
+      <MHToaster />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>,
