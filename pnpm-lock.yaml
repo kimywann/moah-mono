@@ -145,6 +145,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.3.3
+      '@tanstack/react-query-devtools':
+        specifier: ^5.102.6
+        version: 5.102.6(@tanstack/react-query@5.102.6(react@19.2.8))(react@19.2.8)
       '@types/node':
         specifier: ^20
         version: 20.19.43
@@ -1545,6 +1548,15 @@ packages:
 
   '@tanstack/query-core@5.102.6':
     resolution: {integrity: sha512-jp+GucyQ+fel2ILb8ZLQeqMaAqZL/Bzaj+dKOQiPk4vPdf2rQPEV7heUyEVIhatpY42j4AFHav4DzBa1oTIp/A==}
+
+  '@tanstack/query-devtools@5.102.6':
+    resolution: {integrity: sha512-k5k+iZmHRRZTeON7Gva34+HSdbMaibeZezyLn/XyUY05tQLlgj4MgC9UpuZOBiDe9aMKGg8buGCl+zk8VRA9Zw==}
+
+  '@tanstack/react-query-devtools@5.102.6':
+    resolution: {integrity: sha512-WKa5PQo4BtsYqAp//pI22RUk5ENzmJKwetvl9AF9J8hRK7hwM8GXVqUPMq9O4NbVWxSlXCtMIcu9CJnUkjn/PQ==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.102.6
+      react: ^18 || ^19
 
   '@tanstack/react-query@5.102.6':
     resolution: {integrity: sha512-ANz4KZ8z80D85fiz5IAHjpb8XBPLrjOb/0natlD9Ascyy/3p96V86Zw8UbOfA0HDLcvK/A4gNd95r723y5UT2w==}
@@ -5864,6 +5876,14 @@ snapshots:
       tailwindcss: 4.3.3
 
   '@tanstack/query-core@5.102.6': {}
+
+  '@tanstack/query-devtools@5.102.6': {}
+
+  '@tanstack/react-query-devtools@5.102.6(@tanstack/react-query@5.102.6(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@tanstack/query-devtools': 5.102.6
+      '@tanstack/react-query': 5.102.6(react@19.2.8)
+      react: 19.2.8
 
   '@tanstack/react-query@5.102.6(react@19.2.8)':
     dependencies:
