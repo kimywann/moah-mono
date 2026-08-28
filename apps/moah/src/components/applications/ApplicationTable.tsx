@@ -10,7 +10,6 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
-import { useState } from "react";
 import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
@@ -29,6 +28,8 @@ type TBadgeVariant =
 
 interface IApplicationTableProps {
   applications: IApplicationList[];
+  isStageUpdate: boolean;
+  onStageChange: (id: string, stage: TApplicationStage) => void;
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
@@ -66,23 +67,27 @@ const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] =
   }));
 
 interface IApplicationStageDropdownProps {
+  isUpdate: boolean;
+  onChange: (stage: TApplicationStage) => void;
   stage: TApplicationStage;
 }
 
 const ApplicationStageDropdown = ({
-  stage: initialStage,
+  isUpdate,
+  onChange,
+  stage,
 }: IApplicationStageDropdownProps) => {
-  const [stage, setStage] = useState(initialStage);
   const stageDisplay = STAGE_DISPLAY[stage];
 
   return (
     <MHDropdown
-      onChange={setStage}
+      onChange={onChange}
       options={APPLICATION_STAGE_OPTIONS}
       trigger={(isOpen) => (
         <button
           aria-label="지원 단계 변경"
-          className="cursor-pointer rounded-tiny focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+          className="cursor-pointer rounded-tiny focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={isUpdate}
           type="button"
         >
           <MHBadge
@@ -106,7 +111,10 @@ const ApplicationStageDropdown = ({
   );
 };
 
-const columns: ColumnDef<IApplicationList>[] = [
+const createColumns = (
+  isStageUpdate: boolean,
+  onStageChange: (id: string, stage: TApplicationStage) => void,
+): ColumnDef<IApplicationList>[] => [
   {
     accessorKey: "companyName",
     enableSorting: false,
@@ -148,8 +156,12 @@ const columns: ColumnDef<IApplicationList>[] = [
     accessorKey: "stage",
     enableSorting: false,
     header: "지원 단계",
-    cell: ({ getValue }) => (
-      <ApplicationStageDropdown stage={getValue<TApplicationStage>()} />
+    cell: ({ getValue, row }) => (
+      <ApplicationStageDropdown
+        isUpdate={isStageUpdate}
+        onChange={(stage) => onStageChange(row.original.id, stage)}
+        stage={getValue<TApplicationStage>()}
+      />
     ),
   },
   {
@@ -174,7 +186,7 @@ const ApplicationTable = (props: IApplicationTableProps) => {
   return (
     <MHTable
       caption="지원 현황"
-      columns={columns}
+      columns={createColumns(props.isStageUpdate, props.onStageChange)}
       data={props.applications}
       getRowId={(application) => application.id}
       onSortingChange={props.onSortingChange}

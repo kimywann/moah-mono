@@ -1,10 +1,15 @@
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import ApplicationTable from "@/components/applications/ApplicationTable";
-import type { IApplicationList } from "@/shared/type/application";
+import type {
+  IApplicationList,
+  TApplicationStage,
+} from "@/shared/type/application";
 
 interface IApplicationsProps {
   applications: IApplicationList[];
+  isStageUpdate: boolean;
+  onStageChange: (id: string, stage: TApplicationStage) => void;
 }
 
 const Applications = (props: IApplicationsProps) => {
@@ -27,6 +32,8 @@ const Applications = (props: IApplicationsProps) => {
 
       <ApplicationTable
         applications={props.applications}
+        isStageUpdate={props.isStageUpdate}
+        onStageChange={props.onStageChange}
         onSortingChange={setSorting}
         sorting={sorting}
       />
