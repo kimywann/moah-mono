@@ -28,7 +28,7 @@ const MHBadge = ({
     "inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-tiny medium leading-body",
     BADGE_CLASS[size],
     variant === "neutral" && "bg-muted text-muted-foreground",
-    variant === "primary" && "bg-tintRed text-brand50",
+    variant === "primary" && "bg-tintBlue text-brand50",
     variant === "success" && "bg-tintGreen text-green50",
     variant === "warning" && "bg-tintOrange text-orange50",
     variant === "danger" && "bg-tintRed text-red50",

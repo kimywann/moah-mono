@@ -2,6 +2,8 @@ import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
+import { toast } from "@moah/ui/components/MHToaster";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { saveJobPosting } from "@/api/job-posting";
@@ -10,10 +12,12 @@ interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
   jobPosting: TJobPostingForm;
   onClose?: () => void;
+  onSaveSuccess: () => void;
 }
 
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const careerValue =
     props.jobPosting.minYears === null && props.jobPosting.maxYears === null
@@ -48,12 +52,17 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
       const response = await saveJobPosting(props.jobPosting);
 
       if (!response.success) {
-        throw new Error("채용 공고 저장에 실패했습니다.");
+        throw new Error("공고 저장에 실패했습니다.");
       }
 
-      props.onClose?.();
+      await queryClient.invalidateQueries({
+        queryKey: ["applications"],
+      });
+
+      toast.success("지원 목록에 추가했어요.");
+      props.onSaveSuccess();
     } catch {
-      window.alert("채용 공고를 저장하지 못했습니다. 다시 시도해 주세요.");
+      toast.error("공고를 저장하지 못했습니다. 다시 시도해 주세요.");
     } finally {
       setIsSaving(false);
     }

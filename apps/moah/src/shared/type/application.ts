@@ -1,31 +1,20 @@
-export type TApplicationStage =
-  | "READY"
-  | "APPLIED"
-  | "INTERVIEW"
-  | "PASSED"
-  | "REJECTED";
+import type { APPLICATION_STAGES } from "@moah/shared/constants/application";
+import type {
+  JOB_POSTING_DEADLINE_TYPES,
+  JOB_POSTING_PLATFORMS,
+} from "@moah/shared/constants/job-posting";
 
-export type TJobPostingPlatform =
-  | "SARAMIN"
-  | "JOB_KOREA"
-  | "JOB_PLANET"
-  | "ZIGHANG"
-  | "ROCKET_PUNCH"
-  | "WORK24"
-  | "WANTED"
-  | "OTHER";
+export type TApplicationStage = (typeof APPLICATION_STAGES)[number];
+
+export type TJobPostingPlatform = (typeof JOB_POSTING_PLATFORMS)[number];
 
 export type TJobPostingDeadlineType =
-  | "DATE"
-  | "ROLLING"
-  | "UNTIL_FILLED"
-  | "UNKNOWN";
+  (typeof JOB_POSTING_DEADLINE_TYPES)[number];
 
 export interface IApplicationList {
   deadline: string | null;
   deadlineType: TJobPostingDeadlineType;
   id: string;
-  jobPostingId: string;
   companyName: string | null;
   location: string | null;
   minYears: number | null;
@@ -34,4 +23,9 @@ export interface IApplicationList {
   position: string | null;
   stage: TApplicationStage;
   url: string;
+}
+
+export interface IApplication extends IApplicationList {
+  hiringProcess: string[];
+  techStacks: string[];
 }

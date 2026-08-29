@@ -1,4 +1,5 @@
 import MHIcon from "@moah/ui/components/MHIcon";
+import { toast } from "@moah/ui/components/MHToaster";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -60,10 +61,10 @@ const LoginPage = () => {
 
           <div className="mt-8 flex flex-col gap-3">
             <GoogleLogin
-              onError={() => window.alert("구글 로그인에 실패했습니다.")}
+              onError={() => toast.error("구글 로그인에 실패했습니다.")}
               onSuccess={async ({ credential }) => {
                 if (!credential) {
-                  window.alert("구글 로그인 정보를 확인할 수 없습니다.");
+                  toast.error("구글 로그인 정보를 확인할 수 없습니다.");
                   return;
                 }
 
@@ -71,7 +72,7 @@ const LoginPage = () => {
                   setIsLoading(true);
                   await handleGoogleLogin(credential);
                 } catch {
-                  window.alert("구글 로그인에 실패했습니다.");
+                  toast.error("구글 로그인에 실패했습니다.");
                 } finally {
                   setIsLoading(false);
                 }

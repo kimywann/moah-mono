@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./constants/*": "./constants/*.ts",
     "./config/*": "./config/*.ts",
     "./type/*": "./type/*.ts",
-    "./utils/*": "./utils/*.ts"
+    "./utils/*": "./utils/*.ts",
+    "./assets/*": "./assets/*"
   }
 }
