@@ -1,5 +1,6 @@
 import MHIcon from "@moah/ui/components/MHIcon";
 import { Link } from "react-router";
+import logo from "@/shared/assets/logo.svg";
 
 const NAV_CLASS =
   "flex flex-col items-center justify-center gap-1 rounded-small px-3 py-2 text-center text-muted-foreground transition-colors hover:bg-muted";
@@ -8,7 +9,7 @@ const Sidebar = () => {
   return (
     <aside className="flex w-30 shrink-0 flex-col border-neutral10 border-r">
       <div className="flex items-center justify-center px-5 py-6">
-        <div aria-hidden="true" className="size-10 rounded-full bg-primary" />
+        <img alt="Moah Logo" className="size-10 object-contain" src={logo} />
       </div>
 
       <nav
