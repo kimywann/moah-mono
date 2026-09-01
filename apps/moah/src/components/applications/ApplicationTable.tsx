@@ -30,7 +30,10 @@ interface IApplicationTableProps {
   applications: IApplicationList[];
   isStageUpdate: boolean;
   onDetailClick: (id: string) => void;
+  onSelectAll: (ids: string[], isSelected: boolean) => void;
+  onSelectChange: (id: string, isSelected: boolean) => void;
   onStageChange: (id: string, stage: TApplicationStage) => void;
+  selectedApplicationIds: Set<string>;
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
@@ -206,6 +209,11 @@ const ApplicationTable = (props: IApplicationTableProps) => {
       data={props.applications}
       getRowId={(application) => application.id}
       onSortingChange={props.onSortingChange}
+      rowSelection={{
+        onRowSelectionChange: props.onSelectChange,
+        onSelectAllChange: props.onSelectAll,
+        selectedRowIds: props.selectedApplicationIds,
+      }}
       sorting={props.sorting}
     />
   );

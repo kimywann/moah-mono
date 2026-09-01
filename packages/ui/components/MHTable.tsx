@@ -9,7 +9,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import cn from "../utils/cn";
+import MHCheckbox from "./MHCheckbox";
 import MHIcon from "./MHIcon";
+
+interface IMHTableRowSelectionProps {
+  onRowSelectionChange: (rowId: string, isSelected: boolean) => void;
+  onSelectAllChange: (rowIds: string[], isSelected: boolean) => void;
+  selectedRowIds: Set<string>;
+}
 
 interface IMHTableProps<TData> {
   caption: string;
@@ -17,9 +24,10 @@ interface IMHTableProps<TData> {
   columns: TableOptions<TData>["columns"];
   data: TData[];
   getRowId?: TableOptions<TData>["getRowId"];
-  sorting: SortingState;
-  onSortingChange: OnChangeFn<SortingState>;
   isLoading?: boolean;
+  onSortingChange: OnChangeFn<SortingState>;
+  rowSelection?: IMHTableRowSelectionProps;
+  sorting: SortingState;
 }
 
 const MHTable = <TData,>({
@@ -30,6 +38,7 @@ const MHTable = <TData,>({
   getRowId,
   isLoading = false,
   onSortingChange,
+  rowSelection,
   sorting,
 }: IMHTableProps<TData>) => {
   const table = useReactTable({
@@ -46,7 +55,12 @@ const MHTable = <TData,>({
   });
 
   const rows = table.getRowModel().rows;
-  const visibleColumnCount = table.getVisibleLeafColumns().length;
+  const visibleColumnCount =
+    table.getVisibleLeafColumns().length + (rowSelection ? 1 : 0);
+  const rowIds = rows.map((row) => row.id);
+  const isAllSelected =
+    rowIds.length > 0 &&
+    rowIds.every((rowId) => rowSelection?.selectedRowIds.has(rowId));
 
   return (
     <div
@@ -64,6 +78,23 @@ const MHTable = <TData,>({
         <thead className="bg-mono10 text-muted-foreground">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
+              {rowSelection && (
+                <th
+                  className="border-border-subtle border-b px-4 py-3"
+                  scope="col"
+                >
+                  <MHCheckbox
+                    disabled={rows.length === 0}
+                    isChecked={isAllSelected}
+                    onChange={(event) =>
+                      rowSelection.onSelectAllChange(
+                        rowIds,
+                        event.target.checked,
+                      )
+                    }
+                  />
+                </th>
+              )}
               {headerGroup.headers.map((header) => {
                 const isSortable = header.column.getCanSort();
                 const sortingDirection = header.column.getIsSorted();
@@ -142,6 +173,19 @@ const MHTable = <TData,>({
                 className="transition-colors hover:bg-muted last:[&>td]:border-b-0"
                 key={row.id}
               >
+                {rowSelection && (
+                  <td className="border-border-subtle border-b px-4 py-4">
+                    <MHCheckbox
+                      isChecked={rowSelection.selectedRowIds.has(row.id)}
+                      onChange={(event) =>
+                        rowSelection.onRowSelectionChange(
+                          row.id,
+                          event.target.checked,
+                        )
+                      }
+                    />
+                  </td>
+                )}
                 {row.getVisibleCells().map((cell) => (
                   <td
                     className="border-border-subtle border-b px-4 py-4"

@@ -1,3 +1,4 @@
+import MHButton from "@moah/ui/components/MHButton";
 import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -23,6 +24,9 @@ const Applications = (props: IApplicationsProps) => {
   const [selectedApplicationId, setSelectedApplicationId] = useState<
     string | null
   >(null);
+  const [selectedApplicationIds, setSelectedApplicationIds] = useState<
+    Set<string>
+  >(new Set());
   const [sorting, setSorting] = useState<SortingState>([]);
   const totalPages = Math.ceil(
     props.applications.length / APPLICATIONS_PAGE_SIZE,
@@ -39,6 +43,36 @@ const Applications = (props: IApplicationsProps) => {
     }
   }, [currentPage, totalPages]);
 
+  const handleSelectChange = (id: string, isSelected: boolean) => {
+    setSelectedApplicationIds((previous) => {
+      const next = new Set(previous);
+
+      if (isSelected) {
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+
+      return next;
+    });
+  };
+
+  const handleSelectAll = (ids: string[], isSelected: boolean) => {
+    setSelectedApplicationIds((previous) => {
+      const next = new Set(previous);
+
+      for (const id of ids) {
+        if (isSelected) {
+          next.add(id);
+        } else {
+          next.delete(id);
+        }
+      }
+
+      return next;
+    });
+  };
+
   return (
     <section className="w-full">
       <div className="mb-6">
@@ -49,10 +83,9 @@ const Applications = (props: IApplicationsProps) => {
         />
       </div>
 
-      <div className="mb-3 flex justify-end">
-        <p className="medium display14 text-muted-foreground">
-          총 {props.applications.length}건
-        </p>
+      <div className="mb-3 flex justify-end gap-2">
+        <MHButton variant="secondary">등록하기</MHButton>
+        <MHButton variant="danger">삭제하기</MHButton>
       </div>
 
       <div className="min-h-82">
@@ -60,8 +93,11 @@ const Applications = (props: IApplicationsProps) => {
           applications={currentApplications}
           isStageUpdate={props.isStageUpdate}
           onDetailClick={setSelectedApplicationId}
+          onSelectAll={handleSelectAll}
+          onSelectChange={handleSelectChange}
           onStageChange={props.onStageChange}
           onSortingChange={setSorting}
+          selectedApplicationIds={selectedApplicationIds}
           sorting={sorting}
         />
       </div>
