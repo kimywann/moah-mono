@@ -1,3 +1,4 @@
+import MHIcon from "@moah/ui/components/MHIcon";
 import { useEffect, useState } from "react";
 import { getJobPostingList } from "@/api/job-posting";
 import JobPostingCard from "@/components/job-posting/JobPostingCard";
@@ -32,9 +33,12 @@ const RecruitPage = () => {
 
   if (isLoading) {
     return (
-      <p className="p-6 text-muted-foreground">
-        채용 공고 목록을 불러오는 중...
-      </p>
+      <output
+        aria-label="채용 공고 목록을 불러오는 중"
+        className="flex min-h-82 items-center justify-center"
+      >
+        <MHIcon className="animate-spin text-primary" icon="loaderCircle" />
+      </output>
     );
   }
 

@@ -1,3 +1,4 @@
+import MHIcon from "@moah/ui/components/MHIcon";
 import { toast } from "@moah/ui/components/MHToaster";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApplicationList, updateApplication } from "@/api/application";
@@ -80,9 +81,12 @@ const ApplicationsPage = () => {
 
   if (applicationsQuery.isPending) {
     return (
-      <p className="p-6 text-muted-foreground">
-        지원 현황 목록을 불러오는 중...
-      </p>
+      <output
+        aria-label="지원 현황 목록을 불러오는 중"
+        className="flex min-h-82 items-center justify-center"
+      >
+        <MHIcon className="animate-spin text-primary" icon="loaderCircle" />
+      </output>
     );
   }
 
