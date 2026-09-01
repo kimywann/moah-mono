@@ -95,6 +95,10 @@ const JobPostingExtractor = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2">
+            <p className="display14 flex items-center gap-2 px-4 text-primary">
+              <MHIcon icon="info" size={16} />
+              기업 공식 채용 페이지 링크만 지원합니다.
+            </p>
             <div
               className={cn(
                 "flex min-h-14 w-full items-end gap-2 rounded-full border border-border bg-background p-2 transition-colors focus-within:border-focus focus-within:ring-1 focus-within:ring-focus",

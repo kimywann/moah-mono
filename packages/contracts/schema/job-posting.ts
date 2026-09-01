@@ -11,6 +11,30 @@ interface IRestrictedJobPostingPlatform {
 
 const RESTRICTED_JOB_POSTING_PLATFORMS: IRestrictedJobPostingPlatform[] = [
   {
+    hostname: "saramin.co.kr",
+    label: "사람인",
+  },
+  {
+    hostname: "jobkorea.co.kr",
+    label: "잡코리아",
+  },
+  {
+    hostname: "jobplanet.co.kr",
+    label: "잡플래닛",
+  },
+  {
+    hostname: "zighang.com",
+    label: "직행",
+  },
+  {
+    hostname: "rocketpunch.com",
+    label: "로켓펀치",
+  },
+  {
+    hostname: "work24.go.kr",
+    label: "고용24",
+  },
+  {
     hostname: "wanted.co.kr",
     label: "원티드",
   },
