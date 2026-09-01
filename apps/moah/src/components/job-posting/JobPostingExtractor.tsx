@@ -3,6 +3,7 @@ import {
   type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
 import MHIcon from "@moah/ui/components/MHIcon";
+import { toast } from "@moah/ui/components/MHToaster";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useState } from "react";
@@ -59,6 +60,14 @@ const JobPostingExtractor = () => {
 
     try {
       const response = await extractJobPosting(parsedURL.data);
+
+      if (
+        !response.success &&
+        response.error?.code === "JOB_POSTING_REQUIRED_INFO_MISSING"
+      ) {
+        toast.error("공식 채용 페이지 URL만 입력해 주세요.");
+        return;
+      }
 
       if (!response.success || !response.data) {
         throw new Error("채용 공고 추출 요청에 실패했습니다.");

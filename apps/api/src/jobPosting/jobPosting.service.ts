@@ -1,5 +1,6 @@
 import {
   jobPostingExtractionResponseSchema,
+  type TJobPostingExtraction,
   type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
 import {
@@ -7,6 +8,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
@@ -180,6 +182,12 @@ export class JobPostingService {
       throw new BadGatewayException("채용 공고 추출 결과가 올바르지 않습니다.");
     }
 
+    if (this.isRequiredJobPostingInfoMissing(parsedJobPosting.data)) {
+      throw new UnprocessableEntityException({
+        code: "JOB_POSTING_REQUIRED_INFO_MISSING",
+      });
+    }
+
     return parsedJobPosting.data;
   }
 
@@ -277,6 +285,16 @@ export class JobPostingService {
     }
 
     return "OTHER";
+  }
+
+  private isRequiredJobPostingInfoMissing(
+    jobPosting: TJobPostingExtraction,
+  ) {
+    return !(
+      jobPosting.companyName?.trim() &&
+      jobPosting.title?.trim() &&
+      jobPosting.position
+    );
   }
 
   private isPlatformHostname(hostname: string, platformHostname: string) {
