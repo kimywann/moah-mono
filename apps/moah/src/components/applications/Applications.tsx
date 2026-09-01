@@ -3,6 +3,8 @@ import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import ApplicationDetailModal from "@/components/applications/ApplicationDetailModal";
+import ApplicationRegisterModal from "@/components/applications/ApplicationRegisterModal";
+import ApplicationStageBadge from "@/components/applications/ApplicationStageBadge";
 import ApplicationTable from "@/components/applications/ApplicationTable";
 import HeroBanner from "@/components/layout/HeroBanner";
 import hero from "@/shared/assets/applications-hero.png";
@@ -21,6 +23,7 @@ const APPLICATIONS_PAGE_SIZE = 10;
 
 const Applications = (props: IApplicationsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [selectedApplicationId, setSelectedApplicationId] = useState<
     string | null
   >(null);
@@ -83,9 +86,17 @@ const Applications = (props: IApplicationsProps) => {
         />
       </div>
 
-      <div className="mb-3 flex justify-end gap-2">
-        <MHButton variant="secondary">등록하기</MHButton>
-        <MHButton variant="danger">삭제하기</MHButton>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <ApplicationStageBadge applications={props.applications} />
+        <div className="flex shrink-0 gap-2">
+          <MHButton
+            onClick={() => setIsRegistrationModalOpen(true)}
+            variant="secondary"
+          >
+            등록하기
+          </MHButton>
+          <MHButton variant="danger">삭제하기</MHButton>
+        </div>
       </div>
 
       <div className="min-h-82">
@@ -114,6 +125,12 @@ const Applications = (props: IApplicationsProps) => {
         <ApplicationDetailModal
           applicationId={selectedApplicationId}
           onClose={() => setSelectedApplicationId(null)}
+        />
+      )}
+
+      {isRegistrationModalOpen && (
+        <ApplicationRegisterModal
+          onClose={() => setIsRegistrationModalOpen(false)}
         />
       )}
     </section>
