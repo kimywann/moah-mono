@@ -9,7 +9,13 @@ const Sidebar = () => {
   return (
     <aside className="flex w-30 shrink-0 flex-col border-neutral10 border-r">
       <div className="flex items-center justify-center px-5 py-6">
-        <img alt="Moah Logo" className="size-10 object-contain" src={logo} />
+        <Link to="/">
+          <img
+            alt="Moah Logo"
+            className="curosr-pointer size-10 object-contain"
+            src={logo}
+          />
+        </Link>
       </div>
 
       <nav
