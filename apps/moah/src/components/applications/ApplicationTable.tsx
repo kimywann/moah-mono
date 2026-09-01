@@ -10,6 +10,7 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
+import { STAGE_DISPLAY } from "@/shared/constants/application-stage";
 import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
@@ -17,14 +18,6 @@ import type {
   TJobPostingPlatform,
 } from "@/shared/type/application";
 import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
-
-type TBadgeVariant =
-  | "neutral"
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
 
 interface IApplicationTableProps {
   applications: IApplicationList[];
@@ -37,32 +30,6 @@ interface IApplicationTableProps {
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
-
-const STAGE_DISPLAY = {
-  READY: {
-    label: "지원 준비 중",
-    variant: "neutral",
-  },
-  APPLIED: {
-    label: "지원 완료",
-    variant: "info",
-  },
-  INTERVIEW: {
-    label: "면접",
-    variant: "warning",
-  },
-  PASSED: {
-    label: "합격",
-    variant: "success",
-  },
-  REJECTED: {
-    label: "불합격",
-    variant: "danger",
-  },
-} satisfies Record<
-  TApplicationStage,
-  { label: string; variant: TBadgeVariant }
->;
 
 const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] =
   APPLICATION_STAGES.map((stage) => ({
