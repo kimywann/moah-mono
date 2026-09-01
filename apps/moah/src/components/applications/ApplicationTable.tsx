@@ -26,7 +26,7 @@ interface IApplicationTableProps {
   onSelectAll: (ids: string[], isSelected: boolean) => void;
   onSelectChange: (id: string, isSelected: boolean) => void;
   onStageChange: (id: string, stage: TApplicationStage) => void;
-  selectedApplicationIds: Set<string>;
+  selectedIds: Set<string>;
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
@@ -179,7 +179,7 @@ const ApplicationTable = (props: IApplicationTableProps) => {
       rowSelection={{
         onRowSelectionChange: props.onSelectChange,
         onSelectAllChange: props.onSelectAll,
-        selectedRowIds: props.selectedApplicationIds,
+        selectedRowIds: props.selectedIds,
       }}
       sorting={props.sorting}
     />

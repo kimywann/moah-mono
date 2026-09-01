@@ -55,6 +55,17 @@ export class ApplicationsService {
     return application;
   }
 
+  async removeMany(userId: string, applicationIds: string[]) {
+    const result = await this.prismaService.application.deleteMany({
+      where: {
+        id: { in: applicationIds },
+        userId,
+      },
+    });
+
+    return { deletedCount: result.count };
+  }
+
   async update(
     userId: string,
     applicationId: string,

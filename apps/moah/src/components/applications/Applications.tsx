@@ -16,7 +16,9 @@ import type {
 
 interface IApplicationsProps {
   applications: IApplicationList[];
+  isDeleting: boolean;
   isStageUpdate: boolean;
+  onDelete: (ids: string[]) => Promise<void>;
   onStageChange: (id: string, stage: TApplicationStage) => void;
 }
 
@@ -25,12 +27,8 @@ const APPLICATIONS_PAGE_SIZE = 10;
 const Applications = (props: IApplicationsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
-  const [selectedApplicationId, setSelectedApplicationId] = useState<
-    string | null
-  >(null);
-  const [selectedApplicationIds, setSelectedApplicationIds] = useState<
-    Set<string>
-  >(new Set());
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<SortingState>([]);
   const totalPages = Math.ceil(
     props.applications.length / APPLICATIONS_PAGE_SIZE,
@@ -48,7 +46,7 @@ const Applications = (props: IApplicationsProps) => {
   }, [currentPage, totalPages]);
 
   const handleSelectChange = (id: string, isSelected: boolean) => {
-    setSelectedApplicationIds((previous) => {
+    setSelectedIds((previous) => {
       const next = new Set(previous);
 
       if (isSelected) {
@@ -62,7 +60,7 @@ const Applications = (props: IApplicationsProps) => {
   };
 
   const handleSelectAll = (ids: string[], isSelected: boolean) => {
-    setSelectedApplicationIds((previous) => {
+    setSelectedIds((previous) => {
       const next = new Set(previous);
 
       for (const id of ids) {
@@ -98,7 +96,12 @@ const Applications = (props: IApplicationsProps) => {
     });
 
     if (result === "delete") {
-      // TODO: 선택한 지원 공고 삭제 API 요청
+      try {
+        await props.onDelete([...selectedIds]);
+        setSelectedIds(new Set());
+      } catch {
+        return;
+      }
     }
   };
 
@@ -121,7 +124,11 @@ const Applications = (props: IApplicationsProps) => {
           >
             등록하기
           </MHButton>
-          <MHButton onClick={() => void handleDeleteClick()} variant="danger">
+          <MHButton
+            disabled={selectedIds.size === 0 || props.isDeleting}
+            onClick={() => void handleDeleteClick()}
+            variant="danger"
+          >
             삭제하기
           </MHButton>
         </div>
@@ -131,12 +138,12 @@ const Applications = (props: IApplicationsProps) => {
         <ApplicationTable
           applications={currentApplications}
           isStageUpdate={props.isStageUpdate}
-          onDetailClick={setSelectedApplicationId}
+          onDetailClick={setDetailId}
           onSelectAll={handleSelectAll}
           onSelectChange={handleSelectChange}
           onStageChange={props.onStageChange}
           onSortingChange={setSorting}
-          selectedApplicationIds={selectedApplicationIds}
+          selectedIds={selectedIds}
           sorting={sorting}
         />
       </div>
@@ -149,10 +156,10 @@ const Applications = (props: IApplicationsProps) => {
         />
       </div>
 
-      {selectedApplicationId && (
+      {detailId && (
         <ApplicationDetailModal
-          applicationId={selectedApplicationId}
-          onClose={() => setSelectedApplicationId(null)}
+          applicationId={detailId}
+          onClose={() => setDetailId(null)}
         />
       )}
 

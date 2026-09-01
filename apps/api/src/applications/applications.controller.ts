@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   Inject,
@@ -47,6 +48,33 @@ export class ApplicationsController {
         user.id,
         applicationId,
       ),
+    };
+  }
+
+  @Delete()
+  async remove(
+    @Body("ids") applicationIds: string[],
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    if (
+      !Array.isArray(applicationIds) ||
+      applicationIds.length === 0 ||
+      applicationIds.some((applicationId) => typeof applicationId !== "string")
+    ) {
+      throw new BadRequestException("삭제할 지원 정보를 확인해 주세요.");
+    }
+
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+    const result = await this.applicationsService.removeMany(
+      user.id,
+      applicationIds,
+    );
+
+    return {
+      success: true,
+      data: result,
     };
   }
 

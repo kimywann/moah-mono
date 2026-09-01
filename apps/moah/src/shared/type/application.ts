@@ -30,3 +30,7 @@ export interface IApplication extends IApplicationList {
   hiringProcess: string[];
   techStacks: string[];
 }
+
+export interface IDeleteApplicationsResponse {
+  deletedCount: number;
+}
