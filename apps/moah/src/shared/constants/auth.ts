@@ -3,4 +3,5 @@ export const INIT_AUTH_CONTEXT = {
   isAuthInitialized: false,
   login: () => {},
   handleLogout: async () => {},
+  handleWithdraw: async () => {},
 };

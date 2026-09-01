@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   HttpCode,
@@ -35,6 +36,26 @@ export class AuthController {
       success: true,
       data: user,
     };
+  }
+
+  @Delete("me")
+  async withdraw(
+    @Headers("cookie") cookieHeader: string | undefined,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    await this.authService.withdraw(user.id);
+
+    response.clearCookie("session", {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return { success: true };
   }
 
   @Post("logout")

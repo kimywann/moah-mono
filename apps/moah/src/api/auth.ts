@@ -22,3 +22,9 @@ export const logout = async (): Promise<IApiResponse<void>> => {
     method: "POST",
   });
 };
+
+export const withdraw = async (): Promise<IApiResponse<void>> => {
+  return apiFetcher("/auth/me", {
+    method: "DELETE",
+  });
+};

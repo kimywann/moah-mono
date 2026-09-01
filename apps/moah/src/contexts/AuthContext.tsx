@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { getCurrentMe, logout } from "@/api/auth";
+import { getCurrentMe, logout, withdraw } from "@/api/auth";
 import { INIT_AUTH_CONTEXT } from "@/shared/constants/auth";
 import type { User } from "@/shared/type/user";
 
@@ -16,6 +16,7 @@ interface AuthContextType {
   user?: User;
   login: (user: User) => void;
   handleLogout: () => Promise<void>;
+  handleWithdraw: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>(INIT_AUTH_CONTEXT);
@@ -82,6 +83,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     clearAuth();
   };
 
+  const handleWithdraw = async () => {
+    const response = await withdraw();
+
+    if (!response.success) {
+      throw new Error("회원 탈퇴에 실패했습니다.");
+    }
+
+    clearAuth();
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -90,6 +101,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         login,
         handleLogout,
+        handleWithdraw,
       }}
     >
       {children}
