@@ -40,16 +40,6 @@ const RESTRICTED_JOB_POSTING_PLATFORMS: IRestrictedJobPostingPlatform[] = [
   },
 ];
 
-const URL_PROTOCOL_PATTERN = /^[a-zA-Z][a-zA-Z\d+.-]*:\/\//;
-
-const normalizeJobPostingURL = (url: string) => {
-  const trimmedURL = url.trim();
-
-  return URL_PROTOCOL_PATTERN.test(trimmedURL)
-    ? trimmedURL
-    : `https://${trimmedURL}`;
-};
-
 const findRestrictedJobPostingPlatform = (url: string) => {
   const hostname = new URL(url).hostname.toLowerCase();
 
@@ -63,7 +53,6 @@ const findRestrictedJobPostingPlatform = (url: string) => {
 export const jobPostingURLSchema = z
   .string()
   .trim()
-  .transform(normalizeJobPostingURL)
   .pipe(z.url())
   .superRefine((url, context) => {
     const restrictedPlatform = findRestrictedJobPostingPlatform(url);
