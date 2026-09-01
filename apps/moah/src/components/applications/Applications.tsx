@@ -1,4 +1,5 @@
 import MHButton from "@moah/ui/components/MHButton";
+import MHModal from "@moah/ui/components/MHModal";
 import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -76,6 +77,31 @@ const Applications = (props: IApplicationsProps) => {
     });
   };
 
+  const handleDeleteClick = async () => {
+    const result = await MHModal<"cancel" | "delete">({
+      name: "지원 공고 삭제",
+      title: "지원 공고를 삭제할까요?",
+      description: "삭제한 정보는 되돌릴 수 없습니다.",
+      width: "!w-[412px]",
+      buttons: [
+        {
+          label: "삭제하기",
+          value: "delete",
+          variant: "danger",
+        },
+        {
+          label: "돌아가기",
+          value: "cancel",
+          variant: "secondary",
+        },
+      ],
+    });
+
+    if (result === "delete") {
+      // TODO: 선택한 지원 공고 삭제 API 요청
+    }
+  };
+
   return (
     <section className="w-full">
       <div className="mb-6">
@@ -95,7 +121,9 @@ const Applications = (props: IApplicationsProps) => {
           >
             등록하기
           </MHButton>
-          <MHButton variant="danger">삭제하기</MHButton>
+          <MHButton onClick={() => void handleDeleteClick()} variant="danger">
+            삭제하기
+          </MHButton>
         </div>
       </div>
 
