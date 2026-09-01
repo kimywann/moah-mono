@@ -81,10 +81,11 @@ const JobPostingExtractor = () => {
       <div className="flex w-full flex-col items-center gap-10">
         <div className="flex max-w-200 flex-col items-center gap-3 text-center">
           <h1 className="bold display40">
-            길어지는 취업 준비, 복잡한 관리는 끝
+            흩어지는 지원 정보, 이제 <span className="text-primary">모아</span>
+            {""} 보세요
           </h1>
           <p className="display16 medium text-muted-foreground">
-            공고 URL만 입력하면, 지원 관리는 모아가 정리합니다.
+            공고 URL 하나로 지원 현황을 간편하게 관리해요.
           </p>
         </div>
 
