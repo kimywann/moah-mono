@@ -1,10 +1,18 @@
-import { createContext, type ReactNode, useContext, useState } from "react";
-import { logout } from "@/api/auth";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { getCurrentMe, logout } from "@/api/auth";
 import { INIT_AUTH_CONTEXT } from "@/shared/constants/auth";
 import type { User } from "@/shared/type/user";
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isAuthInitialized: boolean;
   user?: User;
   login: (user: User) => void;
   handleLogout: () => Promise<void>;
@@ -26,15 +34,40 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const savedAuthState = localStorage.getItem("isAuthenticated");
-    return savedAuthState === "true";
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+  const [user, setUser] = useState<User>();
 
-  const [user, setUser] = useState<User | undefined>(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : undefined;
-  });
+  const clearAuth = useCallback(() => {
+    setIsAuthenticated(false);
+    setUser(undefined);
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("user");
+  }, []);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const response = await getCurrentMe();
+
+        if (response.success && response.data) {
+          setIsAuthenticated(true);
+          setUser(response.data);
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("user", JSON.stringify(response.data));
+          return;
+        }
+
+        clearAuth();
+      } catch {
+        clearAuth();
+      } finally {
+        setIsAuthInitialized(true);
+      }
+    };
+
+    void initializeAuth();
+  }, [clearAuth]);
 
   const login = (userData: User) => {
     setIsAuthenticated(true);
@@ -46,15 +79,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleLogout = async () => {
     await logout();
 
-    setIsAuthenticated(false);
-    setUser(undefined);
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("user");
+    clearAuth();
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, login, handleLogout }}
+      value={{
+        isAuthenticated,
+        isAuthInitialized,
+        user,
+        login,
+        handleLogout,
+      }}
     >
       {children}
     </AuthContext.Provider>
