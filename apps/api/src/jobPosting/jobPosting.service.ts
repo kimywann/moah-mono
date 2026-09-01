@@ -71,7 +71,17 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
   - "N년 이상" → minYears: N, maxYears: null
   - "N년 이하" → minYears: 0, maxYears: N
   - 경력 조건을 확인할 수 없거나 해석이 모호하면 두 값 모두 null로 반환합니다.
-  - 연차가 아닌 경력 표현은 추측하지 마세요.`;
+  - 연차가 아닌 경력 표현은 추측하지 마세요.
+
+  [채용 절차]
+  - hiringProcess에는 공고에 명시된 채용 전형을 진행 순서대로 배열에 담으세요.
+  - 예: 서류 전형, 1차 면접, 최종 면접
+  - 채용 절차를 확인할 수 없으면 빈 배열을 반환하세요.
+
+  [기술 스택]
+  - techStacks에는 공고에 명시된 기술, 프레임워크, 도구만 중복 없이 배열에 담으세요.
+  - 예: React, TypeScript, Node.js
+  - 기술 스택을 확인할 수 없으면 빈 배열을 반환하세요.`;
 
 @Injectable()
 export class JobPostingService {
@@ -208,12 +218,15 @@ export class JobPostingService {
           url: jobPosting.url,
           platform,
           companyName: jobPosting.companyName,
+          title: jobPosting.title,
           position: jobPosting.position,
           minYears: jobPosting.minYears,
           maxYears: jobPosting.maxYears,
           location: jobPosting.location,
           deadline,
           deadlineType: jobPosting.deadlineType,
+          hiringProcess: jobPosting.hiringProcess,
+          techStacks: jobPosting.techStacks,
         },
         select: {
           id: true,

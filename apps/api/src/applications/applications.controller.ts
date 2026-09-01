@@ -32,6 +32,24 @@ export class ApplicationsController {
     };
   }
 
+  @Get(":id")
+  async findOne(
+    @Param("id") applicationId: string,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.applicationsService.findOneByUserId(
+        user.id,
+        applicationId,
+      ),
+    };
+  }
+
   @Patch(":id")
   async update(
     @Param("id") applicationId: string,

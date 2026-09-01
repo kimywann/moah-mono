@@ -16,6 +16,7 @@ export interface IApplicationList {
   deadlineType: TJobPostingDeadlineType;
   id: string;
   companyName: string | null;
+  title: string | null;
   location: string | null;
   minYears: number | null;
   maxYears: number | null;

@@ -1,6 +1,7 @@
 import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import ApplicationDetailModal from "@/components/applications/ApplicationDetailModal";
 import ApplicationTable from "@/components/applications/ApplicationTable";
 import HeroBanner from "@/components/layout/HeroBanner";
 import hero from "@/shared/assets/applications-hero.png";
@@ -19,6 +20,9 @@ const APPLICATIONS_PAGE_SIZE = 10;
 
 const Applications = (props: IApplicationsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedApplicationId, setSelectedApplicationId] = useState<
+    string | null
+  >(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const totalPages = Math.ceil(
     props.applications.length / APPLICATIONS_PAGE_SIZE,
@@ -55,6 +59,7 @@ const Applications = (props: IApplicationsProps) => {
         <ApplicationTable
           applications={currentApplications}
           isStageUpdate={props.isStageUpdate}
+          onDetailClick={setSelectedApplicationId}
           onStageChange={props.onStageChange}
           onSortingChange={setSorting}
           sorting={sorting}
@@ -68,6 +73,13 @@ const Applications = (props: IApplicationsProps) => {
           totalPages={totalPages}
         />
       </div>
+
+      {selectedApplicationId && (
+        <ApplicationDetailModal
+          applicationId={selectedApplicationId}
+          onClose={() => setSelectedApplicationId(null)}
+        />
+      )}
     </section>
   );
 };

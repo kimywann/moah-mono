@@ -29,6 +29,7 @@ type TBadgeVariant =
 interface IApplicationTableProps {
   applications: IApplicationList[];
   isStageUpdate: boolean;
+  onDetailClick: (id: string) => void;
   onStageChange: (id: string, stage: TApplicationStage) => void;
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
@@ -113,6 +114,7 @@ const ApplicationStageDropdown = ({
 
 const createColumns = (
   isStageUpdate: boolean,
+  onDetailClick: (id: string) => void,
   onStageChange: (id: string, stage: TApplicationStage) => void,
 ): ColumnDef<IApplicationList>[] => [
   {
@@ -138,9 +140,14 @@ const createColumns = (
     cell: ({ row }) => getCareerLabel(row.original),
   },
   {
-    accessorKey: "location",
+    accessorKey: "title",
     enableSorting: false,
-    header: "지역",
+    header: "공고명",
+    cell: ({ getValue }) => (
+      <span className="regular">
+        {getValue<string | null>() ?? "제목 미정"}
+      </span>
+    ),
   },
   {
     accessorKey: "platform",
@@ -174,8 +181,13 @@ const createColumns = (
     accessorKey: "detail",
     enableSorting: false,
     header: "",
-    cell: () => (
-      <MHButton variant="secondary" size="xSmall" className="medium!">
+    cell: ({ row }) => (
+      <MHButton
+        className="medium!"
+        onClick={() => onDetailClick(row.original.id)}
+        size="xSmall"
+        variant="secondary"
+      >
         자세히
       </MHButton>
     ),
@@ -186,7 +198,11 @@ const ApplicationTable = (props: IApplicationTableProps) => {
   return (
     <MHTable
       caption="지원 현황"
-      columns={createColumns(props.isStageUpdate, props.onStageChange)}
+      columns={createColumns(
+        props.isStageUpdate,
+        props.onDetailClick,
+        props.onStageChange,
+      )}
       data={props.applications}
       getRowId={(application) => application.id}
       onSortingChange={props.onSortingChange}

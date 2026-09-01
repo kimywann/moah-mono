@@ -89,6 +89,8 @@ export const jobPostingExtractionResponseSchema = z.object({
   location: z.string().nullable(),
   deadline: z.iso.date().nullable(),
   deadlineType: z.enum(JOB_POSTING_DEADLINE_TYPES),
+  hiringProcess: z.array(z.string().trim()),
+  techStacks: z.array(z.string().trim()),
 });
 
 export const jobPostingFormSchema = jobPostingExtractionResponseSchema.extend({

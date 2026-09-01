@@ -8,6 +8,7 @@ const APPLICATION_LIST_SELECT = {
   url: true,
   platform: true,
   companyName: true,
+  title: true,
   position: true,
   minYears: true,
   maxYears: true,
@@ -36,6 +37,22 @@ export class ApplicationsService {
     });
 
     return applications;
+  }
+
+  async findOneByUserId(userId: string, applicationId: string) {
+    const application = await this.prismaService.application.findFirst({
+      where: {
+        id: applicationId,
+        userId,
+      },
+      select: APPLICATION_SELECT,
+    });
+
+    if (!application) {
+      throw new NotFoundException("지원 정보를 찾을 수 없습니다.");
+    }
+
+    return application;
   }
 
   async update(

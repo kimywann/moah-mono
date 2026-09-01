@@ -55,6 +55,7 @@ model Application {
   url           String
   platform      JobPostingPlatform     @default(OTHER)
   companyName   String?
+  title         String?
   position      String?
   minYears      Int?
   maxYears      Int?

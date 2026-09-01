@@ -9,6 +9,12 @@ export const getApplicationList = async (): Promise<
   return apiFetcher<IApplicationList[]>("/applications");
 };
 
+export const getApplication = async (
+  applicationId: string,
+): Promise<IApiResponse<IApplication>> => {
+  return apiFetcher<IApplication>(`/applications/${applicationId}`);
+};
+
 export const updateApplication = async (
   id: string,
   updateData: TApplicationUpdate,
