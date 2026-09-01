@@ -19,6 +19,15 @@ interface IApplicationStageUpdateContext {
 }
 
 const ApplicationsPage = () => {
+  return (
+    <>
+      <meta content="noindex" name="robots" />
+      <ApplicationsPageContent />
+    </>
+  );
+};
+
+const ApplicationsPageContent = () => {
   const queryClient = useQueryClient();
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
