@@ -30,7 +30,10 @@ export class JobPostingController {
       throw new BadRequestException("채용 공고 URL을 확인해 주세요.");
     }
 
-    return this.jobPostingService.extract(parsedRequest.data.url);
+    return {
+      success: true,
+      data: await this.jobPostingService.extract(parsedRequest.data.url),
+    };
   }
 
   @Post()

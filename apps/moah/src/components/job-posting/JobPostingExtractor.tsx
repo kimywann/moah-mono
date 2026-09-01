@@ -1,5 +1,4 @@
 import {
-  jobPostingExtractionResponseSchema,
   jobPostingURLSchema,
   type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
@@ -7,10 +6,9 @@ import MHIcon from "@moah/ui/components/MHIcon";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useState } from "react";
+import { extractJobPosting } from "@/api/job-posting";
 import { useAuth } from "@/contexts/AuthContext";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const JobPostingExtractor = () => {
   const { isAuthenticated } = useAuth();
@@ -60,34 +58,14 @@ const JobPostingExtractor = () => {
     setErrorMessage("");
 
     try {
-      if (!API_BASE_URL) {
-        throw new Error("API 주소가 설정되지 않았습니다.");
-      }
+      const response = await extractJobPosting(parsedURL.data);
 
-      const response = await fetch(`${API_BASE_URL}/job-postings/extract`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: parsedURL.data,
-        }),
-      });
-
-      if (!response.ok) {
+      if (!response.success || !response.data) {
         throw new Error("채용 공고 추출 요청에 실패했습니다.");
       }
 
-      const responseBody: unknown = await response.json();
-      const parsedJobPosting =
-        jobPostingExtractionResponseSchema.safeParse(responseBody);
-
-      if (!parsedJobPosting.success) {
-        throw new Error("채용 공고 추출 결과가 올바르지 않습니다.");
-      }
-
       setJobPosting({
-        ...parsedJobPosting.data,
+        ...response.data,
         url: parsedURL.data,
       });
       setIsModalOpen(true);
