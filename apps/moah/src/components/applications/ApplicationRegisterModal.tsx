@@ -12,7 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router";
-import { saveJobPosting } from "@/api/job-posting";
+import { createApplication } from "@/api/application";
 import {
   DEADLINE_TYPE_LABEL,
   INITIAL_APPLICATION_REGISTER_FORM,
@@ -47,7 +47,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
     const payload = toJobPostingForm(form);
 
     try {
-      const response = await saveJobPosting(payload);
+      const response = await createApplication(payload);
 
       if (!response.success) {
         throw new Error("지원 정보 저장에 실패했습니다.");

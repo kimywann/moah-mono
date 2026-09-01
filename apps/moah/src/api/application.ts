@@ -1,9 +1,11 @@
 import type { TApplicationUpdate } from "@moah/contracts/schema/application";
+import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import type { IApiResponse } from "@moah/shared/type/api";
 import { apiFetcher } from "@moah/shared/utils/api-fetcher";
 import type {
   IApplication,
   IApplicationList,
+  ICreateApplicationResponse,
   IDeleteApplicationsResponse,
 } from "@/shared/type/application";
 
@@ -17,6 +19,15 @@ export const getApplication = async (
   applicationId: string,
 ): Promise<IApiResponse<IApplication>> => {
   return apiFetcher<IApplication>(`/applications/${applicationId}`);
+};
+
+export const createApplication = async (
+  applicationData: TJobPostingForm,
+): Promise<IApiResponse<ICreateApplicationResponse>> => {
+  return apiFetcher<ICreateApplicationResponse>("/applications", {
+    method: "POST",
+    body: JSON.stringify(applicationData),
+  });
 };
 
 export const deleteApplications = async (

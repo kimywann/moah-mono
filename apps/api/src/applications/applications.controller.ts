@@ -1,4 +1,5 @@
 import { applicationUpdateSchema } from "@moah/contracts/schema/application";
+import { jobPostingFormSchema } from "@moah/contracts/schema/job-posting";
 import {
   BadRequestException,
   Body,
@@ -9,8 +10,10 @@ import {
   Inject,
   Param,
   Patch,
+  Post,
 } from "@nestjs/common";
 import { AuthService } from "../auth/auth.service";
+import { getJobPostingPlatform } from "../common/utils/utils";
 import { ApplicationsService } from "./applications.service";
 
 @Controller("applications")
@@ -48,6 +51,32 @@ export class ApplicationsController {
         user.id,
         applicationId,
       ),
+    };
+  }
+
+  @Post()
+  async create(
+    @Body() body: unknown,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const request = jobPostingFormSchema.safeParse(body);
+
+    if (!request.success) {
+      throw new BadRequestException("등록할 지원 정보를 확인해 주세요.");
+    }
+
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+    const application = await this.applicationsService.create(
+      user.id,
+      request.data,
+      getJobPostingPlatform(request.data.url),
+    );
+
+    return {
+      success: true,
+      data: application,
     };
   }
 

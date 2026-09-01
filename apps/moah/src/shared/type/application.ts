@@ -31,6 +31,11 @@ export interface IApplication extends IApplicationList {
   techStacks: string[];
 }
 
+export interface ICreateApplicationResponse {
+  id: string;
+  stage: TApplicationStage;
+}
+
 export interface IDeleteApplicationsResponse {
   deletedCount: number;
 }

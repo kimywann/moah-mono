@@ -5,14 +5,14 @@ import {
 } from "@moah/contracts/schema/job-posting";
 import {
   BadGatewayException,
-  ConflictException,
   Inject,
   Injectable,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
-import { type JobPostingPlatform, Prisma } from "../generated/prisma/client";
+import { ApplicationsService } from "../applications/applications.service";
+import { getJobPostingPlatform } from "../common/utils/utils";
 import { PrismaService } from "../prisma/prisma.service";
 
 const GEMINI_RESPONSE_SCHEMA = z.object({
@@ -89,6 +89,8 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
 export class JobPostingService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(ApplicationsService)
+    private readonly applicationsService: ApplicationsService,
     @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {}
 
@@ -192,7 +194,7 @@ export class JobPostingService {
   }
 
   async save(userId: string, jobPosting: TJobPostingForm) {
-    const platform = this.getPlatform(jobPosting.url);
+    const platform = getJobPostingPlatform(jobPosting.url);
     const deadline = jobPosting.deadline
       ? new Date(`${jobPosting.deadline}T00:00:00.000Z`)
       : null;
@@ -218,88 +220,14 @@ export class JobPostingService {
       },
     });
 
-    try {
-      return await this.prismaService.application.create({
-        data: {
-          userId,
-          stage: "READY",
-          url: jobPosting.url,
-          platform,
-          companyName: jobPosting.companyName,
-          title: jobPosting.title,
-          position: jobPosting.position,
-          minYears: jobPosting.minYears,
-          maxYears: jobPosting.maxYears,
-          location: jobPosting.location,
-          deadline,
-          deadlineType: jobPosting.deadlineType,
-          hiringProcess: jobPosting.hiringProcess,
-          techStacks: jobPosting.techStacks,
-        },
-        select: {
-          id: true,
-          stage: true,
-        },
-      });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
-        throw new ConflictException("이미 지원 목록에 저장된 채용 공고입니다.");
-      }
-
-      throw error;
-    }
+    return this.applicationsService.create(userId, jobPosting, platform);
   }
 
-  private getPlatform(url: string): JobPostingPlatform {
-    const hostname = new URL(url).hostname.toLowerCase();
-
-    if (this.isPlatformHostname(hostname, "saramin.co.kr")) {
-      return "SARAMIN";
-    }
-
-    if (this.isPlatformHostname(hostname, "jobkorea.co.kr")) {
-      return "JOB_KOREA";
-    }
-
-    if (this.isPlatformHostname(hostname, "jobplanet.co.kr")) {
-      return "JOB_PLANET";
-    }
-
-    if (this.isPlatformHostname(hostname, "zighang.com")) {
-      return "ZIGHANG";
-    }
-
-    if (this.isPlatformHostname(hostname, "rocketpunch.com")) {
-      return "ROCKET_PUNCH";
-    }
-
-    if (this.isPlatformHostname(hostname, "work24.go.kr")) {
-      return "WORK24";
-    }
-
-    if (this.isPlatformHostname(hostname, "wanted.co.kr")) {
-      return "WANTED";
-    }
-
-    return "OTHER";
-  }
-
-  private isRequiredJobPostingInfoMissing(
-    jobPosting: TJobPostingExtraction,
-  ) {
+  private isRequiredJobPostingInfoMissing(jobPosting: TJobPostingExtraction) {
     return !(
       jobPosting.companyName?.trim() &&
       jobPosting.title?.trim() &&
       jobPosting.position
-    );
-  }
-
-  private isPlatformHostname(hostname: string, platformHostname: string) {
-    return (
-      hostname === platformHostname || hostname.endsWith(`.${platformHostname}`)
     );
   }
 }
