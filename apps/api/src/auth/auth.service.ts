@@ -64,6 +64,12 @@ export class AuthService {
     });
   }
 
+  async withdraw(userId: string) {
+    await this.prismaService.user.delete({
+      where: { id: userId },
+    });
+  }
+
   async loginWithGoogle(credential: string) {
     let ticket: LoginTicket;
 

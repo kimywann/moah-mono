@@ -1,10 +1,16 @@
+import MHIcon from "@moah/ui/components/MHIcon";
 import { toast } from "@moah/ui/components/MHToaster";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getApplicationList, updateApplication } from "@/api/application";
+import {
+  deleteApplications,
+  getApplicationList,
+  updateApplication,
+} from "@/api/application";
 import Applications from "@/components/applications/Applications";
 import type {
   IApplication,
   IApplicationList,
+  IDeleteApplicationsResponse,
   TApplicationStage,
 } from "@/shared/type/application";
 
@@ -18,6 +24,15 @@ interface IApplicationStageUpdateContext {
 }
 
 const ApplicationsPage = () => {
+  return (
+    <>
+      <meta content="noindex" name="robots" />
+      <ApplicationsPageContent />
+    </>
+  );
+};
+
+const ApplicationsPageContent = () => {
   const queryClient = useQueryClient();
   const applicationsQuery = useQuery({
     queryKey: ["applications"],
@@ -78,11 +93,39 @@ const ApplicationsPage = () => {
     },
   });
 
+  const deleteApplicationsMutation = useMutation<
+    IDeleteApplicationsResponse,
+    Error,
+    string[]
+  >({
+    mutationFn: async (applicationIds) => {
+      const response = await deleteApplications(applicationIds);
+
+      if (!response.success || !response.data) {
+        throw new Error("지원 공고 삭제에 실패했습니다.");
+      }
+
+      return response.data;
+    },
+    onError: () => {
+      toast.error("지원 공고를 삭제하지 못했습니다.");
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["applications"],
+      });
+      toast.success("지원 공고를 삭제했어요.");
+    },
+  });
+
   if (applicationsQuery.isPending) {
     return (
-      <p className="p-6 text-muted-foreground">
-        지원 현황 목록을 불러오는 중...
-      </p>
+      <output
+        aria-label="지원 현황 목록을 불러오는 중"
+        className="flex min-h-82 items-center justify-center"
+      >
+        <MHIcon className="animate-spin text-primary" icon="loaderCircle" />
+      </output>
     );
   }
 
@@ -97,7 +140,11 @@ const ApplicationsPage = () => {
   return (
     <Applications
       applications={applicationsQuery.data}
+      isDeleting={deleteApplicationsMutation.isPending}
       isStageUpdate={updateApplicationMutation.isPending}
+      onDelete={async (applicationIds) => {
+        await deleteApplicationsMutation.mutateAsync(applicationIds);
+      }}
       onStageChange={(id, stage) =>
         updateApplicationMutation.mutate({ id, stage })
       }

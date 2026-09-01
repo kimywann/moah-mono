@@ -1,16 +1,18 @@
 import {
   jobPostingExtractionResponseSchema,
+  type TJobPostingExtraction,
   type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
 import {
   BadGatewayException,
-  ConflictException,
   Inject,
   Injectable,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
-import { type JobPostingPlatform, Prisma } from "../generated/prisma/client";
+import { ApplicationsService } from "../applications/applications.service";
+import { getJobPostingPlatform } from "../common/utils/utils";
 import { PrismaService } from "../prisma/prisma.service";
 
 const GEMINI_RESPONSE_SCHEMA = z.object({
@@ -71,12 +73,24 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
   - "N년 이상" → minYears: N, maxYears: null
   - "N년 이하" → minYears: 0, maxYears: N
   - 경력 조건을 확인할 수 없거나 해석이 모호하면 두 값 모두 null로 반환합니다.
-  - 연차가 아닌 경력 표현은 추측하지 마세요.`;
+  - 연차가 아닌 경력 표현은 추측하지 마세요.
+
+  [채용 절차]
+  - hiringProcess에는 공고에 명시된 채용 전형을 진행 순서대로 배열에 담으세요.
+  - 예: 서류 전형, 1차 면접, 최종 면접
+  - 채용 절차를 확인할 수 없으면 빈 배열을 반환하세요.
+
+  [기술 스택]
+  - techStacks에는 공고에 명시된 기술, 프레임워크, 도구만 중복 없이 배열에 담으세요.
+  - 예: React, TypeScript, Node.js
+  - 기술 스택을 확인할 수 없으면 빈 배열을 반환하세요.`;
 
 @Injectable()
 export class JobPostingService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
+    @Inject(ApplicationsService)
+    private readonly applicationsService: ApplicationsService,
     @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {}
 
@@ -170,11 +184,17 @@ export class JobPostingService {
       throw new BadGatewayException("채용 공고 추출 결과가 올바르지 않습니다.");
     }
 
+    if (this.isRequiredJobPostingInfoMissing(parsedJobPosting.data)) {
+      throw new UnprocessableEntityException({
+        code: "JOB_POSTING_REQUIRED_INFO_MISSING",
+      });
+    }
+
     return parsedJobPosting.data;
   }
 
   async save(userId: string, jobPosting: TJobPostingForm) {
-    const platform = this.getPlatform(jobPosting.url);
+    const platform = getJobPostingPlatform(jobPosting.url);
     const deadline = jobPosting.deadline
       ? new Date(`${jobPosting.deadline}T00:00:00.000Z`)
       : null;
@@ -200,75 +220,14 @@ export class JobPostingService {
       },
     });
 
-    try {
-      return await this.prismaService.application.create({
-        data: {
-          userId,
-          stage: "READY",
-          url: jobPosting.url,
-          platform,
-          companyName: jobPosting.companyName,
-          position: jobPosting.position,
-          minYears: jobPosting.minYears,
-          maxYears: jobPosting.maxYears,
-          location: jobPosting.location,
-          deadline,
-          deadlineType: jobPosting.deadlineType,
-        },
-        select: {
-          id: true,
-          stage: true,
-        },
-      });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
-        throw new ConflictException("이미 지원 목록에 저장된 채용 공고입니다.");
-      }
-
-      throw error;
-    }
+    return this.applicationsService.create(userId, jobPosting, platform);
   }
 
-  private getPlatform(url: string): JobPostingPlatform {
-    const hostname = new URL(url).hostname.toLowerCase();
-
-    if (this.isPlatformHostname(hostname, "saramin.co.kr")) {
-      return "SARAMIN";
-    }
-
-    if (this.isPlatformHostname(hostname, "jobkorea.co.kr")) {
-      return "JOB_KOREA";
-    }
-
-    if (this.isPlatformHostname(hostname, "jobplanet.co.kr")) {
-      return "JOB_PLANET";
-    }
-
-    if (this.isPlatformHostname(hostname, "zighang.com")) {
-      return "ZIGHANG";
-    }
-
-    if (this.isPlatformHostname(hostname, "rocketpunch.com")) {
-      return "ROCKET_PUNCH";
-    }
-
-    if (this.isPlatformHostname(hostname, "work24.go.kr")) {
-      return "WORK24";
-    }
-
-    if (this.isPlatformHostname(hostname, "wanted.co.kr")) {
-      return "WANTED";
-    }
-
-    return "OTHER";
-  }
-
-  private isPlatformHostname(hostname: string, platformHostname: string) {
-    return (
-      hostname === platformHostname || hostname.endsWith(`.${platformHostname}`)
+  private isRequiredJobPostingInfoMissing(jobPosting: TJobPostingExtraction) {
+    return !(
+      jobPosting.companyName?.trim() &&
+      jobPosting.title?.trim() &&
+      jobPosting.position
     );
   }
 }

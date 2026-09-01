@@ -8,5 +8,6 @@ import { ApplicationsService } from "./applications.service";
   imports: [AuthModule, PrismaModule],
   controllers: [ApplicationsController],
   providers: [ApplicationsService],
+  exports: [ApplicationsService],
 })
 export class ApplicationsModule {}

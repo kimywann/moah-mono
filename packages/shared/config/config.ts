@@ -1,9 +1,10 @@
-export type TEnv = "local";
+export type TEnv = "local" | "opt";
+
+export const ENV: TEnv = "local";
 
 export const SERVER_LIST: Record<TEnv, string> = {
   local: "http://localhost:3001",
+  opt: "https://api.moah.io.kr",
 };
-
-export const ENV: TEnv = "local";
 
 export const API_BASE_URL = SERVER_LIST[ENV];

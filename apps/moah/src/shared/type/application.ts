@@ -16,6 +16,7 @@ export interface IApplicationList {
   deadlineType: TJobPostingDeadlineType;
   id: string;
   companyName: string | null;
+  title: string | null;
   location: string | null;
   minYears: number | null;
   maxYears: number | null;
@@ -28,4 +29,13 @@ export interface IApplicationList {
 export interface IApplication extends IApplicationList {
   hiringProcess: string[];
   techStacks: string[];
+}
+
+export interface ICreateApplicationResponse {
+  id: string;
+  stage: TApplicationStage;
+}
+
+export interface IDeleteApplicationsResponse {
+  deletedCount: number;
 }

@@ -39,7 +39,10 @@ const LoginPage = () => {
           muted
           playsInline
         >
-          <source src="/video/login-background.mp4" type="video/mp4" />
+          <source
+            src="https://dmhp5sbolwl0j.cloudfront.net/videos/login-background.mp4"
+            type="video/mp4"
+          />
         </video>
 
         <section className="relative z-10 w-full max-w-120 rounded-medium bg-background/95 p-8 shadow-xs backdrop-blur-sm">

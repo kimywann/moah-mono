@@ -1,16 +1,15 @@
 import {
-  jobPostingExtractionResponseSchema,
   jobPostingURLSchema,
   type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
 import MHIcon from "@moah/ui/components/MHIcon";
+import { toast } from "@moah/ui/components/MHToaster";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useState } from "react";
+import { extractJobPosting } from "@/api/job-posting";
 import { useAuth } from "@/contexts/AuthContext";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const JobPostingExtractor = () => {
   const { isAuthenticated } = useAuth();
@@ -60,34 +59,22 @@ const JobPostingExtractor = () => {
     setErrorMessage("");
 
     try {
-      if (!API_BASE_URL) {
-        throw new Error("API 주소가 설정되지 않았습니다.");
+      const response = await extractJobPosting(parsedURL.data);
+
+      if (
+        !response.success &&
+        response.error?.code === "JOB_POSTING_REQUIRED_INFO_MISSING"
+      ) {
+        toast.error("공식 채용 페이지 URL만 입력해 주세요.");
+        return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/job-postings/extract`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: parsedURL.data,
-        }),
-      });
-
-      if (!response.ok) {
+      if (!response.success || !response.data) {
         throw new Error("채용 공고 추출 요청에 실패했습니다.");
       }
 
-      const responseBody: unknown = await response.json();
-      const parsedJobPosting =
-        jobPostingExtractionResponseSchema.safeParse(responseBody);
-
-      if (!parsedJobPosting.success) {
-        throw new Error("채용 공고 추출 결과가 올바르지 않습니다.");
-      }
-
       setJobPosting({
-        ...parsedJobPosting.data,
+        ...response.data,
         url: parsedURL.data,
       });
       setIsModalOpen(true);
@@ -103,10 +90,11 @@ const JobPostingExtractor = () => {
       <div className="flex w-full flex-col items-center gap-10">
         <div className="flex max-w-200 flex-col items-center gap-3 text-center">
           <h1 className="bold display40">
-            길어지는 취업 준비, 복잡한 관리는 끝
+            흩어지는 지원 정보, 이제 <span className="text-primary">모아</span>
+            {""} 보세요
           </h1>
           <p className="display16 medium text-muted-foreground">
-            공고 URL만 입력하면, 지원 관리는 모아가 정리합니다.
+            공고 URL 하나로 지원 현황을 간편하게 관리해요.
           </p>
         </div>
 
@@ -116,6 +104,10 @@ const JobPostingExtractor = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2">
+            <p className="display14 flex items-center gap-2 px-4 text-primary">
+              <MHIcon icon="info" size={16} />
+              기업 공식 채용 페이지 링크만 지원합니다.
+            </p>
             <div
               className={cn(
                 "flex min-h-14 w-full items-end gap-2 rounded-full border border-border bg-background p-2 transition-colors focus-within:border-focus focus-within:ring-1 focus-within:ring-focus",

@@ -139,6 +139,30 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               />
             </div>
 
+            <div className="flex flex-col gap-2">
+              <span className="semibold display14 text-neutral40">
+                채용 절차
+              </span>
+              <MHInput
+                isFullWidth
+                readOnly
+                value={
+                  props.jobPosting.hiringProcess.join(" · ") || "정보 없음"
+                }
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="semibold display14 text-neutral40">
+                기술 스택
+              </span>
+              <MHInput
+                isFullWidth
+                readOnly
+                value={props.jobPosting.techStacks.join(" · ") || "정보 없음"}
+              />
+            </div>
+
             <div className="flex flex-col gap-2 sm:col-span-2">
               <span className="semibold display14 text-neutral40">
                 채용 공고 URL

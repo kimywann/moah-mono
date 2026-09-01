@@ -10,6 +10,7 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
+import { STAGE_DISPLAY } from "@/shared/constants/application-stage";
 import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
@@ -18,47 +19,17 @@ import type {
 } from "@/shared/type/application";
 import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
 
-type TBadgeVariant =
-  | "neutral"
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
-
 interface IApplicationTableProps {
   applications: IApplicationList[];
   isStageUpdate: boolean;
+  onDetailClick: (id: string) => void;
+  onSelectAll: (ids: string[], isSelected: boolean) => void;
+  onSelectChange: (id: string, isSelected: boolean) => void;
   onStageChange: (id: string, stage: TApplicationStage) => void;
+  selectedIds: Set<string>;
   onSortingChange: OnChangeFn<SortingState>;
   sorting: SortingState;
 }
-
-const STAGE_DISPLAY = {
-  READY: {
-    label: "지원 준비 중",
-    variant: "neutral",
-  },
-  APPLIED: {
-    label: "지원 완료",
-    variant: "info",
-  },
-  INTERVIEW: {
-    label: "면접",
-    variant: "warning",
-  },
-  PASSED: {
-    label: "합격",
-    variant: "success",
-  },
-  REJECTED: {
-    label: "불합격",
-    variant: "danger",
-  },
-} satisfies Record<
-  TApplicationStage,
-  { label: string; variant: TBadgeVariant }
->;
 
 const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] =
   APPLICATION_STAGES.map((stage) => ({
@@ -113,6 +84,7 @@ const ApplicationStageDropdown = ({
 
 const createColumns = (
   isStageUpdate: boolean,
+  onDetailClick: (id: string) => void,
   onStageChange: (id: string, stage: TApplicationStage) => void,
 ): ColumnDef<IApplicationList>[] => [
   {
@@ -138,9 +110,14 @@ const createColumns = (
     cell: ({ row }) => getCareerLabel(row.original),
   },
   {
-    accessorKey: "location",
+    accessorKey: "title",
     enableSorting: false,
-    header: "지역",
+    header: "공고명",
+    cell: ({ getValue }) => (
+      <span className="regular">
+        {getValue<string | null>() ?? "제목 미정"}
+      </span>
+    ),
   },
   {
     accessorKey: "platform",
@@ -174,8 +151,13 @@ const createColumns = (
     accessorKey: "detail",
     enableSorting: false,
     header: "",
-    cell: () => (
-      <MHButton variant="secondary" size="xSmall" className="medium!">
+    cell: ({ row }) => (
+      <MHButton
+        className="medium!"
+        onClick={() => onDetailClick(row.original.id)}
+        size="xSmall"
+        variant="secondary"
+      >
         자세히
       </MHButton>
     ),
@@ -186,10 +168,19 @@ const ApplicationTable = (props: IApplicationTableProps) => {
   return (
     <MHTable
       caption="지원 현황"
-      columns={createColumns(props.isStageUpdate, props.onStageChange)}
+      columns={createColumns(
+        props.isStageUpdate,
+        props.onDetailClick,
+        props.onStageChange,
+      )}
       data={props.applications}
       getRowId={(application) => application.id}
       onSortingChange={props.onSortingChange}
+      rowSelection={{
+        onRowSelectionChange: props.onSelectChange,
+        onSelectAllChange: props.onSelectAll,
+        selectedRowIds: props.selectedIds,
+      }}
       sorting={props.sorting}
     />
   );
