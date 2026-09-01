@@ -17,6 +17,7 @@ interface IMHSelectProps {
   placeholder: string;
   size?: TComponentSize;
   value?: string;
+  variant?: "default" | "field";
 }
 
 const MHSelect = ({
@@ -28,10 +29,14 @@ const MHSelect = ({
   placeholder,
   size = "medium",
   value,
+  variant = "default",
 }: IMHSelectProps) => {
   const triggerClassName = cn(
-    "inline-flex w-80 items-center justify-between rounded-small border border-border bg-transparent text-foreground outline-none transition-colors data-placeholder:text-muted-foreground focus:ring-2 focus:ring-focus focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled disabled:text-disabled-foreground",
+    "inline-flex w-80 items-center justify-between rounded-small text-foreground outline-none transition-colors data-placeholder:text-muted-foreground focus:ring-2 focus:ring-focus focus:ring-offset-2 disabled:cursor-not-allowed disabled:border-disabled-border disabled:bg-disabled disabled:text-disabled-foreground",
     COMPONENT_CLASS[size],
+    variant === "default" && "border border-border bg-transparent",
+    variant === "field" &&
+      "semibold cursor-pointer bg-field focus:border-focus",
     isError && "border-danger focus:ring-danger",
     isFullWidth && "w-full",
   );
