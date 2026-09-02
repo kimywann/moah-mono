@@ -118,7 +118,7 @@ const createColumns = (
     header: "공고명",
     size: 260,
     cell: ({ getValue }) => (
-      <span className="regular truncate">
+      <span className="regular block truncate">
         {getValue<string | null>() ?? "제목 미정"}
       </span>
     ),

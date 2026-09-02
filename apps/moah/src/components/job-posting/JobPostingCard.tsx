@@ -43,9 +43,9 @@ const JobPostingCard = (props: IJobPostingCardProps) => {
             {getCareerLabel(props.jobPosting)}
           </MHBadge>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full min-w-0 items-center gap-2">
           <MHIcon icon="mapPin" size={16} />
-          <span className="regular display12 truncate text-muted-foreground">
+          <span className="regular display12 block min-w-0 flex-1 truncate text-muted-foreground">
             {props.jobPosting.location ?? "근무지 미정"}
           </span>
         </div>
