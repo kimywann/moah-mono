@@ -63,7 +63,7 @@ const MHSelect = ({
           position="popper"
           sideOffset={4}
         >
-          <Select.Viewport>
+          <Select.Viewport className="max-h-60 overflow-y-auto">
             {options.map((option) => (
               <Select.Item
                 className={cn(
