@@ -91,6 +91,7 @@ const createColumns = (
     accessorKey: "companyName",
     enableSorting: false,
     header: "기업",
+    size: 80,
     cell: ({ getValue }) => (
       <span className="regular">{getValue<string>()}</span>
     ),
@@ -99,6 +100,7 @@ const createColumns = (
     accessorKey: "position",
     enableSorting: false,
     header: "포지션",
+    size: 100,
     cell: ({ getValue }) => (
       <span className="regular">{getValue<string>()}</span>
     ),
@@ -107,14 +109,16 @@ const createColumns = (
     accessorKey: "minYears",
     enableSorting: false,
     header: "경력",
+    size: 120,
     cell: ({ row }) => getCareerLabel(row.original),
   },
   {
     accessorKey: "title",
     enableSorting: false,
     header: "공고명",
+    size: 260,
     cell: ({ getValue }) => (
-      <span className="regular">
+      <span className="regular truncate">
         {getValue<string | null>() ?? "제목 미정"}
       </span>
     ),
@@ -123,6 +127,7 @@ const createColumns = (
     accessorKey: "platform",
     enableSorting: false,
     header: "플랫폼",
+    size: 100,
     cell: ({ getValue }) => (
       <span className="regular">
         {PLATFORM_LABEL[getValue<TJobPostingPlatform>()]}
@@ -133,6 +138,7 @@ const createColumns = (
     accessorKey: "stage",
     enableSorting: false,
     header: "지원 단계",
+    size: 128,
     cell: ({ getValue, row }) => (
       <ApplicationStageDropdown
         isUpdate={isStageUpdate}
@@ -145,12 +151,14 @@ const createColumns = (
     accessorKey: "deadline",
     enableSorting: true,
     header: "마감일",
+    size: 120,
     cell: ({ row }) => getDeadlineLabel(row.original),
   },
   {
     accessorKey: "detail",
     enableSorting: false,
     header: "",
+    size: 88,
     cell: ({ row }) => (
       <MHButton
         className="medium!"

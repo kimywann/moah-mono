@@ -71,7 +71,7 @@ const MHTable = <TData,>({
     >
       <table
         aria-busy={isLoading}
-        className="display14 w-full border-collapse text-left"
+        className="display14 w-full table-fixed border-collapse text-left"
       >
         <caption className="sr-only">{caption}</caption>
 
@@ -80,7 +80,7 @@ const MHTable = <TData,>({
             <tr key={headerGroup.id}>
               {rowSelection && (
                 <th
-                  className="border-border-subtle border-b px-4 py-3"
+                  className="w-14 border-border-subtle border-b px-4 py-3"
                   scope="col"
                 >
                   <MHCheckbox
@@ -111,6 +111,7 @@ const MHTable = <TData,>({
                     className="semibold border-border-subtle border-b px-4 py-3"
                     key={header.id}
                     scope="col"
+                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder ? null : isSortable ? (
                       <button
@@ -190,6 +191,7 @@ const MHTable = <TData,>({
                   <td
                     className="border-border-subtle border-b px-4 py-4"
                     key={cell.id}
+                    style={{ width: cell.column.getSize() }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
