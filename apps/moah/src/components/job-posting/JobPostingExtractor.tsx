@@ -148,7 +148,9 @@ const JobPostingExtractor = () => {
               </p>
               {remainingExtractionCount !== null && (
                 <p className="display12 px-4 text-muted-foreground">
-                  오늘 남은 분석 횟수 {remainingExtractionCount} / 5회
+                  {remainingExtractionCount === 0
+                    ? "오늘 분석 횟수를 모두 사용했어요! 내일 00:00에 다시 이용할 수 있어요."
+                    : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 5회`}
                 </p>
               )}
             </div>
@@ -190,6 +192,19 @@ const JobPostingExtractor = () => {
                 </button>
               )}
             </div>
+            {isExtracting && (
+              <output
+                aria-live="polite"
+                className="display14 absolute inset-x-0 top-full mt-2 flex items-center justify-center gap-2 text-muted-foreground"
+              >
+                <MHIcon
+                  className="animate-spin"
+                  icon="loaderCircle"
+                  size={16}
+                />
+                채용 공고 정보를 확인하고 있어요.
+              </output>
+            )}
           </div>
           {errorMessage && (
             <p
