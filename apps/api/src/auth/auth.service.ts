@@ -16,7 +16,12 @@ export class AuthService {
     @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {
     this.googleClientId = configService.getOrThrow<string>("GOOGLE_CLIENT_ID");
-    this.googleClient = new OAuth2Client(this.googleClientId);
+    this.googleClient = new OAuth2Client(
+      this.googleClientId,
+      configService.getOrThrow<string>("GOOGLE_CLIENT_SECRET"),
+      configService.get<string>("GOOGLE_REDIRECT_URI") ??
+        "http://localhost:3001/auth/google/callback",
+    );
   }
 
   async getCurrentUser(sessionToken?: string) {
@@ -70,12 +75,38 @@ export class AuthService {
     });
   }
 
-  async loginWithGoogle(credential: string) {
+  getGoogleAuthorizationURL(state: string) {
+    return this.googleClient.generateAuthUrl({
+      access_type: "offline",
+      prompt: "select_account",
+      scope: ["openid", "email", "profile"],
+      state,
+    });
+  }
+
+  async loginWithGoogleAuthorizationCode(code: string) {
+    let idToken: string | null | undefined;
+
+    try {
+      const tokenResponse = await this.googleClient.getToken(code);
+      idToken = tokenResponse.tokens.id_token;
+    } catch {
+      throw new UnauthorizedException("구글 로그인 정보를 확인할 수 없습니다.");
+    }
+
+    if (!idToken) {
+      throw new UnauthorizedException("구글 로그인 정보를 확인할 수 없습니다.");
+    }
+
+    return this.loginWithGoogleIdToken(idToken);
+  }
+
+  private async loginWithGoogleIdToken(idToken: string) {
     let ticket: LoginTicket;
 
     try {
       ticket = await this.googleClient.verifyIdToken({
-        idToken: credential,
+        idToken,
         audience: this.googleClientId,
       });
     } catch {
