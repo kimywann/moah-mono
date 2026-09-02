@@ -5,8 +5,11 @@ import {
 } from "@moah/contracts/schema/job-posting";
 import {
   BadGatewayException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
+  ServiceUnavailableException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -28,6 +31,16 @@ const GEMINI_RESPONSE_SCHEMA = z.object({
     }),
   ),
 });
+
+interface IGeminiErrorResponse {
+  error?: {
+    code?: string;
+  };
+}
+
+const DAILY_EXTRACTION_LIMIT = 5;
+const KOREAN_TIME_OFFSET_MS = 9 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
@@ -118,40 +131,41 @@ export class JobPostingService {
     }));
   }
 
-  async extract(url: string) {
+  async extract(userId: string, url: string) {
+    const dailyUsageCount = await this.prismaService.jobPostingExtraction.count(
+      {
+        where: {
+          userId,
+          createdAt: {
+            gte: this.getDailyUsageStart(),
+          },
+        },
+      },
+    );
+
+    if (dailyUsageCount >= DAILY_EXTRACTION_LIMIT) {
+      throw new HttpException(
+        "일일 URL 분석 횟수를 초과했습니다.",
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const apiKey = this.configService.getOrThrow<string>("GEMINI_API_KEY");
     const apiURL = this.configService.getOrThrow<string>("GEMINI_API_URL");
+    const fallbackApiURL = this.configService.getOrThrow<string>(
+      "GEMINI_FALLBACK_API_URL",
+    );
 
-    const response = await fetch(apiURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `${EXTRACTION_PROMPT}\n\n채용 공고 URL:\n${url}`,
-              },
-            ],
-          },
-        ],
-        // Gemini가 전달된 URL의 페이지 내용을 직접 조회하도록 설정
-        tools: [
-          {
-            url_context: {},
-          },
-        ],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseJsonSchema: z.toJSONSchema(
-            jobPostingExtractionResponseSchema,
-          ),
-        },
-      }),
-    });
+    const primaryResponse = await this.requestExtraction(apiURL, apiKey, url);
+    const response = (await this.isQuotaExceeded(primaryResponse))
+      ? await this.requestExtraction(fallbackApiURL, apiKey, url)
+      : primaryResponse;
+
+    if (await this.isQuotaExceeded(response)) {
+      throw new ServiceUnavailableException(
+        "오늘 AI 분석 요청 한도를 모두 사용했습니다.",
+      );
+    }
 
     if (!response.ok) {
       throw new BadGatewayException("채용 공고 추출 요청에 실패했습니다.");
@@ -190,7 +204,81 @@ export class JobPostingService {
       });
     }
 
+    await this.prismaService.jobPostingExtraction.create({
+      data: { userId },
+    });
+
     return parsedJobPosting.data;
+  }
+
+  async getExtractionUsage(userId: string) {
+    const usedCount = await this.prismaService.jobPostingExtraction.count({
+      where: {
+        userId,
+        createdAt: {
+          gte: this.getDailyUsageStart(),
+        },
+      },
+    });
+
+    return {
+      limit: DAILY_EXTRACTION_LIMIT,
+      remainingCount: Math.max(DAILY_EXTRACTION_LIMIT - usedCount, 0),
+    };
+  }
+
+  private async requestExtraction(apiURL: string, apiKey: string, url: string) {
+    return fetch(apiURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `${EXTRACTION_PROMPT}\n\n채용 공고 URL:\n${url}`,
+              },
+            ],
+          },
+        ],
+        // Gemini가 전달된 URL의 페이지 내용을 직접 조회하도록 설정
+        tools: [
+          {
+            url_context: {},
+          },
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseJsonSchema: z.toJSONSchema(
+            jobPostingExtractionResponseSchema,
+          ),
+        },
+      }),
+    });
+  }
+
+  private async isQuotaExceeded(response: Response) {
+    if (response.status !== 429) {
+      return false;
+    }
+
+    const responseBody = (await response
+      .clone()
+      .json()) as IGeminiErrorResponse;
+
+    return responseBody.error?.code === "quota_exceeded";
+  }
+
+  private getDailyUsageStart() {
+    const now = Date.now();
+
+    return new Date(
+      Math.floor((now + KOREAN_TIME_OFFSET_MS) / DAY_MS) * DAY_MS -
+        KOREAN_TIME_OFFSET_MS,
+    );
   }
 
   async save(userId: string, jobPosting: TJobPostingForm) {

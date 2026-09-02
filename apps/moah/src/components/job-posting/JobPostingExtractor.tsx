@@ -6,8 +6,11 @@ import MHIcon from "@moah/ui/components/MHIcon";
 import { toast } from "@moah/ui/components/MHToaster";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
-import { useState } from "react";
-import { extractJobPosting } from "@/api/job-posting";
+import { useEffect, useState } from "react";
+import {
+  extractJobPosting,
+  getJobPostingExtractionUsage,
+} from "@/api/job-posting";
 import { useAuth } from "@/contexts/AuthContext";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
 
@@ -17,9 +20,30 @@ const JobPostingExtractor = () => {
   const [isExtracting, setIsExtracting] = useState(false);
   const [jobPosting, setJobPosting] = useState<TJobPostingForm | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [remainingExtractionCount, setRemainingExtractionCount] = useState<
+    number | null
+  >(null);
   const [url, setURL] = useState("");
-  const isSubmitDisabled = !url.trim() || isExtracting;
+  const isSubmitDisabled =
+    !url.trim() || isExtracting || remainingExtractionCount === 0;
   const isError = Boolean(errorMessage);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setRemainingExtractionCount(null);
+      return;
+    }
+
+    const loadExtractionUsage = async () => {
+      const response = await getJobPostingExtractionUsage();
+
+      if (response.success && response.data) {
+        setRemainingExtractionCount(response.data.remainingCount);
+      }
+    };
+
+    void loadExtractionUsage();
+  }, [isAuthenticated]);
 
   const handleChangeURL: ChangeEventHandler<HTMLInputElement> = (event) => {
     setURL(event.target.value);
@@ -46,6 +70,11 @@ const JobPostingExtractor = () => {
       return;
     }
 
+    if (!isAuthenticated) {
+      toast.error("로그인 후 채용 공고를 분석할 수 있어요.");
+      return;
+    }
+
     const parsedURL = jobPostingURLSchema.safeParse(trimmedURL);
 
     if (!parsedURL.success) {
@@ -69,6 +98,11 @@ const JobPostingExtractor = () => {
         return;
       }
 
+      if (!response.success && response.error?.message) {
+        setErrorMessage(response.error.message);
+        return;
+      }
+
       if (!response.success || !response.data) {
         throw new Error("채용 공고 추출 요청에 실패했습니다.");
       }
@@ -77,6 +111,9 @@ const JobPostingExtractor = () => {
         ...response.data,
         url: parsedURL.data,
       });
+      setRemainingExtractionCount((count) =>
+        count === null ? null : Math.max(count - 1, 0),
+      );
       setIsModalOpen(true);
     } catch {
       setErrorMessage("채용 공고를 추출하지 못했습니다. 다시 시도해 주세요.");
@@ -104,10 +141,19 @@ const JobPostingExtractor = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2">
-            <p className="display14 flex items-center gap-2 px-4 text-primary">
-              <MHIcon icon="info" size={16} />
-              기업 공식 채용 페이지 링크만 지원합니다.
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="display12 flex items-center gap-2 px-4 text-primary">
+                <MHIcon icon="info" size={16} />
+                채용 플랫폼 링크는 지원하지 않아요.
+              </p>
+              {remainingExtractionCount !== null && (
+                <p className="display12 px-4 text-muted-foreground">
+                  {remainingExtractionCount === 0
+                    ? "오늘 분석 횟수를 모두 사용했어요! 내일 00:00에 다시 이용할 수 있어요."
+                    : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 5회`}
+                </p>
+              )}
+            </div>
             <div
               className={cn(
                 "flex min-h-14 w-full items-end gap-2 rounded-full border border-border bg-background p-2 transition-colors focus-within:border-focus focus-within:ring-1 focus-within:ring-focus",
@@ -120,7 +166,7 @@ const JobPostingExtractor = () => {
                 aria-invalid={isError}
                 inputMode="url"
                 onChange={handleChangeURL}
-                placeholder="채용 공고 URL을 입력해 주세요"
+                placeholder="공식 채용 페이지 URL을 입력해 주세요"
                 type="text"
                 value={url}
               />
@@ -146,6 +192,19 @@ const JobPostingExtractor = () => {
                 </button>
               )}
             </div>
+            {isExtracting && (
+              <output
+                aria-live="polite"
+                className="display14 absolute inset-x-0 top-full mt-2 flex items-center justify-center gap-2 text-muted-foreground"
+              >
+                <MHIcon
+                  className="animate-spin"
+                  icon="loaderCircle"
+                  size={16}
+                />
+                채용 공고 정보를 확인하고 있어요.
+              </output>
+            )}
           </div>
           {errorMessage && (
             <p

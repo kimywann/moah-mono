@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "./sentry";
 import App from "./App";
 import { AuthProvider } from "./contexts/AuthContext";
 
