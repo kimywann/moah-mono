@@ -69,6 +69,11 @@ const JobPostingExtractor = () => {
         return;
       }
 
+      if (!response.success && response.error?.message) {
+        setErrorMessage(response.error.message);
+        return;
+      }
+
       if (!response.success || !response.data) {
         throw new Error("채용 공고 추출 요청에 실패했습니다.");
       }

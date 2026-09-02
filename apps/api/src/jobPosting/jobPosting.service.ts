@@ -7,6 +7,7 @@ import {
   BadGatewayException,
   Inject,
   Injectable,
+  ServiceUnavailableException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -28,6 +29,12 @@ const GEMINI_RESPONSE_SCHEMA = z.object({
     }),
   ),
 });
+
+interface IGeminiErrorResponse {
+  error?: {
+    code?: string;
+  };
+}
 
 const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
@@ -121,37 +128,20 @@ export class JobPostingService {
   async extract(url: string) {
     const apiKey = this.configService.getOrThrow<string>("GEMINI_API_KEY");
     const apiURL = this.configService.getOrThrow<string>("GEMINI_API_URL");
+    const fallbackApiURL = this.configService.getOrThrow<string>(
+      "GEMINI_FALLBACK_API_URL",
+    );
 
-    const response = await fetch(apiURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `${EXTRACTION_PROMPT}\n\n채용 공고 URL:\n${url}`,
-              },
-            ],
-          },
-        ],
-        // Gemini가 전달된 URL의 페이지 내용을 직접 조회하도록 설정
-        tools: [
-          {
-            url_context: {},
-          },
-        ],
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseJsonSchema: z.toJSONSchema(
-            jobPostingExtractionResponseSchema,
-          ),
-        },
-      }),
-    });
+    const primaryResponse = await this.requestExtraction(apiURL, apiKey, url);
+    const response = (await this.isQuotaExceeded(primaryResponse))
+      ? await this.requestExtraction(fallbackApiURL, apiKey, url)
+      : primaryResponse;
+
+    if (await this.isQuotaExceeded(response)) {
+      throw new ServiceUnavailableException(
+        "오늘 AI 분석 요청 한도를 모두 사용했습니다.",
+      );
+    }
 
     if (!response.ok) {
       throw new BadGatewayException("채용 공고 추출 요청에 실패했습니다.");
@@ -191,6 +181,51 @@ export class JobPostingService {
     }
 
     return parsedJobPosting.data;
+  }
+
+  private async requestExtraction(apiURL: string, apiKey: string, url: string) {
+    return fetch(apiURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `${EXTRACTION_PROMPT}\n\n채용 공고 URL:\n${url}`,
+              },
+            ],
+          },
+        ],
+        // Gemini가 전달된 URL의 페이지 내용을 직접 조회하도록 설정
+        tools: [
+          {
+            url_context: {},
+          },
+        ],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseJsonSchema: z.toJSONSchema(
+            jobPostingExtractionResponseSchema,
+          ),
+        },
+      }),
+    });
+  }
+
+  private async isQuotaExceeded(response: Response) {
+    if (response.status !== 429) {
+      return false;
+    }
+
+    const responseBody = (await response
+      .clone()
+      .json()) as IGeminiErrorResponse;
+
+    return responseBody.error?.code === "quota_exceeded";
   }
 
   async save(userId: string, jobPosting: TJobPostingForm) {
