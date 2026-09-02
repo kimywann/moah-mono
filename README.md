@@ -2,6 +2,9 @@
 
 취업 준비생이 지원 현황을 한곳에서 관리할 수 있는 서비스입니다.   https://moah.io.kr
 
+![홈 화면](./docs/home.png)
+![지원 현황 목록](./docs/application.png)
+
 ## 주요 기능
 
 - Gemini Flash 기반 채용 공고 URL 정보 추출
