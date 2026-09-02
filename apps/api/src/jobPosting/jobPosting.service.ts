@@ -5,6 +5,8 @@ import {
 } from "@moah/contracts/schema/job-posting";
 import {
   BadGatewayException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   ServiceUnavailableException,
@@ -35,6 +37,10 @@ interface IGeminiErrorResponse {
     code?: string;
   };
 }
+
+const DAILY_EXTRACTION_LIMIT = 5;
+const KOREAN_TIME_OFFSET_MS = 9 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 확인하고 정보를 추출하세요.
 
@@ -125,7 +131,25 @@ export class JobPostingService {
     }));
   }
 
-  async extract(url: string) {
+  async extract(userId: string, url: string) {
+    const dailyUsageCount = await this.prismaService.jobPostingExtraction.count(
+      {
+        where: {
+          userId,
+          createdAt: {
+            gte: this.getDailyUsageStart(),
+          },
+        },
+      },
+    );
+
+    if (dailyUsageCount >= DAILY_EXTRACTION_LIMIT) {
+      throw new HttpException(
+        "일일 URL 분석 횟수를 초과했습니다.",
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const apiKey = this.configService.getOrThrow<string>("GEMINI_API_KEY");
     const apiURL = this.configService.getOrThrow<string>("GEMINI_API_URL");
     const fallbackApiURL = this.configService.getOrThrow<string>(
@@ -180,7 +204,27 @@ export class JobPostingService {
       });
     }
 
+    await this.prismaService.jobPostingExtraction.create({
+      data: { userId },
+    });
+
     return parsedJobPosting.data;
+  }
+
+  async getExtractionUsage(userId: string) {
+    const usedCount = await this.prismaService.jobPostingExtraction.count({
+      where: {
+        userId,
+        createdAt: {
+          gte: this.getDailyUsageStart(),
+        },
+      },
+    });
+
+    return {
+      limit: DAILY_EXTRACTION_LIMIT,
+      remainingCount: Math.max(DAILY_EXTRACTION_LIMIT - usedCount, 0),
+    };
   }
 
   private async requestExtraction(apiURL: string, apiKey: string, url: string) {
@@ -226,6 +270,15 @@ export class JobPostingService {
       .json()) as IGeminiErrorResponse;
 
     return responseBody.error?.code === "quota_exceeded";
+  }
+
+  private getDailyUsageStart() {
+    const now = Date.now();
+
+    return new Date(
+      Math.floor((now + KOREAN_TIME_OFFSET_MS) / DAY_MS) * DAY_MS -
+        KOREAN_TIME_OFFSET_MS,
+    );
   }
 
   async save(userId: string, jobPosting: TJobPostingForm) {

@@ -18,6 +18,7 @@ model User {
   updatedAt    DateTime      @updatedAt
   sessions     Session[]
   applications Application[]
+  jobPostingExtractions JobPostingExtraction[]
 
   @@map("users")
 }
@@ -90,6 +91,17 @@ model JobPosting {
   updatedAt    DateTime               @updatedAt
 
   @@map("job_postings")
+}
+
+model JobPostingExtraction {
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("job_posting_extractions")
 }
 
 model Session {

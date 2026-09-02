@@ -23,3 +23,8 @@ export interface ISaveJobPostingResponse {
   jobPostingId: string;
   stage: TApplicationStage;
 }
+
+export interface IJobPostingExtractionUsage {
+  limit: number;
+  remainingCount: number;
+}

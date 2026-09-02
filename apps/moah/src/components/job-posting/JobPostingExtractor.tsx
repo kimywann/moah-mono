@@ -6,8 +6,11 @@ import MHIcon from "@moah/ui/components/MHIcon";
 import { toast } from "@moah/ui/components/MHToaster";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
-import { useState } from "react";
-import { extractJobPosting } from "@/api/job-posting";
+import { useEffect, useState } from "react";
+import {
+  extractJobPosting,
+  getJobPostingExtractionUsage,
+} from "@/api/job-posting";
 import { useAuth } from "@/contexts/AuthContext";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
 
@@ -17,9 +20,29 @@ const JobPostingExtractor = () => {
   const [isExtracting, setIsExtracting] = useState(false);
   const [jobPosting, setJobPosting] = useState<TJobPostingForm | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [remainingExtractionCount, setRemainingExtractionCount] = useState<
+    number | null
+  >(null);
   const [url, setURL] = useState("");
   const isSubmitDisabled = !url.trim() || isExtracting;
   const isError = Boolean(errorMessage);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setRemainingExtractionCount(null);
+      return;
+    }
+
+    const loadExtractionUsage = async () => {
+      const response = await getJobPostingExtractionUsage();
+
+      if (response.success && response.data) {
+        setRemainingExtractionCount(response.data.remainingCount);
+      }
+    };
+
+    void loadExtractionUsage();
+  }, [isAuthenticated]);
 
   const handleChangeURL: ChangeEventHandler<HTMLInputElement> = (event) => {
     setURL(event.target.value);
@@ -43,6 +66,11 @@ const JobPostingExtractor = () => {
     const trimmedURL = url.trim();
 
     if (!trimmedURL) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      toast.error("로그인 후 채용 공고를 분석할 수 있어요.");
       return;
     }
 
@@ -82,6 +110,9 @@ const JobPostingExtractor = () => {
         ...response.data,
         url: parsedURL.data,
       });
+      setRemainingExtractionCount((count) =>
+        count === null ? null : Math.max(count - 1, 0),
+      );
       setIsModalOpen(true);
     } catch {
       setErrorMessage("채용 공고를 추출하지 못했습니다. 다시 시도해 주세요.");
@@ -109,10 +140,17 @@ const JobPostingExtractor = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2">
-            <p className="display14 flex items-center gap-2 px-4 text-primary">
-              <MHIcon icon="info" size={16} />
-              기업 공식 채용 페이지 링크만 지원합니다.
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="display12 flex items-center gap-2 px-4 text-primary">
+                <MHIcon icon="info" size={16} />
+                공식 채용 페이지 링크만 지원합니다.
+              </p>
+              {remainingExtractionCount !== null && (
+                <p className="display12 px-4 text-muted-foreground">
+                  오늘 남은 분석 횟수 {remainingExtractionCount} / 5회
+                </p>
+              )}
+            </div>
             <div
               className={cn(
                 "flex min-h-14 w-full items-end gap-2 rounded-full border border-border bg-background p-2 transition-colors focus-within:border-focus focus-within:ring-1 focus-within:ring-focus",
