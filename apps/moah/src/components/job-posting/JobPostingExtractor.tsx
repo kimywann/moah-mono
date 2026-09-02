@@ -24,7 +24,8 @@ const JobPostingExtractor = () => {
     number | null
   >(null);
   const [url, setURL] = useState("");
-  const isSubmitDisabled = !url.trim() || isExtracting;
+  const isSubmitDisabled =
+    !url.trim() || isExtracting || remainingExtractionCount === 0;
   const isError = Boolean(errorMessage);
 
   useEffect(() => {
