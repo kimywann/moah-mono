@@ -144,7 +144,7 @@ const JobPostingExtractor = () => {
             <div className="flex items-center justify-between gap-2">
               <p className="display12 flex items-center gap-2 px-4 text-primary">
                 <MHIcon icon="info" size={16} />
-                공식 채용 페이지 링크만 지원합니다.
+                채용 플랫폼 링크는 지원하지 않아요.
               </p>
               {remainingExtractionCount !== null && (
                 <p className="display12 px-4 text-muted-foreground">
@@ -166,7 +166,7 @@ const JobPostingExtractor = () => {
                 aria-invalid={isError}
                 inputMode="url"
                 onChange={handleChangeURL}
-                placeholder="채용 공고 URL을 입력해 주세요"
+                placeholder="공식 채용 페이지 URL을 입력해 주세요"
                 type="text"
                 value={url}
               />
