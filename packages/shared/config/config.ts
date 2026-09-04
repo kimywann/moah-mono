@@ -1,6 +1,6 @@
 export type TEnv = "local" | "opt";
 
-export const ENV: TEnv = "local";
+export const ENV: TEnv = import.meta.env.DEV ? "local" : "opt";
 
 export const SERVER_LIST: Record<TEnv, string> = {
   local: "http://localhost:3001",
