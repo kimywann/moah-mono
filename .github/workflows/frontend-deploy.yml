@@ -35,6 +35,14 @@ jobs:
       - name: Build frontend
         run: pnpm --filter moah build
 
+      - name: Check GitHub OIDC information
+        run: |
+          echo "repository=${GITHUB_REPOSITORY}"
+          echo "owner_id=${GITHUB_REPOSITORY_OWNER_ID}"
+          echo "repository_id=${GITHUB_REPOSITORY_ID}"
+          echo "ref=${GITHUB_REF}"
+          echo "event=${GITHUB_EVENT_NAME}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
