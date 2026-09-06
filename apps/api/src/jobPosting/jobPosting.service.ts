@@ -77,14 +77,16 @@ const EXTRACTION_PROMPT = `주어진 채용 공고 URL의 페이지 내용을 �
   - 서비스 기획자, 사업 기획자, 운영 기획자 → "기획"
   - 허용 목록에 해당하는 직무가 없으면 "기타"를 반환합니다.
 
-  [경력 연차]
+  [경력]
   - minYears와 maxYears에는 지원 가능한 경력 연차 범위를 정수로 반환합니다.
-  - 신입, 신입 가능 → minYears: 0, maxYears: 0
-  - 경력무관, 신입·경력, 경력 제한 없음 → minYears: 0, maxYears: null
+  - 신입 → minYears: 0, maxYears: 0
+  - 경력무관, 경력 제한 없음 → minYears: 0, maxYears: null
   - "N년" → minYears: N, maxYears: N
   - "N~M년" → minYears: N, maxYears: M
   - "N년 이상" → minYears: N, maxYears: null
   - "N년 이하" → minYears: 0, maxYears: N
+  - "N년 미만" → minYears: 0, maxYears: N - 1
+  - 1~2년차 이상 또는 그에 준하는 실력은 minYears: 1, maxYears: null
   - 경력 조건을 확인할 수 없거나 해석이 모호하면 두 값 모두 null로 반환합니다.
   - 연차가 아닌 경력 표현은 추측하지 마세요.
 
