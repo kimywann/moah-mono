@@ -8,21 +8,7 @@ const LoginPage = () => {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden p-6">
-      <video
-        aria-hidden
-        autoPlay
-        className="absolute inset-0 size-full object-cover"
-        loop
-        muted
-        playsInline
-      >
-        <source
-          src="https://dmhp5sbolwl0j.cloudfront.net/videos/login-background.mp4"
-          type="video/mp4"
-        />
-      </video>
-
-      <section className="relative z-10 w-full max-w-120 rounded-medium bg-background/95 p-8 shadow-xs backdrop-blur-sm">
+      <section className="relative z-10 w-full max-w-120 rounded-medium border border-border p-8 shadow-xs">
         <button
           aria-label="이전 페이지로"
           className="-ml-3 flex size-10 cursor-pointer items-center justify-center rounded-small focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
@@ -32,10 +18,15 @@ const LoginPage = () => {
           <MHIcon icon="arrowLeft" size={30} />
         </button>
 
-        <div className="mt-4">
+        <div className="mt-2">
           <h1 className="bold display28 text-center">로그인</h1>
-          <p className="display16 medium mt-3 text-center text-muted-foreground">
-            소셜 계정으로 간편하게 시작하세요
+          <p className="display16 medium mt-8 text-center text-muted-foreground">
+            채용 공고 URL 하나로 공고 정보를 불러와
+            <br />
+            지원 목록에 바로 저장하세요.
+          </p>
+          <p className="display14 medium mt-2 text-center text-primary">
+            로그인하면 매일 10회 이용할 수 있어요!
           </p>
         </div>
 
@@ -47,7 +38,7 @@ const LoginPage = () => {
             }
             size="large"
           >
-            Google로 로그인하기
+            Google로 빠르게 로그인하기
           </MHButton>
         </div>
       </section>

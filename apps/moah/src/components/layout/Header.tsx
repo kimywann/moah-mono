@@ -1,11 +1,13 @@
+import { API_BASE_URL } from "@moah/shared/config/config";
+import MHButton from "@moah/ui/components/MHButton";
 import MHModal from "@moah/ui/components/MHModal";
 import { toast } from "@moah/ui/components/MHToaster";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import { useAuth } from "@/contexts/AuthContext";
 
 const AUTH_BUTTON_CLASS =
-  "medium semibold inline-flex h-11 items-center justify-center whitespace-nowrap rounded-tiny bg-primary px-4 text-white leading-body transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2";
+  "medium semibold inline-flex h-11 items-center justify-center whitespace-nowrap rounded-tiny bg-primary px-4 text-white leading-body transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 cursor-pointer";
 const MENU_ITEM_CLASS =
   "display14 regular flex w-full cursor-pointer rounded-tiny px-3 py-2 text-left text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -13,7 +15,37 @@ const Header = () => {
   const { isAuthenticated, user, handleLogout, handleWithdraw } = useAuth();
   const navigate = useNavigate();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isLoginPopoverOpen, setIsLoginPopoverOpen] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const loginPopoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isLoginPopoverOpen) {
+      return;
+    }
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (
+        loginPopoverRef.current &&
+        !loginPopoverRef.current.contains(event.target as Node)
+      ) {
+        setIsLoginPopoverOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsLoginPopoverOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleDocumentClick);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleDocumentClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isLoginPopoverOpen]);
 
   const handleClickLogout = async () => {
     setIsProfileMenuOpen(false);
@@ -106,9 +138,43 @@ const Header = () => {
             </div>
           </div>
         ) : (
-          <Link className={`ml-auto ${AUTH_BUTTON_CLASS}`} to="/login">
-            로그인
-          </Link>
+          <div className="relative ml-auto" ref={loginPopoverRef}>
+            <button
+              aria-expanded={isLoginPopoverOpen}
+              aria-haspopup="dialog"
+              className={AUTH_BUTTON_CLASS}
+              onClick={() => setIsLoginPopoverOpen((isOpen) => !isOpen)}
+              type="button"
+            >
+              로그인
+            </button>
+
+            {isLoginPopoverOpen && (
+              <div
+                aria-label="로그인"
+                className="absolute top-full right-0 z-50 mt-2 w-80 rounded-medium border border-neutral10 bg-background p-6 text-center shadow-sm"
+                role="dialog"
+              >
+                <p className="display14 regular leading-body">
+                  채용 공고 URL 하나로 공고 정보를 불러와
+                  <br />
+                  지원 목록에 바로 저장하세요.
+                </p>
+                <p className="display12 medium mt-2 text-primary">
+                  로그인하면 매일 10회 이용할 수 있어요!
+                </p>
+                <MHButton
+                  className="mt-3"
+                  isFullWidth
+                  onClick={() =>
+                    window.location.assign(`${API_BASE_URL}/auth/google`)
+                  }
+                >
+                  Google로 빠르게 로그인하기
+                </MHButton>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </header>

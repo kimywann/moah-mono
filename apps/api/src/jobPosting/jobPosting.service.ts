@@ -39,7 +39,7 @@ interface IGeminiErrorResponse {
   };
 }
 
-const DAILY_EXTRACTION_LIMIT = 5;
+const DAILY_EXTRACTION_LIMIT = 10;
 const KOREAN_TIME_OFFSET_MS = 9 * 60 * 60 * 1000;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
