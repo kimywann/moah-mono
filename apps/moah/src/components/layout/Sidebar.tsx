@@ -7,7 +7,7 @@ const NAV_CLASS =
 
 const Sidebar = () => {
   return (
-    <aside className="flex w-30 shrink-0 flex-col border-neutral10 border-r">
+    <aside className="sticky top-0 flex h-screen w-30 shrink-0 flex-col border-neutral10 border-r">
       <div className="flex items-center justify-center px-5 py-6">
         <Link to="/">
           <img

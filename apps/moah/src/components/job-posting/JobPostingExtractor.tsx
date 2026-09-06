@@ -150,7 +150,7 @@ const JobPostingExtractor = () => {
                 <p className="display12 px-4 text-muted-foreground">
                   {remainingExtractionCount === 0
                     ? "오늘 분석 횟수를 모두 사용했어요! 내일 00:00에 다시 이용할 수 있어요."
-                    : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 5회`}
+                    : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 10회`}
                 </p>
               )}
             </div>

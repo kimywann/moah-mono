@@ -13,12 +13,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ReactNode, useEffect, useState } from "react";
 import { getApplication, updateApplication } from "@/api/application";
 import { DEADLINE_TYPE_LABEL } from "@/components/applications/form/application-register.form";
-import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplication,
   TApplicationStage,
   TJobPostingDeadlineType,
 } from "@/shared/type/application";
+import ExperienceField from "./ExperienceField";
 
 interface IApplicationDetailModalProps {
   applicationId: string;
@@ -260,35 +260,20 @@ const ApplicationDetailContent = ({
       />
     </ApplicationDetailField>
     <ApplicationDetailField label="경력">
-      <div className="flex gap-2">
-        <MHInput
-          isFullWidth
-          onChange={(event) => onChange("minYears", event.target.value)}
-          placeholder="최소 경력"
-          type="number"
-          value={form.minYears}
-        />
-        <MHInput
-          isFullWidth
-          onChange={(event) => onChange("maxYears", event.target.value)}
-          placeholder="최대 경력"
-          type="number"
-          value={form.maxYears}
-        />
-      </div>
+      <ExperienceField
+        maxYears={form.maxYears}
+        minYears={form.minYears}
+        onChange={(range) => {
+          onChange("maxYears", range.maxYears);
+          onChange("minYears", range.minYears);
+        }}
+      />
     </ApplicationDetailField>
     <ApplicationDetailField label="근무 지역">
       <MHInput
         isFullWidth
         onChange={(event) => onChange("location", event.target.value)}
         value={form.location}
-      />
-    </ApplicationDetailField>
-    <ApplicationDetailField label="채용 플랫폼">
-      <MHInput
-        isFullWidth
-        readOnly
-        value={PLATFORM_LABEL[application.platform]}
       />
     </ApplicationDetailField>
     <ApplicationDetailField label="지원 단계">

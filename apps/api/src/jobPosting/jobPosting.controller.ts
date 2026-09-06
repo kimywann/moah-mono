@@ -67,7 +67,7 @@ export class JobPostingController {
           success: false,
           error: {
             code: "DAILY_EXTRACTION_LIMIT_EXCEEDED",
-            message: "오늘 URL 분석 5회를 모두 사용했어요.",
+            message: "오늘 URL 분석 10회를 모두 사용했어요.",
           },
         };
       }
