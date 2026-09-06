@@ -13,22 +13,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ReactNode, useEffect, useState } from "react";
 import { getApplication, updateApplication } from "@/api/application";
 import { DEADLINE_TYPE_LABEL } from "@/components/applications/form/application-register.form";
-import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplication,
   TApplicationStage,
   TJobPostingDeadlineType,
 } from "@/shared/type/application";
+import ExperienceRangeSlider, {
+  type IExperienceRange,
+  MAX_EXPERIENCE_YEARS,
+} from "./ExperienceRangeSlider";
 
 interface IApplicationDetailModalProps {
   applicationId: string;
   onClose: () => void;
 }
 
+type TExperienceType = "NEW_GRAD" | "NO_LIMIT" | "CUSTOM";
+
 interface IApplicationEditForm {
   companyName: string;
   deadline: string;
   deadlineType: TJobPostingDeadlineType;
+  experienceType: TExperienceType;
   hiringProcess: string;
   location: string;
   maxYears: string;
@@ -37,6 +43,12 @@ interface IApplicationEditForm {
   stage: TApplicationStage;
   techStacks: string;
 }
+
+const EXPERIENCE_TYPE_OPTIONS = [
+  { label: "신입", value: "NEW_GRAD" },
+  { label: "경력 무관", value: "NO_LIMIT" },
+  { label: "직접 입력", value: "CUSTOM" },
+] as const;
 
 const STAGE_LABEL: Record<TApplicationStage, string> = {
   READY: "지원 준비 중",
@@ -55,10 +67,36 @@ const splitValues = (value: string) =>
 const toNullableNumber = (value: string) =>
   value.trim() ? Number(value) : null;
 
+const toSliderValue = (value: string, fallback: number) => {
+  const parsedValue = Number(value);
+
+  if (!Number.isFinite(parsedValue)) {
+    return fallback;
+  }
+
+  return Math.min(Math.max(parsedValue, 0), MAX_EXPERIENCE_YEARS);
+};
+
+const getExperienceType = (
+  minYears: number | null,
+  maxYears: number | null,
+): TExperienceType => {
+  if (minYears === 0 && maxYears === 0) {
+    return "NEW_GRAD";
+  }
+
+  if (minYears === 0 && maxYears === null) {
+    return "NO_LIMIT";
+  }
+
+  return "CUSTOM";
+};
+
 const toEditForm = (application: IApplication): IApplicationEditForm => ({
   companyName: application.companyName ?? "",
   deadline: application.deadline?.slice(0, 10) ?? "",
   deadlineType: application.deadlineType,
+  experienceType: getExperienceType(application.minYears, application.maxYears),
   hiringProcess: application.hiringProcess.join(", "),
   location: application.location ?? "",
   maxYears: application.maxYears?.toString() ?? "",
@@ -119,6 +157,58 @@ const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
     );
   };
 
+  const handleExperienceTypeChange = (experienceType: TExperienceType) => {
+    setForm((previous) => {
+      if (!previous) {
+        return previous;
+      }
+
+      if (experienceType === "NEW_GRAD") {
+        return {
+          ...previous,
+          experienceType,
+          maxYears: "0",
+          minYears: "0",
+        };
+      }
+
+      if (experienceType === "NO_LIMIT") {
+        return {
+          ...previous,
+          experienceType,
+          maxYears: "",
+          minYears: "0",
+        };
+      }
+
+      return {
+        ...previous,
+        experienceType,
+        maxYears:
+          previous.experienceType === "CUSTOM"
+            ? previous.maxYears
+            : MAX_EXPERIENCE_YEARS.toString(),
+        minYears:
+          previous.experienceType === "CUSTOM" ? previous.minYears : "0",
+      };
+    });
+  };
+
+  const handleExperienceRangeChange = ({
+    maxYears,
+    minYears,
+  }: IExperienceRange) => {
+    setForm((previous) =>
+      previous
+        ? {
+            ...previous,
+            maxYears: maxYears.toString(),
+            minYears: minYears.toString(),
+          }
+        : previous,
+    );
+  };
+
   const handleSubmit = () => {
     if (!form) return;
 
@@ -130,14 +220,22 @@ const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
       return;
     }
 
+    const minYears = toNullableNumber(form.minYears);
+    const parsedMaxYears = toNullableNumber(form.maxYears);
+    const maxYears =
+      form.experienceType === "CUSTOM" &&
+      parsedMaxYears === MAX_EXPERIENCE_YEARS
+        ? null
+        : parsedMaxYears;
+
     updateApplicationMutation.mutate({
       companyName: form.companyName.trim() || null,
       deadline: form.deadlineType === "DATE" ? form.deadline || null : null,
       deadlineType: form.deadlineType,
       hiringProcess: splitValues(form.hiringProcess),
       location: form.location.trim() || null,
-      maxYears: toNullableNumber(form.maxYears),
-      minYears: toNullableNumber(form.minYears),
+      maxYears,
+      minYears,
       position: form.position || null,
       stage: form.stage,
       techStacks: splitValues(form.techStacks),
@@ -191,6 +289,8 @@ const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
               application={applicationQuery.data}
               form={form}
               onChange={handleFormChange}
+              onExperienceRangeChange={handleExperienceRangeChange}
+              onExperienceTypeChange={handleExperienceTypeChange}
             />
           )}
         </div>
@@ -226,12 +326,16 @@ interface IApplicationDetailContentProps {
     key: TKey,
     value: IApplicationEditForm[TKey],
   ) => void;
+  onExperienceRangeChange: (range: IExperienceRange) => void;
+  onExperienceTypeChange: (value: TExperienceType) => void;
 }
 
 const ApplicationDetailContent = ({
   application,
   form,
   onChange,
+  onExperienceRangeChange,
+  onExperienceTypeChange,
 }: IApplicationDetailContentProps) => (
   <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
     <ApplicationDetailField label="기업명">
@@ -260,21 +364,27 @@ const ApplicationDetailContent = ({
       />
     </ApplicationDetailField>
     <ApplicationDetailField label="경력">
-      <div className="flex gap-2">
-        <MHInput
+      <div className="flex flex-col gap-2">
+        <MHSelect
           isFullWidth
-          onChange={(event) => onChange("minYears", event.target.value)}
-          placeholder="최소 경력"
-          type="number"
-          value={form.minYears}
+          onValueChange={(value) =>
+            onExperienceTypeChange(value as TExperienceType)
+          }
+          options={EXPERIENCE_TYPE_OPTIONS.map((option) => ({
+            label: option.label,
+            value: option.value,
+          }))}
+          placeholder="경력을 선택해 주세요"
+          value={form.experienceType}
+          variant="field"
         />
-        <MHInput
-          isFullWidth
-          onChange={(event) => onChange("maxYears", event.target.value)}
-          placeholder="최대 경력"
-          type="number"
-          value={form.maxYears}
-        />
+        {form.experienceType === "CUSTOM" && (
+          <ExperienceRangeSlider
+            maxYears={toSliderValue(form.maxYears, MAX_EXPERIENCE_YEARS)}
+            minYears={toSliderValue(form.minYears, 0)}
+            onChange={onExperienceRangeChange}
+          />
+        )}
       </div>
     </ApplicationDetailField>
     <ApplicationDetailField label="근무 지역">
@@ -282,13 +392,6 @@ const ApplicationDetailContent = ({
         isFullWidth
         onChange={(event) => onChange("location", event.target.value)}
         value={form.location}
-      />
-    </ApplicationDetailField>
-    <ApplicationDetailField label="채용 플랫폼">
-      <MHInput
-        isFullWidth
-        readOnly
-        value={PLATFORM_LABEL[application.platform]}
       />
     </ApplicationDetailField>
     <ApplicationDetailField label="지원 단계">
