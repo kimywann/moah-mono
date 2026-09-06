@@ -13,6 +13,7 @@ import { type ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { createApplication } from "@/api/application";
+import ExperienceField from "@/components/applications/ExperienceField";
 import {
   DEADLINE_TYPE_LABEL,
   INITIAL_APPLICATION_REGISTER_FORM,
@@ -42,6 +43,8 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
     resolver: zodResolver(applicationRegisterFormSchema),
   });
   const deadlineType = watch("deadlineType");
+  const minYears = watch("minYears");
+  const maxYears = watch("maxYears");
 
   const handleSave = async (form: TApplicationRegisterForm) => {
     const payload = toJobPostingForm(form);
@@ -229,46 +232,22 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                   </RegistrationField>
                 )}
               />
-              <Controller
-                control={control}
-                name="minYears"
-                render={({ field }) => (
-                  <RegistrationField
-                    error={errors.minYears?.message}
-                    label="최소 경력"
-                  >
-                    <MHInput
-                      isError={Boolean(errors.minYears)}
-                      isFullWidth
-                      name={field.name}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                      type="number"
-                      value={field.value}
-                    />
-                  </RegistrationField>
-                )}
-              />
-              <Controller
-                control={control}
-                name="maxYears"
-                render={({ field }) => (
-                  <RegistrationField
-                    error={errors.maxYears?.message}
-                    label="최대 경력"
-                  >
-                    <MHInput
-                      isError={Boolean(errors.maxYears)}
-                      isFullWidth
-                      name={field.name}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                      type="number"
-                      value={field.value}
-                    />
-                  </RegistrationField>
-                )}
-              />
+              <RegistrationField className="sm:col-span-2" label="경력">
+                <ExperienceField
+                  maxYears={maxYears}
+                  minYears={minYears}
+                  onChange={(range) => {
+                    setValue("minYears", range.minYears, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    });
+                    setValue("maxYears", range.maxYears, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    });
+                  }}
+                />
+              </RegistrationField>
               <Controller
                 control={control}
                 name="deadlineType"

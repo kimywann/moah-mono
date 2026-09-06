@@ -11,11 +11,9 @@ import type {
   SortingState,
 } from "@tanstack/react-table";
 import { STAGE_DISPLAY } from "@/shared/constants/application-stage";
-import { PLATFORM_LABEL } from "@/shared/constants/platform";
 import type {
   IApplicationList,
   TApplicationStage,
-  TJobPostingPlatform,
 } from "@/shared/type/application";
 import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
 
@@ -120,17 +118,6 @@ const createColumns = (
     cell: ({ getValue }) => (
       <span className="regular block truncate">
         {getValue<string | null>() ?? "제목 미정"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "platform",
-    enableSorting: false,
-    header: "플랫폼",
-    size: 100,
-    cell: ({ getValue }) => (
-      <span className="regular">
-        {PLATFORM_LABEL[getValue<TJobPostingPlatform>()]}
       </span>
     ),
   },
