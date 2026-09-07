@@ -70,6 +70,21 @@ export class ResumeController {
     };
   }
 
+  @Get(":resumeId/download-url")
+  async createDownloadUrl(
+    @Param("resumeId") resumeId: string,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.resumeService.createDownloadUrl(user.id, resumeId),
+    };
+  }
+
   @Delete(":resumeId")
   async deleteResume(
     @Param("resumeId") resumeId: string,

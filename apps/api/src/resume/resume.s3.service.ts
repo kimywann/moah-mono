@@ -14,6 +14,7 @@ import { ConfigService } from "@nestjs/config";
 
 const UPLOAD_URL_EXPIRES_IN_SECONDS = 60 * 10;
 const PREVIEW_URL_EXPIRES_IN_SECONDS = 60;
+const DOWNLOAD_URL_EXPIRES_IN_SECONDS = 60;
 
 export interface IResumeUploadUrl {
   key: string;
@@ -23,6 +24,11 @@ export interface IResumeUploadUrl {
 
 export interface IResumePreviewUrl {
   previewUrl: string;
+  expiresIn: number;
+}
+
+export interface IResumeDownloadUrl {
+  downloadUrl: string;
   expiresIn: number;
 }
 
@@ -113,6 +119,27 @@ export class ResumeS3Service {
     return {
       previewUrl,
       expiresIn: PREVIEW_URL_EXPIRES_IN_SECONDS,
+    };
+  }
+
+  async createDownloadUrl(
+    s3Key: string,
+    contentType: string,
+    fileName: string,
+  ): Promise<IResumeDownloadUrl> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: s3Key,
+      ResponseContentDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
+      ResponseContentType: contentType,
+    });
+    const downloadUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: DOWNLOAD_URL_EXPIRES_IN_SECONDS,
+    });
+
+    return {
+      downloadUrl,
+      expiresIn: DOWNLOAD_URL_EXPIRES_IN_SECONDS,
     };
   }
 

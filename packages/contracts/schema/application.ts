@@ -23,4 +23,11 @@ export const applicationUpdateSchema = z
     message: "수정할 항목을 하나 이상 입력해 주세요.",
   });
 
+export const applicationAttachmentsUpdateSchema = z.object({
+  resumeIds: z.array(z.uuid()).max(4),
+});
+
 export type TApplicationUpdate = z.infer<typeof applicationUpdateSchema>;
+export type TApplicationAttachmentsUpdate = z.infer<
+  typeof applicationAttachmentsUpdateSchema
+>;

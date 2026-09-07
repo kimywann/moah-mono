@@ -1,4 +1,7 @@
-import { applicationUpdateSchema } from "@moah/contracts/schema/application";
+import {
+  applicationAttachmentsUpdateSchema,
+  applicationUpdateSchema,
+} from "@moah/contracts/schema/application";
 import { jobPostingFormSchema } from "@moah/contracts/schema/job-posting";
 import {
   BadRequestException,
@@ -11,6 +14,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from "@nestjs/common";
 import { AuthService } from "../auth/auth.service";
 import { getJobPostingPlatform } from "../common/utils/utils";
@@ -131,6 +135,32 @@ export class ApplicationsController {
     return {
       success: true,
       data: application,
+    };
+  }
+
+  @Put(":id/attachments")
+  async updateAttachments(
+    @Param("id") applicationId: string,
+    @Body() body: unknown,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const request = applicationAttachmentsUpdateSchema.safeParse(body);
+
+    if (!request.success) {
+      throw new BadRequestException("연결할 파일을 확인해 주세요.");
+    }
+
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.applicationsService.updateAttachments(
+        user.id,
+        applicationId,
+        request.data.resumeIds,
+      ),
     };
   }
 

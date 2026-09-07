@@ -1,6 +1,7 @@
 import type { TApplicationUpdate } from "@moah/contracts/schema/application";
 import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -22,6 +23,18 @@ const APPLICATION_LIST_SELECT = {
   location: true,
   deadline: true,
   deadlineType: true,
+  attachments: {
+    orderBy: { createdAt: "asc" },
+    select: {
+      resume: {
+        select: {
+          id: true,
+          name: true,
+          resumeType: true,
+        },
+      },
+    },
+  },
 } as const;
 
 const APPLICATION_SELECT = {
@@ -29,6 +42,21 @@ const APPLICATION_SELECT = {
   hiringProcess: true,
   techStacks: true,
 } as const;
+
+const toApplicationResponse = <
+  TApplication extends {
+    attachments: { resume: { id: string; name: string; resumeType: string } }[];
+  },
+>(
+  application: TApplication,
+) => {
+  const { attachments, ...applicationData } = application;
+
+  return {
+    ...applicationData,
+    attachments: attachments.map(({ resume }) => resume),
+  };
+};
 
 @Injectable()
 export class ApplicationsService {
@@ -43,7 +71,7 @@ export class ApplicationsService {
       select: APPLICATION_LIST_SELECT,
     });
 
-    return applications;
+    return applications.map(toApplicationResponse);
   }
 
   async findOneByUserId(userId: string, applicationId: string) {
@@ -59,7 +87,7 @@ export class ApplicationsService {
       throw new NotFoundException("지원 정보를 찾을 수 없습니다.");
     }
 
-    return application;
+    return toApplicationResponse(application);
   }
 
   async create(
@@ -144,10 +172,63 @@ export class ApplicationsService {
           }),
     };
 
-    return this.prismaService.application.update({
+    const updatedApplication = await this.prismaService.application.update({
       where: { id: applicationId },
       data,
       select: APPLICATION_SELECT,
     });
+
+    return toApplicationResponse(updatedApplication);
+  }
+
+  async updateAttachments(
+    userId: string,
+    applicationId: string,
+    resumeIds: string[],
+  ) {
+    const uniqueResumeIds = [...new Set(resumeIds)];
+    const [application, resumeCount] = await Promise.all([
+      this.prismaService.application.findFirst({
+        where: {
+          id: applicationId,
+          userId,
+        },
+        select: { id: true },
+      }),
+      this.prismaService.resume.count({
+        where: {
+          id: { in: uniqueResumeIds },
+          userId,
+          status: "READY",
+        },
+      }),
+    ]);
+
+    if (!application) {
+      throw new NotFoundException("지원 정보를 찾을 수 없습니다.");
+    }
+
+    if (resumeCount !== uniqueResumeIds.length) {
+      throw new BadRequestException("연결할 파일을 확인해 주세요.");
+    }
+
+    await this.prismaService.$transaction(async (transaction) => {
+      await transaction.applicationAttachment.deleteMany({
+        where: { applicationId },
+      });
+
+      if (uniqueResumeIds.length === 0) {
+        return;
+      }
+
+      await transaction.applicationAttachment.createMany({
+        data: uniqueResumeIds.map((resumeId) => ({
+          applicationId,
+          resumeId,
+        })),
+      });
+    });
+
+    return { resumeIds: uniqueResumeIds };
   }
 }

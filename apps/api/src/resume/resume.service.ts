@@ -129,12 +129,24 @@ export class ResumeService {
         fileFormat: true,
         resumeType: true,
         createdAt: true,
+        attachments: {
+          orderBy: { createdAt: "asc" },
+          select: {
+            application: {
+              select: {
+                id: true,
+                companyName: true,
+                title: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    return resumes.map((resume) => ({
+    return resumes.map(({ attachments, ...resume }) => ({
       ...resume,
-      linkedApplications: [],
+      linkedApplications: attachments.map(({ application }) => application),
     }));
   }
 
@@ -217,6 +229,31 @@ export class ResumeService {
     return this.resumeS3Service.createPreviewUrl(
       resume.s3Key,
       resume.contentType,
+    );
+  }
+
+  async createDownloadUrl(userId: string, resumeId: string) {
+    const resume = await this.prismaService.resume.findFirst({
+      where: {
+        id: resumeId,
+        status: "READY",
+        userId,
+      },
+      select: {
+        contentType: true,
+        name: true,
+        s3Key: true,
+      },
+    });
+
+    if (!resume) {
+      throw new NotFoundException("다운로드할 파일을 찾을 수 없습니다.");
+    }
+
+    return this.resumeS3Service.createDownloadUrl(
+      resume.s3Key,
+      resume.contentType,
+      resume.name,
     );
   }
 
