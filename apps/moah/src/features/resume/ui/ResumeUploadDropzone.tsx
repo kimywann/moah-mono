@@ -73,7 +73,7 @@ const ResumeUploadBanner = ({
       />
 
       <div className="flex size-full cursor-pointer flex-col items-center justify-center px-6 text-center focus-within:outline-none">
-        <MHIcon className="text-primary" icon="fileText" size={32} />
+        <MHIcon className="text-primary" icon="upload" size={32} />
         <p className="bold display18 mt-3">
           파일을 이곳에 끌어다 놓거나 클릭해서 업로드해 주세요
         </p>

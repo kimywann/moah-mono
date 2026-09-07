@@ -16,6 +16,7 @@ import {
   MapPin,
   Search,
   SquareKanban,
+  Upload,
   X,
 } from "lucide-react";
 import cn from "../utils/cn";
@@ -38,6 +39,7 @@ const ICONS = {
   x: X,
   search: Search,
   arrowUp: ArrowUp,
+  upload: Upload,
 } satisfies Record<string, LucideIcon>;
 
 interface IMHIconProps {

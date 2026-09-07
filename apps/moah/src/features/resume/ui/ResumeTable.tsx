@@ -52,22 +52,28 @@ const RESUME_COLUMNS: ColumnDef<IResume>[] = [
     ),
   },
   {
-    accessorKey: "linkedApplication",
+    accessorKey: "linkedApplications",
     enableSorting: false,
     header: "연결된 지원 공고",
     size: 320,
     cell: ({ getValue }) => {
-      const linkedApplication = getValue<string | null>();
+      const linkedApplications =
+        getValue<IResume["linkedApplications"]>() ?? [];
+      const linkedApplicationLabels = linkedApplications.map(
+        ({ companyName, title }) =>
+          [companyName, title].filter(Boolean).join(" · ") || "공고 정보 없음",
+      );
+      const linkedApplicationLabel = linkedApplicationLabels.join(", ");
 
       return (
         <span
           className={
-            linkedApplication
+            linkedApplications.length > 0
               ? "regular block truncate"
               : "regular text-muted-foreground"
           }
         >
-          {linkedApplication ?? "연결된 공고 없음"}
+          {linkedApplicationLabel || "연결된 공고 없음"}
         </span>
       );
     },
