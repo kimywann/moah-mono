@@ -1,9 +1,14 @@
+import type { TApplicationUpdate } from "@moah/contracts/schema/application";
 import { jobPostingURLSchema } from "@moah/contracts/schema/job-posting";
 import {
   JOB_POSTING_DEADLINE_TYPES,
   JOB_POSTING_POSITIONS,
 } from "@moah/shared/constants/job-posting";
 import { z } from "zod";
+import type {
+  TApplicationStage,
+  TJobPostingDeadlineType,
+} from "@/features/applications/model/application.type";
 
 const optionalYearsSchema = z
   .string()
@@ -36,3 +41,30 @@ export const applicationRegisterFormSchema = z.object({
 export type TApplicationRegisterForm = z.infer<
   typeof applicationRegisterFormSchema
 >;
+
+export const INITIAL_APPLICATION_REGISTER_FORM: TApplicationRegisterForm = {
+  companyName: "",
+  deadline: "",
+  deadlineType: "UNKNOWN",
+  hiringProcess: "",
+  location: "",
+  maxYears: "",
+  minYears: "",
+  position: "",
+  techStacks: "",
+  title: "",
+  url: "",
+};
+
+export interface IApplicationEditForm {
+  companyName: string;
+  deadline: string;
+  deadlineType: TJobPostingDeadlineType;
+  hiringProcess: string;
+  location: string;
+  maxYears: string;
+  minYears: string;
+  position: NonNullable<TApplicationUpdate["position"]> | "";
+  stage: TApplicationStage;
+  techStacks: string;
+}

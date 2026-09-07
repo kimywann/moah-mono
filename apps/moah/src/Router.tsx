@@ -1,11 +1,11 @@
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router";
-import ContentLayout from "@/components/layout/ContentLayout";
-import MainLayout from "@/components/layout/MainLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ContentLayout from "@/shared/components/layout/ContentLayout";
+import MainLayout from "@/shared/components/layout/MainLayout";
 
 const RequireAuth = () => {
   const { isAuthenticated, isAuthInitialized } = useAuth();

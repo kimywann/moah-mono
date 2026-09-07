@@ -7,7 +7,7 @@ import type {
   IApplicationList,
   ICreateApplicationResponse,
   IDeleteApplicationsResponse,
-} from "@/shared/type/application";
+} from "@/features/applications/model/application.type";
 
 export const getApplicationList = async (): Promise<
   IApiResponse<IApplicationList[]>

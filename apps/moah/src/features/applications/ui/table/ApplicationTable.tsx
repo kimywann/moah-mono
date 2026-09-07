@@ -10,12 +10,15 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
-import { STAGE_DISPLAY } from "@/shared/constants/application-stage";
+import {
+  getCareerLabel,
+  getDeadlineLabel,
+} from "@/features/applications/lib/format";
+import { APPLICATION_STAGE_DISPLAY } from "@/features/applications/model/application.constant";
 import type {
   IApplicationList,
   TApplicationStage,
-} from "@/shared/type/application";
-import { getCareerLabel, getDeadlineLabel } from "@/shared/utils/format";
+} from "@/features/applications/model/application.type";
 
 interface IApplicationTableProps {
   applications: IApplicationList[];
@@ -31,7 +34,7 @@ interface IApplicationTableProps {
 
 const APPLICATION_STAGE_OPTIONS: IMHDropdownOption<TApplicationStage>[] =
   APPLICATION_STAGES.map((stage) => ({
-    label: STAGE_DISPLAY[stage].label,
+    label: APPLICATION_STAGE_DISPLAY[stage].label,
     value: stage,
   }));
 
@@ -46,7 +49,7 @@ const ApplicationStageDropdown = ({
   onChange,
   stage,
 }: IApplicationStageDropdownProps) => {
-  const stageDisplay = STAGE_DISPLAY[stage];
+  const stageDisplay = APPLICATION_STAGE_DISPLAY[stage];
 
   return (
     <MHDropdown

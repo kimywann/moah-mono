@@ -1,10 +1,10 @@
 import { APPLICATION_STAGES } from "@moah/shared/constants/application";
 import MHBadge from "@moah/ui/components/MHBadge";
-import { STAGE_DISPLAY } from "@/shared/constants/application-stage";
+import { APPLICATION_STAGE_DISPLAY } from "@/features/applications/model/application.constant";
 import type {
   IApplicationList,
   TApplicationStage,
-} from "@/shared/type/application";
+} from "@/features/applications/model/application.type";
 
 interface IApplicationStageBadgeProps {
   applications: IApplicationList[];
@@ -33,7 +33,7 @@ const ApplicationStageBadge = (props: IApplicationStageBadgeProps) => {
     <fieldset className="flex flex-wrap gap-2 border-0 p-0">
       <legend className="sr-only">지원 단계별 현황</legend>
       {APPLICATION_STAGES.map((stage) => {
-        const stageDisplay = STAGE_DISPLAY[stage];
+        const stageDisplay = APPLICATION_STAGE_DISPLAY[stage];
 
         return (
           <MHBadge key={stage} size="lg" variant={stageDisplay.variant}>

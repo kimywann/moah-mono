@@ -8,10 +8,10 @@ type TExperienceType = "NEW_GRAD" | "NO_LIMIT" | "CUSTOM";
 interface IExperienceFieldProps {
   maxYears: string;
   minYears: string;
-  onChange: (range: IExperienceRange) => void;
+  onChange: (value: IExperienceFieldValue) => void;
 }
 
-interface IExperienceRange {
+interface IExperienceFieldValue {
   maxYears: string;
   minYears: string;
 }

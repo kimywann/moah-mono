@@ -11,62 +11,30 @@ import MHSelect from "@moah/ui/components/MHSelect";
 import { toast } from "@moah/ui/components/MHToaster";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ReactNode, useEffect, useState } from "react";
-import { getApplication, updateApplication } from "@/api/application";
-import { DEADLINE_TYPE_LABEL } from "@/components/applications/form/application-register.form";
+import {
+  getApplication,
+  updateApplication,
+} from "@/features/applications/api/application";
+import {
+  toApplicationEditForm,
+  toUpdateApplicationPayload,
+} from "@/features/applications/lib/payload";
+import {
+  APPLICATION_STAGE_DISPLAY,
+  DEADLINE_TYPE_LABEL,
+} from "@/features/applications/model/application.constant";
+import type { IApplicationEditForm } from "@/features/applications/model/application.form";
 import type {
   IApplication,
   TApplicationStage,
   TJobPostingDeadlineType,
-} from "@/shared/type/application";
-import ExperienceField from "./ExperienceField";
+} from "@/features/applications/model/application.type";
+import ExperienceField from "@/features/applications/ui/form/ExperienceField";
 
 interface IApplicationDetailModalProps {
   applicationId: string;
   onClose: () => void;
 }
-
-interface IApplicationEditForm {
-  companyName: string;
-  deadline: string;
-  deadlineType: TJobPostingDeadlineType;
-  hiringProcess: string;
-  location: string;
-  maxYears: string;
-  minYears: string;
-  position: NonNullable<TApplicationUpdate["position"]> | "";
-  stage: TApplicationStage;
-  techStacks: string;
-}
-
-const STAGE_LABEL: Record<TApplicationStage, string> = {
-  READY: "지원 준비 중",
-  APPLIED: "지원 완료",
-  INTERVIEW: "면접",
-  PASSED: "합격",
-  REJECTED: "불합격",
-};
-
-const splitValues = (value: string) =>
-  value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-const toNullableNumber = (value: string) =>
-  value.trim() ? Number(value) : null;
-
-const toEditForm = (application: IApplication): IApplicationEditForm => ({
-  companyName: application.companyName ?? "",
-  deadline: application.deadline?.slice(0, 10) ?? "",
-  deadlineType: application.deadlineType,
-  hiringProcess: application.hiringProcess.join(", "),
-  location: application.location ?? "",
-  maxYears: application.maxYears?.toString() ?? "",
-  minYears: application.minYears?.toString() ?? "",
-  position: (application.position as IApplicationEditForm["position"]) ?? "",
-  stage: application.stage,
-  techStacks: application.techStacks.join(", "),
-});
 
 const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
   const queryClient = useQueryClient();
@@ -86,7 +54,7 @@ const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
 
   useEffect(() => {
     if (applicationQuery.data) {
-      setForm(toEditForm(applicationQuery.data));
+      setForm(toApplicationEditForm(applicationQuery.data));
     }
   }, [applicationQuery.data]);
 
@@ -130,18 +98,7 @@ const ApplicationDetailModal = (props: IApplicationDetailModalProps) => {
       return;
     }
 
-    updateApplicationMutation.mutate({
-      companyName: form.companyName.trim() || null,
-      deadline: form.deadlineType === "DATE" ? form.deadline || null : null,
-      deadlineType: form.deadlineType,
-      hiringProcess: splitValues(form.hiringProcess),
-      location: form.location.trim() || null,
-      maxYears: toNullableNumber(form.maxYears),
-      minYears: toNullableNumber(form.minYears),
-      position: form.position || null,
-      stage: form.stage,
-      techStacks: splitValues(form.techStacks),
-    });
+    updateApplicationMutation.mutate(toUpdateApplicationPayload(form));
   };
 
   return (
@@ -281,7 +238,7 @@ const ApplicationDetailContent = ({
         isFullWidth
         onValueChange={(value) => onChange("stage", value as TApplicationStage)}
         options={APPLICATION_STAGES.map((stage) => ({
-          label: STAGE_LABEL[stage],
+          label: APPLICATION_STAGE_DISPLAY[stage].label,
           value: stage,
         }))}
         placeholder="지원 단계를 선택해 주세요"

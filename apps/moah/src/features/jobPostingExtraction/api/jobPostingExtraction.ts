@@ -1,7 +1,7 @@
 import type { TJobPostingExtraction } from "@moah/contracts/schema/job-posting";
 import type { IApiResponse } from "@moah/shared/type/api";
 import { apiFetcher } from "@moah/shared/utils/api-fetcher";
-import type { IJobPostingExtractionUsage } from "@/shared/type/job-posting";
+import type { IJobPostingExtractionUsage } from "@/features/jobPostingExtraction/model/jobPostingExtraction.types";
 
 export const extractJobPosting = async (
   url: string,

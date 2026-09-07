@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import { getCurrentMe, logout, withdraw } from "@/api/auth";
-import { INIT_AUTH_CONTEXT } from "@/shared/constants/auth";
 import type { User } from "@/shared/type/user";
 
 interface AuthContextType {
@@ -19,7 +18,7 @@ interface AuthContextType {
   handleWithdraw: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>(INIT_AUTH_CONTEXT);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 // Context를 쉽게 사용하기 위한 Hook
 export const useAuth = (): AuthContextType => {
