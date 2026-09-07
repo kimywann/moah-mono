@@ -1,7 +1,7 @@
-import JobPostingExtractor from "@/features/jobPostingExtraction/ui/JobPostingExtractor";
+import JobPostingExtractionView from "@/features/jobPostingExtraction/JobPostingExtractionView";
 
 const HomePage = () => {
-  return <JobPostingExtractor />;
+  return <JobPostingExtractionView />;
 };
 
 export default HomePage;
