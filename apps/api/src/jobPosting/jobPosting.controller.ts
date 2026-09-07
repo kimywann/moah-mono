@@ -1,7 +1,4 @@
-import {
-  jobPostingExtractionRequestSchema,
-  jobPostingFormSchema,
-} from "@moah/contracts/schema/job-posting";
+import { jobPostingExtractionRequestSchema } from "@moah/contracts/schema/job-posting";
 import {
   BadRequestException,
   Body,
@@ -76,28 +73,6 @@ export class JobPostingController {
     }
   }
 
-  @Post()
-  async save(@Body() body: unknown, @Headers("cookie") cookieHeader?: string) {
-    const request = jobPostingFormSchema.safeParse(body);
-
-    if (!request.success) {
-      throw new BadRequestException("저장할 채용 공고 정보를 확인해 주세요.");
-    }
-
-    const user = await this.authService.getCurrentUser(
-      this.getSessionToken(cookieHeader),
-    );
-    const application = await this.jobPostingService.save(
-      user.id,
-      request.data,
-    );
-
-    return {
-      success: true,
-      data: application,
-    };
-  }
-
   @Get("extractions/usage")
   async getExtractionUsage(@Headers("cookie") cookieHeader?: string) {
     const user = await this.authService.getCurrentUser(
@@ -107,14 +82,6 @@ export class JobPostingController {
     return {
       success: true,
       data: await this.jobPostingService.getExtractionUsage(user.id),
-    };
-  }
-
-  @Get()
-  async findAll() {
-    return {
-      success: true,
-      data: await this.jobPostingService.findAll(),
     };
   }
 

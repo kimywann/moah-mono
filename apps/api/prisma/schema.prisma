@@ -74,25 +74,6 @@ model Application {
   @@map("applications")
 }
 
-model JobPosting {
-  id           String                 @id @default(uuid())
-  url          String                 @unique
-  platform     JobPostingPlatform     @default(OTHER)
-  companyName  String?
-  title        String?
-  position     String?
-  minYears     Int?
-  maxYears     Int?
-  location     String?
-  deadline     DateTime?              @db.Date
-  deadlineType JobPostingDeadlineType @default(UNKNOWN)
-  extractedAt  DateTime
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
-
-  @@map("job_postings")
-}
-
 model JobPostingExtraction {
   id        String   @id @default(uuid())
   userId    String
