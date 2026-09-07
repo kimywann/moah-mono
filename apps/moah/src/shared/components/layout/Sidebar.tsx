@@ -32,6 +32,11 @@ const Sidebar = () => {
           <span className="display14 medium">지원 목록</span>
         </Link>
 
+        <Link className={NAV_CLASS} to="/resume">
+          <MHIcon icon="fileText" size={20} />
+          <span className="display14 medium">이력서</span>
+        </Link>
+
         {/* <Link className={NAV_CLASS} to="/board">
           <MHIcon icon="squareKanban" size={20} />
           <span className="display14 medium">칸반 보드</span>

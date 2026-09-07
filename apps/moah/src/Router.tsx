@@ -4,6 +4,7 @@ import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ResumePage from "@/pages/ResumePage";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 import MainLayout from "@/shared/components/layout/MainLayout";
 
@@ -31,6 +32,7 @@ const Router = () => {
           <Route element={<ContentLayout />}>
             <Route element={<RequireAuth />}>
               <Route element={<ApplicationsPage />} path="applications" />
+              <Route element={<ResumePage />} path="resume" />
             </Route>
           </Route>
         </Route>
