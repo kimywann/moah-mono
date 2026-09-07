@@ -1,4 +1,4 @@
-import JobPostingExtractor from "@/components/job-posting/JobPostingExtractor";
+import JobPostingExtractor from "@/features/jobPostingExtraction/ui/JobPostingExtractor";
 
 const HomePage = () => {
   return <JobPostingExtractor />;

@@ -7,11 +7,11 @@ import { toast } from "@moah/ui/components/MHToaster";
 import cn from "@moah/ui/utils/cn";
 import type { ChangeEventHandler, SubmitEventHandler } from "react";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   extractJobPosting,
   getJobPostingExtractionUsage,
-} from "@/api/job-posting";
-import { useAuth } from "@/contexts/AuthContext";
+} from "@/features/jobPostingExtraction/api/jobPostingExtraction";
 import JobPostingPreviewModal from "./JobPostingPreviewModal";
 
 const JobPostingExtractor = () => {
