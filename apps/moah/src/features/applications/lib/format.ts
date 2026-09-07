@@ -1,20 +1,13 @@
-import type { TJobPostingDeadlineType } from "@moah/contracts/schema/job-posting";
 import dayjs from "dayjs";
-
-interface IJobPostingCareer {
-  minYears: number | null;
-  maxYears: number | null;
-}
-
-interface IJobPostingDeadline {
-  deadline: string | null;
-  deadlineType: TJobPostingDeadlineType;
-}
+import type {
+  IApplicationCareer,
+  IApplicationDeadline,
+} from "../model/application.type";
 
 export const getCareerLabel = ({
   minYears,
   maxYears,
-}: IJobPostingCareer): string => {
+}: IApplicationCareer): string => {
   if (minYears === null && maxYears === null) {
     return "경력 조건 미정";
   }
@@ -39,7 +32,7 @@ export const getCareerLabel = ({
 export const getDeadlineLabel = ({
   deadline,
   deadlineType,
-}: IJobPostingDeadline): string => {
+}: IApplicationDeadline): string => {
   if (deadlineType === "ROLLING") {
     return "상시 채용";
   }

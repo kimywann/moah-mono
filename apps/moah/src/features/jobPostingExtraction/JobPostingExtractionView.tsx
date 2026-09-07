@@ -12,9 +12,9 @@ import {
   extractJobPosting,
   getJobPostingExtractionUsage,
 } from "@/features/jobPostingExtraction/api/jobPostingExtraction";
-import JobPostingPreviewModal from "./JobPostingPreviewModal";
+import JobPostingPreviewModal from "@/features/jobPostingExtraction/ui/JobPostingPreviewModal";
 
-const JobPostingExtractor = () => {
+const JobPostingExtractionView = () => {
   const { isAuthenticated } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
@@ -229,4 +229,4 @@ const JobPostingExtractor = () => {
   );
 };
 
-export default JobPostingExtractor;
+export default JobPostingExtractionView;

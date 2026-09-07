@@ -1,40 +1,36 @@
 import MHButton from "@moah/ui/components/MHButton";
+import MHIcon from "@moah/ui/components/MHIcon";
 import MHModal from "@moah/ui/components/MHModal";
 import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import ApplicationDetailModal from "@/components/applications/ApplicationDetailModal";
-import ApplicationRegisterModal from "@/components/applications/ApplicationRegisterModal";
-import ApplicationStageBadge from "@/components/applications/ApplicationStageBadge";
-import ApplicationTable from "@/components/applications/ApplicationTable";
-import HeroBanner from "@/components/layout/HeroBanner";
+import { useApplications } from "@/features/applications/hooks/useApplications";
+import ApplicationDetailModal from "@/features/applications/ui/modal/ApplicationDetailModal";
+import ApplicationRegisterModal from "@/features/applications/ui/modal/ApplicationRegisterModal";
+import ApplicationStageBadge from "@/features/applications/ui/table/ApplicationStageBadge";
+import ApplicationTable from "@/features/applications/ui/table/ApplicationTable";
 import hero from "@/shared/assets/applications-hero.png";
-import type {
-  IApplicationList,
-  TApplicationStage,
-} from "@/shared/type/application";
-
-interface IApplicationsProps {
-  applications: IApplicationList[];
-  isDeleting: boolean;
-  isStageUpdate: boolean;
-  onDelete: (ids: string[]) => Promise<void>;
-  onStageChange: (id: string, stage: TApplicationStage) => void;
-}
+import HeroBanner from "@/shared/components/layout/HeroBanner";
 
 const APPLICATIONS_PAGE_SIZE = 10;
 
-const Applications = (props: IApplicationsProps) => {
+const ApplicationsView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<SortingState>([]);
-  const totalPages = Math.ceil(
-    props.applications.length / APPLICATIONS_PAGE_SIZE,
-  );
+
+  const {
+    applicationsQuery,
+    deleteApplicationsMutation,
+    updateApplicationMutation,
+  } = useApplications();
+  const applications = applicationsQuery.data ?? [];
+
+  const totalPages = Math.ceil(applications.length / APPLICATIONS_PAGE_SIZE);
   const startIndex = (currentPage - 1) * APPLICATIONS_PAGE_SIZE;
-  const currentApplications = props.applications.slice(
+  const currentApplications = applications.slice(
     startIndex,
     startIndex + APPLICATIONS_PAGE_SIZE,
   );
@@ -97,13 +93,32 @@ const Applications = (props: IApplicationsProps) => {
 
     if (result === "delete") {
       try {
-        await props.onDelete([...selectedIds]);
+        await deleteApplicationsMutation.mutateAsync([...selectedIds]);
         setSelectedIds(new Set());
       } catch {
         return;
       }
     }
   };
+
+  if (applicationsQuery.isPending) {
+    return (
+      <output
+        aria-label="지원 현황 목록을 불러오는 중"
+        className="flex min-h-82 items-center justify-center"
+      >
+        <MHIcon className="animate-spin text-primary" icon="loaderCircle" />
+      </output>
+    );
+  }
+
+  if (applicationsQuery.isError) {
+    return (
+      <p className="p-6 text-danger" role="alert">
+        지원 현황 목록을 불러오지 못했습니다.
+      </p>
+    );
+  }
 
   return (
     <section className="w-full">
@@ -116,7 +131,7 @@ const Applications = (props: IApplicationsProps) => {
       </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <ApplicationStageBadge applications={props.applications} />
+        <ApplicationStageBadge applications={applications} />
         <div className="flex shrink-0 gap-2">
           <MHButton
             onClick={() => setIsRegistrationModalOpen(true)}
@@ -125,7 +140,9 @@ const Applications = (props: IApplicationsProps) => {
             등록하기
           </MHButton>
           <MHButton
-            disabled={selectedIds.size === 0 || props.isDeleting}
+            disabled={
+              selectedIds.size === 0 || deleteApplicationsMutation.isPending
+            }
             onClick={() => void handleDeleteClick()}
             variant="danger"
           >
@@ -137,11 +154,13 @@ const Applications = (props: IApplicationsProps) => {
       <div className="min-h-82">
         <ApplicationTable
           applications={currentApplications}
-          isStageUpdate={props.isStageUpdate}
+          isStageUpdate={updateApplicationMutation.isPending}
           onDetailClick={setDetailId}
           onSelectAll={handleSelectAll}
           onSelectChange={handleSelectChange}
-          onStageChange={props.onStageChange}
+          onStageChange={(id, stage) =>
+            updateApplicationMutation.mutate({ id, stage })
+          }
           onSortingChange={setSorting}
           selectedIds={selectedIds}
           sorting={sorting}
@@ -172,4 +191,4 @@ const Applications = (props: IApplicationsProps) => {
   );
 };
 
-export default Applications;
+export default ApplicationsView;

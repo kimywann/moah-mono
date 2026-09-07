@@ -39,3 +39,26 @@ export interface ICreateApplicationResponse {
 export interface IDeleteApplicationsResponse {
   deletedCount: number;
 }
+
+export interface IApplicationCareer {
+  minYears: number | null;
+  maxYears: number | null;
+}
+
+export interface IApplicationDeadline {
+  deadline: string | null;
+  deadlineType: TJobPostingDeadlineType;
+}
+
+export type TApplicationStageBadgeVariant =
+  | "neutral"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info";
+
+export interface IApplicationStageDisplay {
+  label: string;
+  variant: TApplicationStageBadgeVariant;
+}

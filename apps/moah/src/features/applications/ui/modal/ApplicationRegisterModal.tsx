@@ -12,17 +12,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router";
-import { createApplication } from "@/api/application";
-import ExperienceField from "@/components/applications/ExperienceField";
-import {
-  DEADLINE_TYPE_LABEL,
-  INITIAL_APPLICATION_REGISTER_FORM,
-  toJobPostingForm,
-} from "@/components/applications/form/application-register.form";
+import { createApplication } from "@/features/applications/api/application";
+import { toCreateApplicationPayload } from "@/features/applications/lib/payload";
+import { DEADLINE_TYPE_LABEL } from "@/features/applications/model/application.constant";
 import {
   applicationRegisterFormSchema,
+  INITIAL_APPLICATION_REGISTER_FORM,
   type TApplicationRegisterForm,
-} from "@/components/applications/form/application-register.schema";
+} from "@/features/applications/model/application.form";
+import ExperienceField from "@/features/applications/ui/form/ExperienceField";
 import applicationRegisterImage from "@/shared/assets/application-register.webp";
 
 interface IApplicationRegisterModalProps {
@@ -47,7 +45,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
   const maxYears = watch("maxYears");
 
   const handleSave = async (form: TApplicationRegisterForm) => {
-    const payload = toJobPostingForm(form);
+    const payload = toCreateApplicationPayload(form);
 
     try {
       const response = await createApplication(payload);

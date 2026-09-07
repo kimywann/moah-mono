@@ -6,7 +6,7 @@ import { toast } from "@moah/ui/components/MHToaster";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { createApplication } from "@/api/application";
+import { createApplication } from "@/features/applications/api/application";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
