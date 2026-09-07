@@ -19,7 +19,7 @@ model Resume {
   userId             String
   name               String
   fileFormat         ResumeFileFormat
-  resumeType         ResumeType
+  resumeType         ResumeType       @default(OTHER)
   contentType        String
   fileSize           Int
   s3Key              String       @unique
