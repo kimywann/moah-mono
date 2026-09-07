@@ -99,6 +99,7 @@ export class ResumeService {
         userId,
         name: request.fileName,
         fileFormat,
+        resumeType: request.resumeType,
         contentType: request.contentType,
         fileSize: request.fileSize,
         s3Key: key,
@@ -113,6 +114,28 @@ export class ResumeService {
       uploadUrl,
       expiresIn,
     };
+  }
+
+  async findAllByUserId(userId: string) {
+    const resumes = await this.prismaService.resume.findMany({
+      where: {
+        userId,
+        status: "READY",
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        fileFormat: true,
+        resumeType: true,
+        createdAt: true,
+      },
+    });
+
+    return resumes.map((resume) => ({
+      ...resume,
+      linkedApplications: [],
+    }));
   }
 
   async completeUpload(userId: string, resumeId: string) {

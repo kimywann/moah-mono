@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Headers,
   Inject,
   Param,
@@ -19,6 +20,18 @@ export class ResumeController {
     @Inject(ResumeService)
     private readonly resumeService: ResumeService,
   ) {}
+
+  @Get()
+  async findAll(@Headers("cookie") cookieHeader?: string) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.resumeService.findAllByUserId(user.id),
+    };
+  }
 
   @Post("upload-url")
   async createUploadUrl(

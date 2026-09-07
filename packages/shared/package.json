@@ -9,5 +9,8 @@
     "./type/*": "./type/*.ts",
     "./utils/*": "./utils/*.ts",
     "./assets/*": "./assets/*"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.23"
   }
 }

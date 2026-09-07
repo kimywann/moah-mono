@@ -4,6 +4,7 @@ import type { ChangeEvent, DragEvent } from "react";
 import { useState } from "react";
 
 interface IResumeUploadBannerProps {
+  isUploading?: boolean;
   onFileSelect: (file: File) => void;
   selectedFileName?: string;
 }
@@ -11,6 +12,7 @@ interface IResumeUploadBannerProps {
 const isSupportedFile = (file: File) => /\.(pdf|docx)$/i.test(file.name);
 
 const ResumeUploadBanner = ({
+  isUploading = false,
   onFileSelect,
   selectedFileName,
 }: IResumeUploadBannerProps) => {
@@ -18,7 +20,7 @@ const ResumeUploadBanner = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleFile = (file: File | undefined) => {
-    if (!file) {
+    if (!file || isUploading) {
       return;
     }
 
@@ -67,6 +69,7 @@ const ResumeUploadBanner = ({
       <input
         accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         className="sr-only"
+        disabled={isUploading}
         id="resume-file-upload"
         onChange={handleChange}
         type="file"
@@ -75,7 +78,9 @@ const ResumeUploadBanner = ({
       <div className="flex size-full cursor-pointer flex-col items-center justify-center px-6 text-center focus-within:outline-none">
         <MHIcon className="text-primary" icon="upload" size={32} />
         <p className="bold display18 mt-3">
-          파일을 이곳에 끌어다 놓거나 클릭해서 업로드해 주세요
+          {isUploading
+            ? "이력서를 업로드하는 중이에요"
+            : "파일을 이곳에 끌어다 놓거나 클릭해서 업로드해 주세요"}
         </p>
         <p className="display14 regular mt-2 text-muted-foreground">
           {selectedFileName ?? "PDF, DOCX 파일만 업로드할 수 있어요."}

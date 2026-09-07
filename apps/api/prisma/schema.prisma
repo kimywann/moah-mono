@@ -42,6 +42,12 @@ enum ResumeStatus {
   READY
 }
 
+enum ResumeType {
+  PORTFOLIO
+  RESUME
+  OTHER
+}
+
 enum JobPostingPlatform {
   SARAMIN
   JOB_KOREA
@@ -90,6 +96,7 @@ model Resume {
   userId             String
   name               String
   fileFormat         ResumeFileFormat
+  resumeType         ResumeType
   contentType        String
   fileSize           Int
   s3Key              String           @unique

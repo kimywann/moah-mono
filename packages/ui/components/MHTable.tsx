@@ -23,6 +23,7 @@ interface IMHTableProps<TData> {
   className?: string;
   columns: TableOptions<TData>["columns"];
   data: TData[];
+  emptyMessage?: string;
   getRowId?: TableOptions<TData>["getRowId"];
   isLoading?: boolean;
   onSortingChange: OnChangeFn<SortingState>;
@@ -35,6 +36,7 @@ const MHTable = <TData,>({
   className,
   columns,
   data,
+  emptyMessage = "데이터가 존재하지 않습니다.",
   getRowId,
   isLoading = false,
   onSortingChange,
@@ -165,7 +167,7 @@ const MHTable = <TData,>({
                 className="px-4 py-12 text-center text-muted-foreground"
                 colSpan={visibleColumnCount}
               >
-                데이터가 존재하지 않습니다.
+                {emptyMessage}
               </td>
             </tr>
           ) : (

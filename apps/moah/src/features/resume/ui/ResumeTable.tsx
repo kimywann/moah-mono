@@ -1,3 +1,6 @@
+import type { TResumeType } from "@moah/contracts/schema/resume";
+import { formatDateTime } from "@moah/shared/utils/format";
+import MHBadge from "@moah/ui/components/MHBadge";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHTable from "@moah/ui/components/MHTable";
 import type {
@@ -5,6 +8,7 @@ import type {
   OnChangeFn,
   SortingState,
 } from "@tanstack/react-table";
+import { RESUME_TYPE_LABEL } from "@/features/resume/model/resume.constant";
 import type { IResume } from "@/features/resume/model/resume.type";
 
 interface IResumeTableProps {
@@ -34,20 +38,37 @@ const RESUME_COLUMNS: ColumnDef<IResume>[] = [
     enableSorting: false,
     header: "파일 형식",
     size: 120,
-    cell: ({ getValue }) => (
-      <span className="regular text-muted-foreground">
-        {getValue<string>()}
-      </span>
-    ),
+    cell: ({ getValue }) => {
+      return (
+        <span className="regular text-muted-foreground">
+          {getValue<string>()}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "resumeType",
+    enableSorting: false,
+    header: "파일 형식",
+    size: 120,
+    cell: ({ getValue }) => {
+      const resumeType = getValue<TResumeType>();
+
+      return (
+        <MHBadge className="regular" size="md">
+          {RESUME_TYPE_LABEL[resumeType]}
+        </MHBadge>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
     enableSorting: false,
-    header: "업로드일",
+    header: "업로드 날짜",
     size: 160,
     cell: ({ getValue }) => (
       <span className="regular text-muted-foreground">
-        {getValue<string>()}
+        {formatDateTime(getValue<string>())}
       </span>
     ),
   },
@@ -93,6 +114,7 @@ const ResumeTable = ({
       caption="이력서 목록"
       columns={RESUME_COLUMNS}
       data={resumes}
+      emptyMessage="등록된 이력서가 없어요. 첫 이력서를 업로드해 보세요!"
       getRowId={(resume) => resume.id}
       onSortingChange={onSortingChange}
       rowSelection={{
