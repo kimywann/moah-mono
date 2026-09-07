@@ -5,6 +5,7 @@ import type {
   IResume,
   IResumeCompleteResponse,
   IResumeDeleteResponse,
+  IResumeDownloadUrlResponse,
   IResumePreviewUrlResponse,
   IResumeUploadUrlResponse,
 } from "@/features/resume/model/resume.type";
@@ -55,6 +56,14 @@ export const getResumePreviewUrl = async (
 ): Promise<IApiResponse<IResumePreviewUrlResponse>> => {
   return apiFetcher<IResumePreviewUrlResponse>(
     `/resumes/${resumeId}/preview-url`,
+  );
+};
+
+export const getResumeDownloadUrl = async (
+  resumeId: string,
+): Promise<IApiResponse<IResumeDownloadUrlResponse>> => {
+  return apiFetcher<IResumeDownloadUrlResponse>(
+    `/resumes/${resumeId}/download-url`,
   );
 };
 

@@ -1,9 +1,13 @@
-import type { TApplicationUpdate } from "@moah/contracts/schema/application";
+import type {
+  TApplicationAttachmentsUpdate,
+  TApplicationUpdate,
+} from "@moah/contracts/schema/application";
 import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import type { IApiResponse } from "@moah/shared/type/api";
 import { apiFetcher } from "@moah/shared/utils/api-fetcher";
 import type {
   IApplication,
+  IApplicationAttachmentsUpdateResponse,
   IApplicationList,
   ICreateApplicationResponse,
   IDeleteApplicationsResponse,
@@ -47,4 +51,17 @@ export const updateApplication = async (
     method: "PATCH",
     body: JSON.stringify(updateData),
   });
+};
+
+export const updateApplicationAttachments = async (
+  id: string,
+  updateData: TApplicationAttachmentsUpdate,
+): Promise<IApiResponse<IApplicationAttachmentsUpdateResponse>> => {
+  return apiFetcher<IApplicationAttachmentsUpdateResponse>(
+    `/applications/${id}/attachments`,
+    {
+      method: "PUT",
+      body: JSON.stringify(updateData),
+    },
+  );
 };

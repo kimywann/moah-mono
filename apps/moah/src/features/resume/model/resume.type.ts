@@ -34,6 +34,11 @@ export interface IResumePreviewUrlResponse {
   expiresIn: number;
 }
 
+export interface IResumeDownloadUrlResponse {
+  downloadUrl: string;
+  expiresIn: number;
+}
+
 export interface IResumeDeleteResponse {
   resumeId: string;
 }

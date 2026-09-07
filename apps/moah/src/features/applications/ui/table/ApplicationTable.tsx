@@ -5,6 +5,7 @@ import type { IMHDropdownOption } from "@moah/ui/components/MHDropdown";
 import MHDropdown from "@moah/ui/components/MHDropdown";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHTable from "@moah/ui/components/MHTable";
+import MHTooltip from "@moah/ui/components/MHTooltip";
 import type {
   ColumnDef,
   OnChangeFn,
@@ -22,6 +23,7 @@ import type {
 
 interface IApplicationTableProps {
   applications: IApplicationList[];
+  onAttachmentClick: (id: string) => void;
   isStageUpdate: boolean;
   onDetailClick: (id: string) => void;
   onSelectAll: (ids: string[], isSelected: boolean) => void;
@@ -85,6 +87,7 @@ const ApplicationStageDropdown = ({
 
 const createColumns = (
   isStageUpdate: boolean,
+  onAttachmentClick: (id: string) => void,
   onDetailClick: (id: string) => void,
   onStageChange: (id: string, stage: TApplicationStage) => void,
 ): ColumnDef<IApplicationList>[] => [
@@ -145,6 +148,52 @@ const createColumns = (
     cell: ({ row }) => getDeadlineLabel(row.original),
   },
   {
+    accessorKey: "attachments",
+    enableSorting: false,
+    header: "파일",
+    size: 280,
+    cell: ({ row }) => {
+      const [firstAttachment] = row.original.attachments;
+      const additionalAttachmentCount = row.original.attachments.length - 1;
+      const attachmentTooltip = row.original.attachments
+        .map(({ name }) => name)
+        .join("\n");
+
+      return (
+        <div className="inline-flex max-w-full items-center gap-2">
+          {firstAttachment ? (
+            <span
+              className="regular max-w-[180px] truncate"
+              title={firstAttachment.name}
+            >
+              {firstAttachment.name}
+            </span>
+          ) : (
+            <span className="regular text-muted-foreground">미첨부</span>
+          )}
+          {firstAttachment && additionalAttachmentCount > 0 && (
+            <MHTooltip content={attachmentTooltip}>
+              <span className="regular shrink-0 text-muted-foreground">
+                +{additionalAttachmentCount}
+              </span>
+            </MHTooltip>
+          )}
+          <MHButton
+            className="medium! size-8 shrink-0 p-0"
+            onClick={() => onAttachmentClick(row.original.id)}
+            size="xSmall"
+            variant="secondary"
+          >
+            <MHIcon icon="upload" size={16} />
+            <span className="sr-only">
+              {firstAttachment ? "첨부 파일 편집" : "파일 첨부"}
+            </span>
+          </MHButton>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "detail",
     enableSorting: false,
     header: "",
@@ -168,6 +217,7 @@ const ApplicationTable = (props: IApplicationTableProps) => {
       caption="지원 현황"
       columns={createColumns(
         props.isStageUpdate,
+        props.onAttachmentClick,
         props.onDetailClick,
         props.onStageChange,
       )}

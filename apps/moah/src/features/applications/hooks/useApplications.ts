@@ -4,9 +4,11 @@ import {
   deleteApplications,
   getApplicationList,
   updateApplication,
+  updateApplicationAttachments,
 } from "@/features/applications/api/application";
 import type {
   IApplication,
+  IApplicationAttachmentsUpdateResponse,
   IApplicationList,
   IDeleteApplicationsResponse,
   TApplicationStage,
@@ -19,6 +21,11 @@ interface IApplicationStageUpdate {
 
 interface IApplicationStageUpdateContext {
   previousApplications: IApplicationList[] | undefined;
+}
+
+interface IApplicationAttachmentsUpdateInput {
+  id: string;
+  resumeIds: string[];
 }
 
 export const useApplications = () => {
@@ -107,9 +114,36 @@ export const useApplications = () => {
     },
   });
 
+  const updateApplicationAttachmentsMutation = useMutation<
+    IApplicationAttachmentsUpdateResponse,
+    Error,
+    IApplicationAttachmentsUpdateInput
+  >({
+    mutationFn: async ({ id, resumeIds }) => {
+      const response = await updateApplicationAttachments(id, { resumeIds });
+
+      if (!response.success || !response.data) {
+        throw new Error("파일 연결에 실패했습니다.");
+      }
+
+      return response.data;
+    },
+    onError: () => {
+      toast.error("첨부 파일 설정을 저장하지 못했습니다.");
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["applications"] }),
+        queryClient.invalidateQueries({ queryKey: ["resumes"] }),
+      ]);
+      toast.success("첨부 파일 설정을 저장했어요.");
+    },
+  });
+
   return {
     applicationsQuery,
     deleteApplicationsMutation,
+    updateApplicationAttachmentsMutation,
     updateApplicationMutation,
   };
 };

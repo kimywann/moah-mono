@@ -5,6 +5,7 @@ import MHPagination from "@moah/ui/components/MHPagination";
 import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useApplications } from "@/features/applications/hooks/useApplications";
+import ApplicationAttachmentModal from "@/features/applications/ui/modal/ApplicationAttachmentModal";
 import ApplicationDetailModal from "@/features/applications/ui/modal/ApplicationDetailModal";
 import ApplicationRegisterModal from "@/features/applications/ui/modal/ApplicationRegisterModal";
 import ApplicationStageBadge from "@/features/applications/ui/table/ApplicationStageBadge";
@@ -17,6 +18,9 @@ const APPLICATIONS_PAGE_SIZE = 10;
 const ApplicationsView = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [attachmentApplicationId, setAttachmentApplicationId] = useState<
+    string | null
+  >(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -24,9 +28,13 @@ const ApplicationsView = () => {
   const {
     applicationsQuery,
     deleteApplicationsMutation,
+    updateApplicationAttachmentsMutation,
     updateApplicationMutation,
   } = useApplications();
   const applications = applicationsQuery.data ?? [];
+  const attachmentApplication = applications.find(
+    ({ id }) => id === attachmentApplicationId,
+  );
 
   const totalPages = Math.ceil(applications.length / APPLICATIONS_PAGE_SIZE);
   const startIndex = (currentPage - 1) * APPLICATIONS_PAGE_SIZE;
@@ -101,6 +109,22 @@ const ApplicationsView = () => {
     }
   };
 
+  const handleAttachmentSave = async (resumeIds: string[]) => {
+    if (!attachmentApplicationId) {
+      return;
+    }
+
+    try {
+      await updateApplicationAttachmentsMutation.mutateAsync({
+        id: attachmentApplicationId,
+        resumeIds,
+      });
+      setAttachmentApplicationId(null);
+    } catch {
+      return;
+    }
+  };
+
   if (applicationsQuery.isPending) {
     return (
       <output
@@ -155,6 +179,7 @@ const ApplicationsView = () => {
         <ApplicationTable
           applications={currentApplications}
           isStageUpdate={updateApplicationMutation.isPending}
+          onAttachmentClick={setAttachmentApplicationId}
           onDetailClick={setDetailId}
           onSelectAll={handleSelectAll}
           onSelectChange={handleSelectChange}
@@ -179,6 +204,15 @@ const ApplicationsView = () => {
         <ApplicationDetailModal
           applicationId={detailId}
           onClose={() => setDetailId(null)}
+        />
+      )}
+
+      {attachmentApplication && (
+        <ApplicationAttachmentModal
+          application={attachmentApplication}
+          isSaving={updateApplicationAttachmentsMutation.isPending}
+          onClose={() => setAttachmentApplicationId(null)}
+          onSave={(resumeIds) => void handleAttachmentSave(resumeIds)}
         />
       )}
 

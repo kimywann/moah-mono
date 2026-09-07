@@ -3,6 +3,7 @@ import { formatDateTime } from "@moah/shared/utils/format";
 import MHBadge from "@moah/ui/components/MHBadge";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHTable from "@moah/ui/components/MHTable";
+import MHTooltip from "@moah/ui/components/MHTooltip";
 import type {
   ColumnDef,
   OnChangeFn,
@@ -90,20 +91,41 @@ const createResumeColumns = (
         getValue<IResume["linkedApplications"]>() ?? [];
       const linkedApplicationLabels = linkedApplications.map(
         ({ companyName, title }) =>
-          [companyName, title].filter(Boolean).join(" · ") || "공고 정보 없음",
+          [companyName, title].filter(Boolean).join(" | ") || "공고 정보 없음",
       );
-      const linkedApplicationLabel = linkedApplicationLabels.join(", ");
-
-      return (
-        <span
+      const [firstLinkedApplicationLabel] = linkedApplicationLabels;
+      const additionalLinkedApplicationCount =
+        linkedApplicationLabels.length - 1;
+      const linkedApplicationTooltip = linkedApplicationLabels.join("\n");
+      const linkedApplicationContent = (
+        <div
           className={
             linkedApplications.length > 0
-              ? "regular block truncate"
+              ? "flex min-w-0 items-center gap-1"
               : "regular text-muted-foreground"
           }
         >
-          {linkedApplicationLabel || "연결된 공고 없음"}
-        </span>
+          {firstLinkedApplicationLabel ? (
+            <span className="regular min-w-0 truncate">
+              {firstLinkedApplicationLabel}
+            </span>
+          ) : (
+            "연결된 공고 없음"
+          )}
+          {additionalLinkedApplicationCount > 0 && (
+            <span className="regular shrink-0 text-muted-foreground">
+              +{additionalLinkedApplicationCount}
+            </span>
+          )}
+        </div>
+      );
+
+      return linkedApplicationTooltip ? (
+        <MHTooltip content={linkedApplicationTooltip}>
+          {linkedApplicationContent}
+        </MHTooltip>
+      ) : (
+        linkedApplicationContent
       );
     },
   },

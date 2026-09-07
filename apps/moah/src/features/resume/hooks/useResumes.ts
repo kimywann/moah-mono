@@ -48,6 +48,8 @@ export const useResumes = () => {
       if (!completeResponse.success || !completeResponse.data) {
         throw new Error("이력서 업로드 완료 처리에 실패했습니다.");
       }
+
+      return completeResponse.data;
     },
     onError: () => {
       toast.error("이력서를 업로드하지 못했습니다.");
