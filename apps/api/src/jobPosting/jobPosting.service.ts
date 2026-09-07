@@ -1,7 +1,6 @@
 import {
   jobPostingExtractionResponseSchema,
   type TJobPostingExtraction,
-  type TJobPostingForm,
 } from "@moah/contracts/schema/job-posting";
 import {
   BadGatewayException,
@@ -14,8 +13,6 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
-import { ApplicationsService } from "../applications/applications.service";
-import { getJobPostingPlatform } from "../common/utils/utils";
 import { PrismaService } from "../prisma/prisma.service";
 import { EXTRACTION_PROMPT } from "./constants/prompt";
 
@@ -47,34 +44,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export class JobPostingService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
-    @Inject(ApplicationsService)
-    private readonly applicationsService: ApplicationsService,
     @Inject(PrismaService) private readonly prismaService: PrismaService,
   ) {}
-
-  async findAll() {
-    const jobPostings = await this.prismaService.jobPosting.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        url: true,
-        platform: true,
-        companyName: true,
-        title: true,
-        position: true,
-        minYears: true,
-        maxYears: true,
-        location: true,
-        deadline: true,
-        deadlineType: true,
-      },
-    });
-
-    return jobPostings.map((jobPosting) => ({
-      ...jobPosting,
-      deadline: jobPosting.deadline?.toISOString().slice(0, 10) ?? null,
-    }));
-  }
 
   async extract(userId: string, url: string) {
     const dailyUsageCount = await this.prismaService.jobPostingExtraction.count(
@@ -224,36 +195,6 @@ export class JobPostingService {
       Math.floor((now + KOREAN_TIME_OFFSET_MS) / DAY_MS) * DAY_MS -
         KOREAN_TIME_OFFSET_MS,
     );
-  }
-
-  async save(userId: string, jobPosting: TJobPostingForm) {
-    const platform = getJobPostingPlatform(jobPosting.url);
-    const deadline = jobPosting.deadline
-      ? new Date(`${jobPosting.deadline}T00:00:00.000Z`)
-      : null;
-    await this.prismaService.jobPosting.upsert({
-      where: { url: jobPosting.url },
-      create: {
-        url: jobPosting.url,
-        platform,
-        companyName: jobPosting.companyName,
-        title: jobPosting.title,
-        position: jobPosting.position,
-        minYears: jobPosting.minYears,
-        maxYears: jobPosting.maxYears,
-        location: jobPosting.location,
-        deadline,
-        deadlineType: jobPosting.deadlineType,
-        extractedAt: new Date(),
-      },
-      update: {
-        platform,
-        title: jobPosting.title,
-        deadlineType: jobPosting.deadlineType,
-      },
-    });
-
-    return this.applicationsService.create(userId, jobPosting, platform);
   }
 
   private isRequiredJobPostingInfoMissing(jobPosting: TJobPostingExtraction) {

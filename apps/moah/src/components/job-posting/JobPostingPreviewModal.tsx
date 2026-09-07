@@ -6,7 +6,7 @@ import { toast } from "@moah/ui/components/MHToaster";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { saveJobPosting } from "@/api/job-posting";
+import { createApplication } from "@/api/application";
 
 interface IJobPostingPreviewModalProps {
   isLoggedIn: boolean;
@@ -49,10 +49,10 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
     try {
       setIsSaving(true);
 
-      const response = await saveJobPosting(props.jobPosting);
+      const response = await createApplication(props.jobPosting);
 
-      if (!response.success) {
-        throw new Error("공고 저장에 실패했습니다.");
+      if (!response.success || !response.data) {
+        throw new Error("지원 정보 저장에 실패했습니다.");
       }
 
       await queryClient.invalidateQueries({
@@ -62,7 +62,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
       toast.success("지원 목록에 추가했어요.");
       props.onSaveSuccess();
     } catch {
-      toast.error("공고를 저장하지 못했습니다. 다시 시도해 주세요.");
+      toast.error("지원 정보를 저장하지 못했습니다. 다시 시도해 주세요.");
     } finally {
       setIsSaving(false);
     }
@@ -186,7 +186,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
               onClick={handleSave}
               size="large"
             >
-              {isSaving ? "공고 저장 중..." : "공고 저장하기"}
+              {isSaving ? "지원 정보 저장 중..." : "지원 목록에 저장하기"}
             </MHButton>
           ) : (
             <MHButton

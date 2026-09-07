@@ -6,7 +6,6 @@ import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
-import RecruitPage from "@/pages/RecruitPage";
 
 const RequireAuth = () => {
   const { isAuthenticated, isAuthInitialized } = useAuth();
@@ -33,7 +32,6 @@ const Router = () => {
             <Route element={<RequireAuth />}>
               <Route element={<ApplicationsPage />} path="applications" />
             </Route>
-            <Route element={<RecruitPage />} path="recruit" />
           </Route>
         </Route>
 
