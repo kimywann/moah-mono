@@ -4,9 +4,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   completeResumeUpload,
   createResumeUploadUrl,
+  deleteResume,
   getResumeList,
   uploadResumeToS3,
 } from "@/features/resume/api/resume";
+import type { IResumeDeleteResponse } from "@/features/resume/model/resume.type";
 
 interface IResumeUploadInput {
   file: File;
@@ -56,7 +58,31 @@ export const useResumes = () => {
     },
   });
 
+  const deleteResumeMutation = useMutation<
+    IResumeDeleteResponse,
+    Error,
+    string
+  >({
+    mutationFn: async (resumeId) => {
+      const response = await deleteResume(resumeId);
+
+      if (!response.success || !response.data) {
+        throw new Error("이력서 삭제에 실패했습니다.");
+      }
+
+      return response.data;
+    },
+    onError: () => {
+      toast.error("이력서를 삭제하지 못했습니다.");
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["resumes"] });
+      toast.success("이력서를 삭제했어요.");
+    },
+  });
+
   return {
+    deleteResumeMutation,
     resumesQuery,
     uploadResumeMutation,
   };

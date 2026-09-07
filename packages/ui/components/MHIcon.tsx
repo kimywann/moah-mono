@@ -16,6 +16,7 @@ import {
   MapPin,
   Search,
   SquareKanban,
+  Trash2,
   Upload,
   X,
 } from "lucide-react";
@@ -36,6 +37,7 @@ const ICONS = {
   loaderCircle: LoaderCircle,
   mapPin: MapPin,
   squareKanban: SquareKanban,
+  trash2: Trash2,
   x: X,
   search: Search,
   arrowUp: ArrowUp,

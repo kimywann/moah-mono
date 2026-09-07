@@ -192,6 +192,58 @@ export class ResumeService {
     };
   }
 
+  async createPreviewUrl(userId: string, resumeId: string) {
+    const resume = await this.prismaService.resume.findFirst({
+      where: {
+        id: resumeId,
+        status: "READY",
+        userId,
+      },
+      select: {
+        contentType: true,
+        fileFormat: true,
+        s3Key: true,
+      },
+    });
+
+    if (!resume) {
+      throw new NotFoundException("미리보기할 이력서를 찾을 수 없습니다.");
+    }
+
+    if (resume.fileFormat !== "PDF") {
+      throw new BadRequestException("PDF 파일만 미리볼 수 있습니다.");
+    }
+
+    return this.resumeS3Service.createPreviewUrl(
+      resume.s3Key,
+      resume.contentType,
+    );
+  }
+
+  async deleteResume(userId: string, resumeId: string) {
+    const resume = await this.prismaService.resume.findFirst({
+      where: {
+        id: resumeId,
+        userId,
+      },
+      select: {
+        id: true,
+        s3Key: true,
+      },
+    });
+
+    if (!resume) {
+      throw new NotFoundException("삭제할 이력서를 찾을 수 없습니다.");
+    }
+
+    await this.resumeS3Service.deleteObject(resume.s3Key);
+    await this.prismaService.resume.delete({
+      where: { id: resume.id },
+    });
+
+    return { resumeId: resume.id };
+  }
+
   private getFileFormat(request: TResumeUploadRequest): TResumeFileFormat {
     const lowerCaseFileName = request.fileName.toLowerCase();
     const fileFormat = lowerCaseFileName.endsWith(".pdf")

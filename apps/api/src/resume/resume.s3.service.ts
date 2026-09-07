@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -12,10 +13,16 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 const UPLOAD_URL_EXPIRES_IN_SECONDS = 60 * 10;
+const PREVIEW_URL_EXPIRES_IN_SECONDS = 60;
 
 export interface IResumeUploadUrl {
   key: string;
   uploadUrl: string;
+  expiresIn: number;
+}
+
+export interface IResumePreviewUrl {
+  previewUrl: string;
   expiresIn: number;
 }
 
@@ -87,6 +94,26 @@ export class ResumeS3Service {
 
       throw error;
     }
+  }
+
+  async createPreviewUrl(
+    s3Key: string,
+    contentType: string,
+  ): Promise<IResumePreviewUrl> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: s3Key,
+      ResponseContentDisposition: "inline",
+      ResponseContentType: contentType,
+    });
+    const previewUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: PREVIEW_URL_EXPIRES_IN_SECONDS,
+    });
+
+    return {
+      previewUrl,
+      expiresIn: PREVIEW_URL_EXPIRES_IN_SECONDS,
+    };
   }
 
   async deleteObject(s3Key: string) {

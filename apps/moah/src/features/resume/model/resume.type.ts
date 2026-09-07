@@ -28,3 +28,12 @@ export interface IResumeCompleteResponse {
   resumeId: string;
   status: "READY";
 }
+
+export interface IResumePreviewUrlResponse {
+  previewUrl: string;
+  expiresIn: number;
+}
+
+export interface IResumeDeleteResponse {
+  resumeId: string;
+}

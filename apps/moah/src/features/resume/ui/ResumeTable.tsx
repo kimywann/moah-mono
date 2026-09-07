@@ -12,25 +12,33 @@ import { RESUME_TYPE_LABEL } from "@/features/resume/model/resume.constant";
 import type { IResume } from "@/features/resume/model/resume.type";
 
 interface IResumeTableProps {
-  onSelectAll: (ids: string[], isSelected: boolean) => void;
-  onSelectChange: (id: string, isSelected: boolean) => void;
+  isDeleting: boolean;
+  onDeleteClick: (resume: IResume) => void;
+  onPreviewClick: (resume: IResume) => void;
   onSortingChange: OnChangeFn<SortingState>;
   resumes: IResume[];
-  selectedIds: Set<string>;
   sorting: SortingState;
 }
 
-const RESUME_COLUMNS: ColumnDef<IResume>[] = [
+const createResumeColumns = (
+  isDeleting: boolean,
+  onDeleteClick: (resume: IResume) => void,
+  onPreviewClick: (resume: IResume) => void,
+): ColumnDef<IResume>[] => [
   {
     accessorKey: "name",
     enableSorting: false,
     header: "파일명",
     size: 300,
-    cell: ({ getValue }) => (
-      <div className="flex min-w-0 items-center gap-3">
+    cell: ({ row }) => (
+      <button
+        className="flex min-w-0 cursor-pointer items-center gap-3 rounded-tiny text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+        onClick={() => onPreviewClick(row.original)}
+        type="button"
+      >
         <MHIcon className="text-muted-foreground" icon="fileText" size={20} />
-        <span className="regular block truncate">{getValue<string>()}</span>
-      </div>
+        <span className="regular block truncate">{row.original.name}</span>
+      </button>
     ),
   },
   {
@@ -99,29 +107,41 @@ const RESUME_COLUMNS: ColumnDef<IResume>[] = [
       );
     },
   },
+  {
+    id: "actions",
+    enableSorting: false,
+    header: "",
+    size: 64,
+    cell: ({ row }) => (
+      <button
+        aria-label={`${row.original.name} 삭제`}
+        className="flex size-8 cursor-pointer items-center justify-center rounded-small text-danger hover:bg-tintRed disabled:cursor-not-allowed disabled:opacity-50"
+        disabled={isDeleting}
+        onClick={() => onDeleteClick(row.original)}
+        type="button"
+      >
+        <MHIcon icon="trash2" size={18} />
+      </button>
+    ),
+  },
 ];
 
 const ResumeTable = ({
-  onSelectAll,
-  onSelectChange,
+  isDeleting,
+  onDeleteClick,
+  onPreviewClick,
   onSortingChange,
   resumes,
-  selectedIds,
   sorting,
 }: IResumeTableProps) => {
   return (
     <MHTable
       caption="이력서 목록"
-      columns={RESUME_COLUMNS}
+      columns={createResumeColumns(isDeleting, onDeleteClick, onPreviewClick)}
       data={resumes}
       emptyMessage="등록된 이력서가 없어요. 첫 이력서를 업로드해 보세요!"
       getRowId={(resume) => resume.id}
       onSortingChange={onSortingChange}
-      rowSelection={{
-        onRowSelectionChange: onSelectChange,
-        onSelectAllChange: onSelectAll,
-        selectedRowIds: selectedIds,
-      }}
       sorting={sorting}
     />
   );

@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   Inject,
@@ -51,6 +52,36 @@ export class ResumeController {
     return {
       success: true,
       data: await this.resumeService.createUploadUrl(user.id, request.data),
+    };
+  }
+
+  @Get(":resumeId/preview-url")
+  async createPreviewUrl(
+    @Param("resumeId") resumeId: string,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.resumeService.createPreviewUrl(user.id, resumeId),
+    };
+  }
+
+  @Delete(":resumeId")
+  async deleteResume(
+    @Param("resumeId") resumeId: string,
+    @Headers("cookie") cookieHeader?: string,
+  ) {
+    const user = await this.authService.getCurrentUser(
+      this.getSessionToken(cookieHeader),
+    );
+
+    return {
+      success: true,
+      data: await this.resumeService.deleteResume(user.id, resumeId),
     };
   }
 

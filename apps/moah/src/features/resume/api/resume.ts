@@ -4,6 +4,8 @@ import { apiFetcher } from "@moah/shared/utils/api-fetcher";
 import type {
   IResume,
   IResumeCompleteResponse,
+  IResumeDeleteResponse,
+  IResumePreviewUrlResponse,
   IResumeUploadUrlResponse,
 } from "@/features/resume/model/resume.type";
 
@@ -45,5 +47,21 @@ export const completeResumeUpload = async (
 ): Promise<IApiResponse<IResumeCompleteResponse>> => {
   return apiFetcher<IResumeCompleteResponse>(`/resumes/${resumeId}/complete`, {
     method: "POST",
+  });
+};
+
+export const getResumePreviewUrl = async (
+  resumeId: string,
+): Promise<IApiResponse<IResumePreviewUrlResponse>> => {
+  return apiFetcher<IResumePreviewUrlResponse>(
+    `/resumes/${resumeId}/preview-url`,
+  );
+};
+
+export const deleteResume = async (
+  resumeId: string,
+): Promise<IApiResponse<IResumeDeleteResponse>> => {
+  return apiFetcher<IResumeDeleteResponse>(`/resumes/${resumeId}`, {
+    method: "DELETE",
   });
 };
