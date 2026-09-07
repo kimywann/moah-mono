@@ -9,7 +9,7 @@ interface IResumeUploadBannerProps {
   selectedFileName?: string;
 }
 
-const isSupportedFile = (file: File) => /\.(pdf|docx)$/i.test(file.name);
+const isPDFFile = (file: File) => /\.pdf$/i.test(file.name);
 
 const ResumeUploadBanner = ({
   isUploading = false,
@@ -24,8 +24,8 @@ const ResumeUploadBanner = ({
       return;
     }
 
-    if (!isSupportedFile(file)) {
-      setErrorMessage("PDF 또는 DOCX 파일만 업로드할 수 있어요.");
+    if (!isPDFFile(file)) {
+      setErrorMessage("PDF 파일만 업로드할 수 있어요.");
       return;
     }
 
@@ -67,7 +67,7 @@ const ResumeUploadBanner = ({
       htmlFor="resume-file-upload"
     >
       <input
-        accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        accept=".pdf,application/pdf"
         className="sr-only"
         disabled={isUploading}
         id="resume-file-upload"
@@ -83,7 +83,7 @@ const ResumeUploadBanner = ({
             : "파일을 이곳에 끌어다 놓거나 클릭해서 업로드해 주세요"}
         </p>
         <p className="display14 regular mt-2 text-muted-foreground">
-          {selectedFileName ?? "PDF, DOCX 파일만 업로드할 수 있어요."}
+          {selectedFileName ?? "PDF 파일만 업로드할 수 있어요."}
         </p>
         {errorMessage && (
           <p className="display12 medium mt-2 text-danger" role="alert">

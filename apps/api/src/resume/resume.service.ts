@@ -20,10 +20,7 @@ const MAX_ACTIVE_UPLOADS = 1; // 동시에 업로드 가능한 파일 수
 const UPLOAD_URL_EXPIRES_IN_SECONDS = 60 * 10; // 업로드 URL 유효 시간 10분
 const PENDING_RESUME_RETENTION_MS = UPLOAD_URL_EXPIRES_IN_SECONDS * 1000; // PENDING 보관 시간
 
-const RESUME_CONTENT_TYPES: Record<TResumeFileFormat, string> = {
-  DOCX: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  PDF: "application/pdf",
-};
+const PDF_CONTENT_TYPE = "application/pdf";
 
 @Injectable()
 export class ResumeService {
@@ -283,22 +280,15 @@ export class ResumeService {
 
   private getFileFormat(request: TResumeUploadRequest): TResumeFileFormat {
     const lowerCaseFileName = request.fileName.toLowerCase();
-    const fileFormat = lowerCaseFileName.endsWith(".pdf")
-      ? "PDF"
-      : lowerCaseFileName.endsWith(".docx")
-        ? "DOCX"
-        : undefined;
 
     if (
-      !fileFormat ||
-      RESUME_CONTENT_TYPES[fileFormat] !== request.contentType
+      !lowerCaseFileName.endsWith(".pdf") ||
+      request.contentType !== PDF_CONTENT_TYPE
     ) {
-      throw new BadRequestException(
-        "PDF 또는 DOCX 파일만 업로드할 수 있습니다.",
-      );
+      throw new BadRequestException("PDF 파일만 업로드할 수 있습니다.");
     }
 
-    return fileFormat;
+    return "PDF";
   }
 
   private async removeExpiredPendingResumes(userId: string) {

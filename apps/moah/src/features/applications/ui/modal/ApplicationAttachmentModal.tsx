@@ -23,6 +23,7 @@ import PDFPreview from "@/shared/components/PDFPreview";
 
 const MAX_ATTACHMENT_COUNT = 4;
 const ATTACHMENT_PAGE_SIZE = 5;
+const isPDFFile = (file: File) => /\.pdf$/i.test(file.name);
 
 interface IApplicationAttachmentModalProps {
   application: IApplicationList;
@@ -101,9 +102,16 @@ const ApplicationAttachmentModal = (
     const file = event.target.files?.[0];
     event.target.value = "";
 
-    if (file) {
-      setSelectedFile(file);
+    if (!file) {
+      return;
     }
+
+    if (!isPDFFile(file)) {
+      toast.error("PDF 파일만 업로드할 수 있어요.");
+      return;
+    }
+
+    setSelectedFile(file);
   };
 
   const handleUpload = async (resumeType: TResumeType) => {
@@ -307,7 +315,7 @@ const ApplicationAttachmentModal = (
                   파일 업로드
                 </label>
                 <input
-                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept=".pdf,application/pdf"
                   className="sr-only"
                   disabled={selectedIds.size >= MAX_ATTACHMENT_COUNT || isBusy}
                   id="application-attachment-upload"
