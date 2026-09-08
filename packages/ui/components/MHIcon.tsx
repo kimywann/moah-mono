@@ -15,6 +15,7 @@ import {
   LoaderCircle,
   type LucideIcon,
   MapPin,
+  RotateCcw,
   Search,
   SquareKanban,
   Trash2,
@@ -42,6 +43,7 @@ const ICONS = {
   trash2: Trash2,
   x: X,
   search: Search,
+  rotateCcw: RotateCcw,
   arrowUp: ArrowUp,
   upload: Upload,
 } satisfies Record<string, LucideIcon>;
