@@ -1,6 +1,7 @@
 import type { TResumeType } from "@moah/contracts/schema/resume";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHModal from "@moah/ui/components/MHModal";
+import MHSegmentFilter from "@moah/ui/components/MHSegmentFilter";
 import { toast } from "@moah/ui/components/MHToaster";
 import type { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
@@ -11,14 +12,21 @@ import ResumeTable from "@/features/resume/ui/ResumeTable";
 import ResumeTypeModal from "@/features/resume/ui/ResumeTypeModal";
 import ResumeUploadDropzone from "@/features/resume/ui/ResumeUploadDropzone";
 
+type TResumeFilter = TResumeType | "ALL";
+
 const ResumeView = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [resumeFilter, setResumeFilter] = useState<TResumeFilter>("ALL");
   const [selectedFileName, setSelectedFileName] = useState<string>();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
   const { deleteResumeMutation, resumesQuery, uploadResumeMutation } =
     useResumes();
   const resumes = resumesQuery.data ?? [];
+  const filteredResumes =
+    resumeFilter === "ALL"
+      ? resumes
+      : resumes.filter((resume) => resume.resumeType === resumeFilter);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -127,8 +135,19 @@ const ResumeView = () => {
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 flex flex-col gap-4">
           <h1 className="bold display24">파일 목록</h1>
+          <MHSegmentFilter
+            ariaLabel="파일 유형 필터"
+            onValueChange={setResumeFilter}
+            options={[
+              { label: "전체", value: "ALL" },
+              { label: "이력서", value: "RESUME" },
+              { label: "포트폴리오", value: "PORTFOLIO" },
+              { label: "기타", value: "OTHER" },
+            ]}
+            value={resumeFilter}
+          />
         </div>
 
         <ResumeTable
@@ -136,7 +155,7 @@ const ResumeView = () => {
           onDeleteClick={(resume) => void handleDeleteClick(resume)}
           onPreviewClick={(resume) => void handlePreviewClick(resume)}
           onSortingChange={setSorting}
-          resumes={resumes}
+          resumes={filteredResumes}
           sorting={sorting}
         />
       </section>
