@@ -86,10 +86,10 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
         <div className="mt-8 flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">기업명</span>
+              <span className="semibold display14 text-neutral40">회사명</span>
               <MHInput
                 isFullWidth
-                placeholder="기업명을 입력해 주세요"
+                placeholder="회사명을 입력해 주세요"
                 readOnly
                 value={props.jobPosting.companyName ?? ""}
               />
@@ -172,7 +172,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
                 placeholder="URL을 입력해 주세요"
                 readOnly
                 type="url"
-                value={props.jobPosting.url}
+                value={props.jobPosting.url ?? "등록된 URL 없음"}
               />
             </div>
           </div>

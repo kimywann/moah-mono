@@ -26,10 +26,10 @@ export const toCreateApplicationPayload = (
     location: form.location.trim() || null,
     maxYears: form.maxYears.trim() ? Number(form.maxYears) : null,
     minYears: form.minYears.trim() ? Number(form.minYears) : null,
-    position: form.position || null,
+    position: form.position.trim() || null,
     techStacks: splitCommaSeparatedValues(form.techStacks),
     title: form.title.trim() || null,
-    url: form.url.trim(),
+    url: form.url.trim() || null,
   });
 
 export const toApplicationEditForm = (
@@ -42,7 +42,7 @@ export const toApplicationEditForm = (
   location: application.location ?? "",
   maxYears: application.maxYears?.toString() ?? "",
   minYears: application.minYears?.toString() ?? "",
-  position: (application.position as IApplicationEditForm["position"]) ?? "",
+  position: application.position ?? "",
   stage: application.stage,
   techStacks: application.techStacks.join(", "),
 });
@@ -57,7 +57,7 @@ export const toUpdateApplicationPayload = (
   location: form.location.trim() || null,
   maxYears: form.maxYears.trim() ? Number(form.maxYears) : null,
   minYears: form.minYears.trim() ? Number(form.minYears) : null,
-  position: form.position || null,
+  position: form.position.trim() || null,
   stage: form.stage,
   techStacks: splitCommaSeparatedValues(form.techStacks),
 });

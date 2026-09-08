@@ -1,18 +1,31 @@
-import type { TApplicationUpdate } from "@moah/contracts/schema/application";
+import type {
+  TApplicationAttachmentsUpdate,
+  TApplicationUpdate,
+} from "@moah/contracts/schema/application";
 import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import type { IApiResponse } from "@moah/shared/type/api";
+import type { IListSearchParams } from "@moah/shared/type/url";
 import { apiFetcher } from "@moah/shared/utils/api-fetcher";
 import type {
   IApplication,
-  IApplicationList,
+  IApplicationAttachmentsUpdateResponse,
+  IApplicationListResponse,
   ICreateApplicationResponse,
   IDeleteApplicationsResponse,
+  TApplicationStage,
 } from "@/features/applications/model/application.type";
 
-export const getApplicationList = async (): Promise<
-  IApiResponse<IApplicationList[]>
-> => {
-  return apiFetcher<IApplicationList[]>("/applications");
+export const getApplicationList = async (
+  params: IListSearchParams<TApplicationStage> = {},
+): Promise<IApiResponse<IApplicationListResponse>> => {
+  return apiFetcher<IApplicationListResponse>("/applications", {
+    searchParams: {
+      keyword: params.keyword,
+      page: params.page,
+      sort: params.sort,
+      status: params.status,
+    },
+  });
 };
 
 export const getApplication = async (
@@ -47,4 +60,17 @@ export const updateApplication = async (
     method: "PATCH",
     body: JSON.stringify(updateData),
   });
+};
+
+export const updateApplicationAttachments = async (
+  id: string,
+  updateData: TApplicationAttachmentsUpdate,
+): Promise<IApiResponse<IApplicationAttachmentsUpdateResponse>> => {
+  return apiFetcher<IApplicationAttachmentsUpdateResponse>(
+    `/applications/${id}/attachments`,
+    {
+      method: "PUT",
+      body: JSON.stringify(updateData),
+    },
+  );
 };

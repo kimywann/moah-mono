@@ -1,10 +1,13 @@
+import type { IListSearchParams, TSortOrder } from "@moah/shared/type/url";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHModal from "@moah/ui/components/MHModal";
 import MHPagination from "@moah/ui/components/MHPagination";
-import type { SortingState } from "@tanstack/react-table";
+import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useApplications } from "@/features/applications/hooks/useApplications";
+import type { TApplicationStage } from "@/features/applications/model/application.type";
+import ApplicationAttachmentModal from "@/features/applications/ui/modal/ApplicationAttachmentModal";
 import ApplicationDetailModal from "@/features/applications/ui/modal/ApplicationDetailModal";
 import ApplicationRegisterModal from "@/features/applications/ui/modal/ApplicationRegisterModal";
 import ApplicationStageBadge from "@/features/applications/ui/table/ApplicationStageBadge";
@@ -12,34 +15,76 @@ import ApplicationTable from "@/features/applications/ui/table/ApplicationTable"
 import hero from "@/shared/assets/applications-hero.png";
 import HeroBanner from "@/shared/components/layout/HeroBanner";
 
-const APPLICATIONS_PAGE_SIZE = 10;
+interface IApplicationsViewProps {
+  listParams: IListSearchParams<TApplicationStage>;
+  onListParamsChange: (
+    params: Partial<IListSearchParams<TApplicationStage>>,
+  ) => void;
+}
 
-const ApplicationsView = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+const ApplicationsView = ({
+  listParams,
+  onListParamsChange,
+}: IApplicationsViewProps) => {
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [attachmentApplicationId, setAttachmentApplicationId] = useState<
+    string | null
+  >(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [sorting, setSorting] = useState<SortingState>([]);
-
   const {
     applicationsQuery,
     deleteApplicationsMutation,
+    updateApplicationAttachmentsMutation,
     updateApplicationMutation,
-  } = useApplications();
-  const applications = applicationsQuery.data ?? [];
-
-  const totalPages = Math.ceil(applications.length / APPLICATIONS_PAGE_SIZE);
-  const startIndex = (currentPage - 1) * APPLICATIONS_PAGE_SIZE;
-  const currentApplications = applications.slice(
-    startIndex,
-    startIndex + APPLICATIONS_PAGE_SIZE,
+  } = useApplications(listParams);
+  const applications = applicationsQuery.data?.items ?? [];
+  const currentPage = applicationsQuery.data?.pagination.page ?? 1;
+  const totalPages = applicationsQuery.data?.pagination.totalPages ?? 0;
+  const sorting: SortingState = listParams.sort
+    ? [
+        {
+          id: "deadline",
+          desc: listParams.sort === "DESC",
+        },
+      ]
+    : [];
+  const attachmentApplication = applications.find(
+    ({ id }) => id === attachmentApplicationId,
   );
 
   useEffect(() => {
-    if (totalPages > 0 && currentPage > totalPages) {
-      setCurrentPage(totalPages);
+    const lastPage = Math.max(totalPages, 1);
+
+    if (currentPage > lastPage) {
+      onListParamsChange({
+        page: String(lastPage),
+      });
     }
-  }, [currentPage, totalPages]);
+  }, [currentPage, onListParamsChange, totalPages]);
+
+  const handleSortingChange: OnChangeFn<SortingState> = (updater) => {
+    const nextSorting =
+      typeof updater === "function" ? updater(sorting) : updater;
+    const [nextSort] = nextSorting;
+    let sort: TSortOrder | undefined;
+
+    if (nextSort?.id === "deadline") {
+      sort = nextSort.desc ? "DESC" : "ASC";
+    }
+
+    onListParamsChange({
+      page: "1",
+      sort,
+    });
+  };
+
+  const handleStageFilterChange = (status: TApplicationStage | undefined) => {
+    onListParamsChange({
+      page: "1",
+      status,
+    });
+  };
 
   const handleSelectChange = (id: string, isSelected: boolean) => {
     setSelectedIds((previous) => {
@@ -101,6 +146,22 @@ const ApplicationsView = () => {
     }
   };
 
+  const handleAttachmentSave = async (resumeIds: string[]) => {
+    if (!attachmentApplicationId) {
+      return;
+    }
+
+    try {
+      await updateApplicationAttachmentsMutation.mutateAsync({
+        id: attachmentApplicationId,
+        resumeIds,
+      });
+      setAttachmentApplicationId(null);
+    } catch {
+      return;
+    }
+  };
+
   if (applicationsQuery.isPending) {
     return (
       <output
@@ -131,7 +192,11 @@ const ApplicationsView = () => {
       </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <ApplicationStageBadge applications={applications} />
+        <ApplicationStageBadge
+          onStageChange={handleStageFilterChange}
+          selectedStage={listParams.status}
+          stageCounts={applicationsQuery.data.stageCounts}
+        />
         <div className="flex shrink-0 gap-2">
           <MHButton
             onClick={() => setIsRegistrationModalOpen(true)}
@@ -153,15 +218,16 @@ const ApplicationsView = () => {
 
       <div className="min-h-82">
         <ApplicationTable
-          applications={currentApplications}
+          applications={applications}
           isStageUpdate={updateApplicationMutation.isPending}
+          onAttachmentClick={setAttachmentApplicationId}
           onDetailClick={setDetailId}
           onSelectAll={handleSelectAll}
           onSelectChange={handleSelectChange}
           onStageChange={(id, stage) =>
             updateApplicationMutation.mutate({ id, stage })
           }
-          onSortingChange={setSorting}
+          onSortingChange={handleSortingChange}
           selectedIds={selectedIds}
           sorting={sorting}
         />
@@ -170,7 +236,7 @@ const ApplicationsView = () => {
       <div className="mt-6">
         <MHPagination
           currentPage={currentPage}
-          onPageChange={setCurrentPage}
+          onPageChange={(page) => onListParamsChange({ page: String(page) })}
           totalPages={totalPages}
         />
       </div>
@@ -179,6 +245,15 @@ const ApplicationsView = () => {
         <ApplicationDetailModal
           applicationId={detailId}
           onClose={() => setDetailId(null)}
+        />
+      )}
+
+      {attachmentApplication && (
+        <ApplicationAttachmentModal
+          application={attachmentApplication}
+          isSaving={updateApplicationAttachmentsMutation.isPending}
+          onClose={() => setAttachmentApplicationId(null)}
+          onSave={(resumeIds) => void handleAttachmentSave(resumeIds)}
         />
       )}
 

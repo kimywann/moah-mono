@@ -1,3 +1,4 @@
+import type { TResumeType } from "@moah/contracts/schema/resume";
 import type { APPLICATION_STAGES } from "@moah/shared/constants/application";
 import type {
   JOB_POSTING_DEADLINE_TYPES,
@@ -11,7 +12,14 @@ export type TJobPostingPlatform = (typeof JOB_POSTING_PLATFORMS)[number];
 export type TJobPostingDeadlineType =
   (typeof JOB_POSTING_DEADLINE_TYPES)[number];
 
+export interface IApplicationAttachment {
+  id: string;
+  name: string;
+  resumeType: TResumeType;
+}
+
 export interface IApplicationList {
+  attachments: IApplicationAttachment[];
   deadline: string | null;
   deadlineType: TJobPostingDeadlineType;
   id: string;
@@ -23,12 +31,25 @@ export interface IApplicationList {
   platform: TJobPostingPlatform;
   position: string | null;
   stage: TApplicationStage;
-  url: string;
+  url: string | null;
 }
 
 export interface IApplication extends IApplicationList {
   hiringProcess: string[];
   techStacks: string[];
+}
+
+export interface IApplicationListPagination {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface IApplicationListResponse {
+  items: IApplicationList[];
+  pagination: IApplicationListPagination;
+  stageCounts: Record<TApplicationStage, number>;
 }
 
 export interface ICreateApplicationResponse {
@@ -38,6 +59,10 @@ export interface ICreateApplicationResponse {
 
 export interface IDeleteApplicationsResponse {
   deletedCount: number;
+}
+
+export interface IApplicationAttachmentsUpdateResponse {
+  resumeIds: string[];
 }
 
 export interface IApplicationCareer {

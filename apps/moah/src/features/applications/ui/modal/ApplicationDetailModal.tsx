@@ -1,9 +1,6 @@
 import type { TApplicationUpdate } from "@moah/contracts/schema/application";
 import { APPLICATION_STAGES } from "@moah/shared/constants/application";
-import {
-  JOB_POSTING_DEADLINE_TYPES,
-  JOB_POSTING_POSITIONS,
-} from "@moah/shared/constants/job-posting";
+import { JOB_POSTING_DEADLINE_TYPES } from "@moah/shared/constants/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
@@ -30,6 +27,7 @@ import type {
   TJobPostingDeadlineType,
 } from "@/features/applications/model/application.type";
 import ExperienceField from "@/features/applications/ui/form/ExperienceField";
+import PositionField from "@/features/applications/ui/form/PositionField";
 
 interface IApplicationDetailModalProps {
   applicationId: string;
@@ -191,7 +189,7 @@ const ApplicationDetailContent = ({
   onChange,
 }: IApplicationDetailContentProps) => (
   <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
-    <ApplicationDetailField label="기업명">
+    <ApplicationDetailField label="회사명">
       <MHInput
         isFullWidth
         onChange={(event) => onChange("companyName", event.target.value)}
@@ -202,18 +200,9 @@ const ApplicationDetailContent = ({
       <MHInput isFullWidth readOnly value={application.title ?? "정보 없음"} />
     </ApplicationDetailField>
     <ApplicationDetailField label="포지션">
-      <MHSelect
-        isFullWidth
-        onValueChange={(value) =>
-          onChange("position", value as IApplicationEditForm["position"])
-        }
-        options={JOB_POSTING_POSITIONS.map((position) => ({
-          label: position,
-          value: position,
-        }))}
-        placeholder="포지션을 선택해 주세요"
-        value={form.position || undefined}
-        variant="field"
+      <PositionField
+        onChange={(value) => onChange("position", value)}
+        value={form.position}
       />
     </ApplicationDetailField>
     <ApplicationDetailField label="경력">
@@ -246,7 +235,7 @@ const ApplicationDetailContent = ({
         variant="field"
       />
     </ApplicationDetailField>
-    <ApplicationDetailField label="마감 방식">
+    <ApplicationDetailField label="마감일">
       <MHSelect
         isFullWidth
         onValueChange={(value) =>
@@ -256,7 +245,7 @@ const ApplicationDetailContent = ({
           label: DEADLINE_TYPE_LABEL[deadlineType],
           value: deadlineType,
         }))}
-        placeholder="마감 방식을 선택해 주세요"
+        placeholder="마감일을 선택해 주세요"
         value={form.deadlineType}
         variant="field"
       />
@@ -288,7 +277,12 @@ const ApplicationDetailContent = ({
       />
     </ApplicationDetailField>
     <ApplicationDetailField className="sm:col-span-2" label="채용 공고 URL">
-      <MHInput isFullWidth readOnly type="url" value={application.url} />
+      <MHInput
+        isFullWidth
+        readOnly
+        type="url"
+        value={application.url ?? "등록된 URL 없음"}
+      />
     </ApplicationDetailField>
   </div>
 );

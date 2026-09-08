@@ -9,7 +9,7 @@ import cn from "../utils/cn";
 import MHIcon from "./MHIcon";
 
 const BASE_INPUT =
-  "inline-flex semibold w-80 rounded-small bg-field text-foreground outline-none transition-colors placeholder:text-neutral20 focus:border-focus focus:ring-2 focus:ring-focus";
+  "inline-flex semibold w-80 bg-field text-foreground outline-none transition-colors placeholder:text-neutral20 focus:border-focus focus:ring-2 focus:ring-focus";
 
 interface IMHInputProps {
   className?: string;
@@ -27,6 +27,7 @@ interface IMHInputProps {
   size?: TComponentSize;
   type?: HTMLInputTypeAttribute;
   value?: string;
+  variant?: "default" | "full";
 }
 
 const MHInput = ({
@@ -44,6 +45,7 @@ const MHInput = ({
   size = "medium",
   type = "text",
   value,
+  variant = "default",
 }: IMHInputProps) => {
   const isDisabled = disabled;
   const isClear =
@@ -52,6 +54,7 @@ const MHInput = ({
   const inputClassName = cn(
     BASE_INPUT,
     COMPONENT_CLASS[size],
+    variant === "full" ? "rounded-full" : "rounded-small",
     isError && "border-danger focus:border-danger focus:ring-danger",
     isDisabled &&
       "cursor-not-allowed border-disabled-border bg-disabled text-disabled-foreground placeholder:text-disabled-foreground",
@@ -78,11 +81,11 @@ const MHInput = ({
       {isClear && (
         <button
           aria-label="입력 내용 지우기"
-          className="absolute right-0 flex h-full w-10 items-center justify-center text-muted-foreground"
+          className="absolute right-3 flex h-full cursor-pointer items-center justify-center text-muted-foreground"
           onClick={onClear}
           type="button"
         >
-          <MHIcon icon="x" size={16} />
+          <MHIcon icon="x" size={20} />
         </button>
       )}
     </div>

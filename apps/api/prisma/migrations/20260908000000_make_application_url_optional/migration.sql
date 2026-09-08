@@ -1,0 +1,1 @@
+ALTER TABLE "applications" ALTER COLUMN "url" DROP NOT NULL;

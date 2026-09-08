@@ -1,0 +1,15 @@
+model User {
+  id                   String                 @id @default(uuid())
+  googleId             String                 @unique
+  email                String                 @unique
+  name                 String?
+  profileImage         String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  sessions             Session[]
+  applications         Application[]
+  resumes              Resume[]
+  jobPostingExtractions JobPostingExtraction[]
+
+  @@map("users")
+}

@@ -6,6 +6,8 @@ import {
   Check,
   ChevronDown,
   ClipboardList,
+  Download,
+  FileText,
   Gift,
   House,
   Info,
@@ -13,8 +15,11 @@ import {
   LoaderCircle,
   type LucideIcon,
   MapPin,
+  RotateCcw,
   Search,
   SquareKanban,
+  Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import cn from "../utils/cn";
@@ -26,6 +31,8 @@ const ICONS = {
   check: Check,
   chevronDown: ChevronDown,
   clipboardList: ClipboardList,
+  download: Download,
+  fileText: FileText,
   gift: Gift,
   house: House,
   info: Info,
@@ -33,9 +40,12 @@ const ICONS = {
   loaderCircle: LoaderCircle,
   mapPin: MapPin,
   squareKanban: SquareKanban,
+  trash2: Trash2,
   x: X,
   search: Search,
+  rotateCcw: RotateCcw,
   arrowUp: ArrowUp,
+  upload: Upload,
 } satisfies Record<string, LucideIcon>;
 
 interface IMHIconProps {
