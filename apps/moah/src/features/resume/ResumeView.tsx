@@ -58,13 +58,13 @@ const ResumeView = () => {
       const response = await getResumePreviewUrl(resume.id);
 
       if (!response.success || !response.data) {
-        throw new Error("이력서 미리보기 URL을 발급받지 못했습니다.");
+        throw new Error("파일 미리보기 URL을 발급받지 못했습니다.");
       }
 
       previewWindow.location.href = response.data.previewUrl;
     } catch {
       previewWindow.close();
-      toast.error("이력서 미리보기를 불러오지 못했습니다.");
+      toast.error("파일 미리보기를 불러오지 못했습니다.");
     }
   };
 
@@ -100,7 +100,7 @@ const ResumeView = () => {
   if (resumesQuery.isPending) {
     return (
       <output
-        aria-label="이력서 목록을 불러오는 중"
+        aria-label="파일 목록을 불러오는 중"
         className="flex min-h-82 items-center justify-center"
       >
         <MHIcon className="animate-spin text-primary" icon="loaderCircle" />
@@ -111,7 +111,7 @@ const ResumeView = () => {
   if (resumesQuery.isError) {
     return (
       <p className="p-6 text-danger" role="alert">
-        이력서 목록을 불러오지 못했습니다.
+        파일 목록을 불러오지 못했습니다.
       </p>
     );
   }
@@ -128,7 +128,7 @@ const ResumeView = () => {
         </div>
 
         <div className="mb-4">
-          <h1 className="bold display24">이력서 목록</h1>
+          <h1 className="bold display24">파일 목록</h1>
         </div>
 
         <ResumeTable

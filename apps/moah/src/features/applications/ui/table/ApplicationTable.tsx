@@ -150,7 +150,7 @@ const createColumns = (
   {
     accessorKey: "attachments",
     enableSorting: false,
-    header: "파일",
+    header: "첨부 파일",
     size: 280,
     cell: ({ row }) => {
       const [firstAttachment] = row.original.attachments;

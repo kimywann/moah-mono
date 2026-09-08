@@ -79,7 +79,7 @@ const ResumeUploadBanner = ({
         <MHIcon className="text-primary" icon="upload" size={32} />
         <p className="bold display18 mt-3">
           {isUploading
-            ? "이력서를 업로드하는 중이에요"
+            ? "파일을 업로드하는 중이에요"
             : "파일을 이곳에 끌어다 놓거나 클릭해서 업로드해 주세요"}
         </p>
         <p className="display14 regular mt-2 text-muted-foreground">

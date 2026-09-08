@@ -158,10 +158,10 @@ const ResumeTable = ({
 }: IResumeTableProps) => {
   return (
     <MHTable
-      caption="이력서 목록"
+      caption="파일 목록"
       columns={createResumeColumns(isDeleting, onDeleteClick, onPreviewClick)}
       data={resumes}
-      emptyMessage="등록된 이력서가 없어요. 첫 이력서를 업로드해 보세요!"
+      emptyMessage="등록된 파일이 없어요. 첫 파일을 업로드해 보세요!"
       getRowId={(resume) => resume.id}
       onSortingChange={onSortingChange}
       sorting={sorting}

@@ -23,7 +23,7 @@ export const useResumes = () => {
       const response = await getResumeList();
 
       if (!response.success || !response.data) {
-        throw new Error("이력서 목록을 불러오지 못했습니다.");
+        throw new Error("파일 목록을 불러오지 못했습니다.");
       }
 
       return response.data;
@@ -36,7 +36,7 @@ export const useResumes = () => {
       const uploadUrlResponse = await createResumeUploadUrl(file, resumeType);
 
       if (!uploadUrlResponse.success || !uploadUrlResponse.data) {
-        throw new Error("이력서 업로드 URL을 발급받지 못했습니다.");
+        throw new Error("파일 업로드 URL을 발급받지 못했습니다.");
       }
 
       await uploadResumeToS3(uploadUrlResponse.data.uploadUrl, file);
@@ -46,17 +46,17 @@ export const useResumes = () => {
       );
 
       if (!completeResponse.success || !completeResponse.data) {
-        throw new Error("이력서 업로드 완료 처리에 실패했습니다.");
+        throw new Error("파일 업로드 완료 처리에 실패했습니다.");
       }
 
       return completeResponse.data;
     },
     onError: () => {
-      toast.error("이력서를 업로드하지 못했습니다.");
+      toast.error("파일을 업로드하지 못했습니다.");
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["resumes"] });
-      toast.success("이력서를 업로드했어요.");
+      toast.success("파일을 업로드했어요.");
     },
   });
 
@@ -69,17 +69,17 @@ export const useResumes = () => {
       const response = await deleteResume(resumeId);
 
       if (!response.success || !response.data) {
-        throw new Error("이력서 삭제에 실패했습니다.");
+        throw new Error("파일 삭제에 실패했습니다.");
       }
 
       return response.data;
     },
     onError: () => {
-      toast.error("이력서를 삭제하지 못했습니다.");
+      toast.error("파일을 삭제하지 못했습니다.");
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["resumes"] });
-      toast.success("이력서를 삭제했어요.");
+      toast.success("파일을 삭제했어요.");
     },
   });
 

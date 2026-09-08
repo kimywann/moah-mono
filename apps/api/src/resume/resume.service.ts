@@ -13,7 +13,7 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { ResumeS3Service } from "./resume.s3.service";
 
-const MAX_RESUME_COUNT = 50; // 사용자별 최대 이력서 개수
+const MAX_RESUME_COUNT = 50; // 사용자별 최대 파일 개수
 const MAX_RESUME_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 파일당 최대 10MB
 const MAX_TOTAL_RESUME_SIZE_BYTES = 500 * 1024 * 1024; // 사용자별 전체 최대 500MB
 const MAX_ACTIVE_UPLOADS = 1; // 동시에 업로드 가능한 파일 수
@@ -34,7 +34,7 @@ export class ResumeService {
 
     if (request.fileSize > MAX_RESUME_FILE_SIZE_BYTES) {
       throw new PayloadTooLargeException(
-        "이력서 파일은 10MB 이하만 업로드할 수 있습니다.",
+        "파일은 10MB 이하만 업로드할 수 있습니다.",
       );
     }
 
@@ -67,18 +67,18 @@ export class ResumeService {
     ]);
 
     if (pendingCount >= MAX_ACTIVE_UPLOADS) {
-      throw new ConflictException("이미 업로드 중인 이력서가 있습니다.");
+      throw new ConflictException("이미 업로드 중인 파일이 있습니다.");
     }
 
     if (resumeCount >= MAX_RESUME_COUNT) {
-      throw new ConflictException("이력서는 최대 50개까지 보유할 수 있습니다.");
+      throw new ConflictException("파일은 최대 50개까지 보유할 수 있습니다.");
     }
 
     const currentTotalSize = totalSize._sum.fileSize ?? 0;
 
     if (currentTotalSize + request.fileSize > MAX_TOTAL_RESUME_SIZE_BYTES) {
       throw new PayloadTooLargeException(
-        "이력서 전체 용량은 500MB를 초과할 수 없습니다.",
+        "파일 전체 용량은 500MB를 초과할 수 없습니다.",
       );
     }
 
@@ -163,7 +163,7 @@ export class ResumeService {
     });
 
     if (!resume) {
-      throw new NotFoundException("이력서를 찾을 수 없습니다.");
+      throw new NotFoundException("파일을 찾을 수 없습니다.");
     }
 
     if (resume.status === "READY") {
@@ -216,7 +216,7 @@ export class ResumeService {
     });
 
     if (!resume) {
-      throw new NotFoundException("미리보기할 이력서를 찾을 수 없습니다.");
+      throw new NotFoundException("미리보기할 파일을 찾을 수 없습니다.");
     }
 
     if (resume.fileFormat !== "PDF") {
@@ -267,7 +267,7 @@ export class ResumeService {
     });
 
     if (!resume) {
-      throw new NotFoundException("삭제할 이력서를 찾을 수 없습니다.");
+      throw new NotFoundException("삭제할 파일을 찾을 수 없습니다.");
     }
 
     await this.resumeS3Service.deleteObject(resume.s3Key);
