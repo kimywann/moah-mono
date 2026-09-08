@@ -83,7 +83,8 @@ export const jobPostingExtractionResponseSchema = z.object({
 });
 
 export const jobPostingFormSchema = jobPostingExtractionResponseSchema.extend({
-  url: jobPostingURLSchema,
+  position: z.string().trim().nullable(),
+  url: jobPostingURLSchema.nullable(),
 });
 
 export type TJobPostingExtraction = z.infer<

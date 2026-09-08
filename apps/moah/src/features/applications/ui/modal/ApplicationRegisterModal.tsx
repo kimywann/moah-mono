@@ -1,8 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  JOB_POSTING_DEADLINE_TYPES,
-  JOB_POSTING_POSITIONS,
-} from "@moah/shared/constants/job-posting";
+import { JOB_POSTING_DEADLINE_TYPES } from "@moah/shared/constants/job-posting";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
@@ -21,6 +18,7 @@ import {
   type TApplicationRegisterForm,
 } from "@/features/applications/model/application.form";
 import ExperienceField from "@/features/applications/ui/form/ExperienceField";
+import PositionField from "@/features/applications/ui/form/PositionField";
 import applicationRegisterImage from "@/shared/assets/application-register.webp";
 
 interface IApplicationRegisterModalProps {
@@ -97,7 +95,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
               공고 URL 하나면 등록 완료
             </p>
             <p className="regular display12 mt-1 text-white/90">
-              링크를 붙여넣으면 기업명, 포지션, 마감일을 자동으로 채워드려요.
+              링크를 붙여넣으면 회사명, 포지션, 마감일을 자동으로 채워드려요.
             </p>
           </div>
           <img
@@ -116,7 +114,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
               render={({ field }) => (
                 <RegistrationField
                   error={errors.companyName?.message}
-                  label="기업명"
+                  label="회사명"
                 >
                   <MHInput
                     isError={Boolean(errors.companyName)}
@@ -137,37 +135,11 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                   error={errors.position?.message}
                   label="포지션"
                 >
-                  <MHSelect
-                    isError={Boolean(errors.position)}
-                    isFullWidth
-                    onValueChange={field.onChange}
-                    options={JOB_POSTING_POSITIONS.map((position) => ({
-                      label: position,
-                      value: position,
-                    }))}
-                    placeholder="포지션을 선택해 주세요"
-                    value={field.value || undefined}
-                    variant="field"
-                  />
-                </RegistrationField>
-              )}
-            />
-            <Controller
-              control={control}
-              name="url"
-              render={({ field }) => (
-                <RegistrationField
-                  className="sm:col-span-2"
-                  error={errors.url?.message}
-                  label="채용 공고 URL"
-                >
-                  <MHInput
-                    isError={Boolean(errors.url)}
-                    isFullWidth
+                  <PositionField
+                    error={Boolean(errors.position)}
                     name={field.name}
                     onBlur={field.onBlur}
                     onChange={field.onChange}
-                    type="url"
                     value={field.value}
                   />
                 </RegistrationField>
@@ -192,45 +164,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
           </button>
           {isOptionalOpen && (
             <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
-              <Controller
-                control={control}
-                name="title"
-                render={({ field }) => (
-                  <RegistrationField
-                    error={errors.title?.message}
-                    label="공고명"
-                  >
-                    <MHInput
-                      isError={Boolean(errors.title)}
-                      isFullWidth
-                      name={field.name}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                      value={field.value}
-                    />
-                  </RegistrationField>
-                )}
-              />
-              <Controller
-                control={control}
-                name="location"
-                render={({ field }) => (
-                  <RegistrationField
-                    error={errors.location?.message}
-                    label="근무 지역"
-                  >
-                    <MHInput
-                      isError={Boolean(errors.location)}
-                      isFullWidth
-                      name={field.name}
-                      onBlur={field.onBlur}
-                      onChange={field.onChange}
-                      value={field.value}
-                    />
-                  </RegistrationField>
-                )}
-              />
-              <RegistrationField className="sm:col-span-2" label="경력">
+              <RegistrationField label="경력">
                 <ExperienceField
                   maxYears={maxYears}
                   minYears={minYears}
@@ -246,14 +180,14 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                   }}
                 />
               </RegistrationField>
-              <Controller
-                control={control}
-                name="deadlineType"
-                render={({ field }) => (
-                  <RegistrationField
-                    error={errors.deadlineType?.message}
-                    label="마감 방식"
-                  >
+              <RegistrationField
+                error={errors.deadlineType?.message ?? errors.deadline?.message}
+                label="마감일"
+              >
+                <Controller
+                  control={control}
+                  name="deadlineType"
+                  render={({ field }) => (
                     <MHSelect
                       isError={Boolean(errors.deadlineType)}
                       isFullWidth
@@ -269,22 +203,17 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                           value: deadlineType,
                         }),
                       )}
-                      placeholder="마감 방식을 선택해 주세요"
+                      placeholder="마감일을 선택해 주세요"
                       value={field.value}
                       variant="field"
                     />
-                  </RegistrationField>
-                )}
-              />
-              {deadlineType === "DATE" && (
-                <Controller
-                  control={control}
-                  name="deadline"
-                  render={({ field }) => (
-                    <RegistrationField
-                      error={errors.deadline?.message}
-                      label="지원 마감일"
-                    >
+                  )}
+                />
+                {deadlineType === "DATE" && (
+                  <Controller
+                    control={control}
+                    name="deadline"
+                    render={({ field }) => (
                       <MHInput
                         isError={Boolean(errors.deadline)}
                         isFullWidth
@@ -294,10 +223,10 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                         type="date"
                         value={field.value}
                       />
-                    </RegistrationField>
-                  )}
-                />
-              )}
+                    )}
+                  />
+                )}
+              </RegistrationField>
               <Controller
                 control={control}
                 name="hiringProcess"
@@ -324,7 +253,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                 render={({ field }) => (
                   <RegistrationField
                     error={errors.techStacks?.message}
-                    label="기술 스택"
+                    label="기술스택"
                   >
                     <MHInput
                       isError={Boolean(errors.techStacks)}
@@ -333,6 +262,65 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                       onBlur={field.onBlur}
                       onChange={field.onChange}
                       placeholder="쉼표로 구분해 입력해 주세요"
+                      value={field.value}
+                    />
+                  </RegistrationField>
+                )}
+              />
+              <Controller
+                control={control}
+                name="title"
+                render={({ field }) => (
+                  <RegistrationField
+                    error={errors.title?.message}
+                    label="공고명"
+                  >
+                    <MHInput
+                      isError={Boolean(errors.title)}
+                      isFullWidth
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
+                  </RegistrationField>
+                )}
+              />
+              <Controller
+                control={control}
+                name="location"
+                render={({ field }) => (
+                  <RegistrationField
+                    error={errors.location?.message}
+                    label="근무지역"
+                  >
+                    <MHInput
+                      isError={Boolean(errors.location)}
+                      isFullWidth
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
+                  </RegistrationField>
+                )}
+              />
+              <Controller
+                control={control}
+                name="url"
+                render={({ field }) => (
+                  <RegistrationField
+                    className="sm:col-span-2"
+                    error={errors.url?.message}
+                    label="채용 공고 URL"
+                  >
+                    <MHInput
+                      isError={Boolean(errors.url)}
+                      isFullWidth
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
+                      type="url"
                       value={field.value}
                     />
                   </RegistrationField>

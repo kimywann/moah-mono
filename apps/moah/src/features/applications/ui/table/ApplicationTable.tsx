@@ -94,7 +94,7 @@ const createColumns = (
   {
     accessorKey: "companyName",
     enableSorting: false,
-    header: "기업",
+    header: "회사",
     size: 80,
     cell: ({ getValue }) => (
       <span className="regular">{getValue<string>()}</span>

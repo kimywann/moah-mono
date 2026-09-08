@@ -89,7 +89,7 @@ export class ApplicationsController {
     const application = await this.applicationsService.create(
       user.id,
       request.data,
-      getJobPostingPlatform(request.data.url),
+      request.data.url ? getJobPostingPlatform(request.data.url) : "OTHER",
     );
 
     return {

@@ -31,7 +31,7 @@ export interface IApplicationList {
   platform: TJobPostingPlatform;
   position: string | null;
   stage: TApplicationStage;
-  url: string;
+  url: string | null;
 }
 
 export interface IApplication extends IApplicationList {
