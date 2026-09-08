@@ -11,7 +11,9 @@ const Footer = () => {
               개인정보 처리방침
             </Link>
             <span aria-hidden="true">|</span>
-            <span>이용약관</span>
+            <Link className="hover:text-foreground" to="/terms">
+              이용약관
+            </Link>
           </div>
           <a
             className="hover:text-foreground"
