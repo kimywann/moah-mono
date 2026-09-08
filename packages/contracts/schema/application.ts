@@ -1,9 +1,14 @@
+import { SearchParamsSchema } from "@moah/contracts/schema/url";
 import { APPLICATION_STAGES } from "@moah/shared/constants/application";
 import {
   JOB_POSTING_DEADLINE_TYPES,
   JOB_POSTING_POSITIONS,
 } from "@moah/shared/constants/job-posting";
 import { z } from "zod";
+
+export const applicationListQuerySchema = SearchParamsSchema.extend({
+  status: z.enum(APPLICATION_STAGES).optional(),
+}).strict();
 
 export const applicationUpdateSchema = z
   .object({
@@ -31,3 +36,4 @@ export type TApplicationUpdate = z.infer<typeof applicationUpdateSchema>;
 export type TApplicationAttachmentsUpdate = z.infer<
   typeof applicationAttachmentsUpdateSchema
 >;
+export type TApplicationListQuery = z.infer<typeof applicationListQuerySchema>;

@@ -1,34 +1,15 @@
 import { APPLICATION_STAGES } from "@moah/shared/constants/application";
 import MHBadge from "@moah/ui/components/MHBadge";
 import { APPLICATION_STAGE_DISPLAY } from "@/features/applications/model/application.constant";
-import type {
-  IApplicationList,
-  TApplicationStage,
-} from "@/features/applications/model/application.type";
+import type { TApplicationStage } from "@/features/applications/model/application.type";
 
 interface IApplicationStageBadgeProps {
-  applications: IApplicationList[];
+  onStageChange: (stage?: TApplicationStage) => void;
+  selectedStage?: TApplicationStage;
+  stageCounts: Record<TApplicationStage, number>;
 }
 
-const getStageCounts = (applications: IApplicationList[]) => {
-  const counts: Record<TApplicationStage, number> = {
-    READY: 0,
-    APPLIED: 0,
-    INTERVIEW: 0,
-    PASSED: 0,
-    REJECTED: 0,
-  };
-
-  for (const application of applications) {
-    counts[application.stage] += 1;
-  }
-
-  return counts;
-};
-
 const ApplicationStageBadge = (props: IApplicationStageBadgeProps) => {
-  const stageCounts = getStageCounts(props.applications);
-
   return (
     <fieldset className="flex flex-wrap gap-2 border-0 p-0">
       <legend className="sr-only">지원 단계별 현황</legend>
@@ -36,9 +17,29 @@ const ApplicationStageBadge = (props: IApplicationStageBadgeProps) => {
         const stageDisplay = APPLICATION_STAGE_DISPLAY[stage];
 
         return (
-          <MHBadge key={stage} size="lg" variant={stageDisplay.variant}>
-            {stageDisplay.label} {stageCounts[stage]}건
-          </MHBadge>
+          <button
+            aria-pressed={props.selectedStage === stage}
+            className="cursor-pointer rounded-tiny focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+            key={stage}
+            onClick={() =>
+              props.onStageChange(
+                props.selectedStage === stage ? undefined : stage,
+              )
+            }
+            type="button"
+          >
+            <MHBadge
+              className={
+                props.selectedStage === stage
+                  ? "ring-2 ring-primary ring-offset-1"
+                  : undefined
+              }
+              size="lg"
+              variant={stageDisplay.variant}
+            >
+              {stageDisplay.label} {props.stageCounts[stage]}건
+            </MHBadge>
+          </button>
         );
       })}
     </fieldset>

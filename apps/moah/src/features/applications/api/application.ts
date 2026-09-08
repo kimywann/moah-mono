@@ -4,19 +4,28 @@ import type {
 } from "@moah/contracts/schema/application";
 import type { TJobPostingForm } from "@moah/contracts/schema/job-posting";
 import type { IApiResponse } from "@moah/shared/type/api";
+import type { IListSearchParams } from "@moah/shared/type/url";
 import { apiFetcher } from "@moah/shared/utils/api-fetcher";
 import type {
   IApplication,
   IApplicationAttachmentsUpdateResponse,
-  IApplicationList,
+  IApplicationListResponse,
   ICreateApplicationResponse,
   IDeleteApplicationsResponse,
+  TApplicationStage,
 } from "@/features/applications/model/application.type";
 
-export const getApplicationList = async (): Promise<
-  IApiResponse<IApplicationList[]>
-> => {
-  return apiFetcher<IApplicationList[]>("/applications");
+export const getApplicationList = async (
+  params: IListSearchParams<TApplicationStage> = {},
+): Promise<IApiResponse<IApplicationListResponse>> => {
+  return apiFetcher<IApplicationListResponse>("/applications", {
+    searchParams: {
+      keyword: params.keyword,
+      page: params.page,
+      sort: params.sort,
+      status: params.status,
+    },
+  });
 };
 
 export const getApplication = async (

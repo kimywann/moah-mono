@@ -1,3 +1,4 @@
+import type { IListSearchParams } from "@moah/shared/type/url";
 import { toast } from "@moah/ui/components/MHToaster";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -9,7 +10,7 @@ import {
 import type {
   IApplication,
   IApplicationAttachmentsUpdateResponse,
-  IApplicationList,
+  IApplicationListResponse,
   IDeleteApplicationsResponse,
   TApplicationStage,
 } from "@/features/applications/model/application.type";
@@ -20,7 +21,7 @@ interface IApplicationStageUpdate {
 }
 
 interface IApplicationStageUpdateContext {
-  previousApplications: IApplicationList[] | undefined;
+  previousApplications: IApplicationListResponse | undefined;
 }
 
 interface IApplicationAttachmentsUpdateInput {
@@ -28,12 +29,14 @@ interface IApplicationAttachmentsUpdateInput {
   resumeIds: string[];
 }
 
-export const useApplications = () => {
+export const useApplications = (
+  params: IListSearchParams<TApplicationStage>,
+) => {
   const queryClient = useQueryClient();
   const applicationsQuery = useQuery({
-    queryKey: ["applications"],
+    queryKey: ["applications", params],
     queryFn: async () => {
-      const response = await getApplicationList();
+      const response = await getApplicationList(params);
 
       if (!response.success || !response.data) {
         throw new Error("지원 현황 목록을 불러오지 못했습니다.");
@@ -60,24 +63,36 @@ export const useApplications = () => {
       return response.data;
     },
     onError: (_error, _variables, context) => {
-      queryClient.setQueryData(["applications"], context?.previousApplications);
+      queryClient.setQueryData(
+        ["applications", params],
+        context?.previousApplications,
+      );
       toast.error("지원 단계를 수정하지 못했습니다. 다시 시도해 주세요.");
     },
     onMutate: async ({ id, stage }) => {
       await queryClient.cancelQueries({
-        queryKey: ["applications"],
+        queryKey: ["applications", params],
       });
 
-      const previousApplications = queryClient.getQueryData<IApplicationList[]>(
-        ["applications"],
-      );
+      const previousApplications =
+        queryClient.getQueryData<IApplicationListResponse>([
+          "applications",
+          params,
+        ]);
 
-      queryClient.setQueryData<IApplicationList[]>(
-        ["applications"],
-        (applications) =>
-          applications?.map((application) =>
-            application.id === id ? { ...application, stage } : application,
-          ),
+      queryClient.setQueryData<IApplicationListResponse>(
+        ["applications", params],
+        (response) =>
+          response
+            ? {
+                ...response,
+                items: response.items.map((application) =>
+                  application.id === id
+                    ? { ...application, stage }
+                    : application,
+                ),
+              }
+            : response,
       );
 
       return { previousApplications };

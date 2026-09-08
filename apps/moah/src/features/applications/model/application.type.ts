@@ -39,6 +39,19 @@ export interface IApplication extends IApplicationList {
   techStacks: string[];
 }
 
+export interface IApplicationListPagination {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface IApplicationListResponse {
+  items: IApplicationList[];
+  pagination: IApplicationListPagination;
+  stageCounts: Record<TApplicationStage, number>;
+}
+
 export interface ICreateApplicationResponse {
   id: string;
   stage: TApplicationStage;
