@@ -13,6 +13,8 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
+import { CORE_ACTIVITY_EVENT } from "../analytics/analytics.constants";
+import { AnalyticsService } from "../analytics/analytics.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { EXTRACTION_PROMPT } from "./constants/prompt";
 
@@ -45,6 +47,8 @@ export class JobPostingService {
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
     @Inject(PrismaService) private readonly prismaService: PrismaService,
+    @Inject(AnalyticsService)
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   async extract(userId: string, url: string) {
@@ -122,6 +126,11 @@ export class JobPostingService {
 
     await this.prismaService.jobPostingExtraction.create({
       data: { userId },
+    });
+
+    this.analyticsService.trackCoreActivity({
+      userId,
+      eventName: CORE_ACTIVITY_EVENT.JOB_POSTING_EXTRACTED,
     });
 
     return parsedJobPosting.data;

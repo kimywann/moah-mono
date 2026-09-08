@@ -10,6 +10,8 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { CORE_ACTIVITY_EVENT } from "../analytics/analytics.constants";
+import { AnalyticsService } from "../analytics/analytics.service";
 import { type JobPostingPlatform, Prisma } from "../generated/prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
@@ -67,6 +69,8 @@ const toApplicationResponse = <
 export class ApplicationsService {
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
+    @Inject(AnalyticsService)
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   async findAllByUserId(userId: string, query: TApplicationListQuery) {
@@ -155,7 +159,7 @@ export class ApplicationsService {
       : null;
 
     try {
-      return await this.prismaService.application.create({
+      const application = await this.prismaService.application.create({
         data: {
           userId,
           stage: "READY",
@@ -177,6 +181,14 @@ export class ApplicationsService {
           stage: true,
         },
       });
+
+      this.analyticsService.trackCoreActivity({
+        userId,
+        eventName: CORE_ACTIVITY_EVENT.JOB_POSTING_SAVED,
+        properties: { platform },
+      });
+
+      return application;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -210,7 +222,7 @@ export class ApplicationsService {
         id: applicationId,
         userId,
       },
-      select: { id: true },
+      select: { id: true, stage: true },
     });
 
     if (!application) {
@@ -232,6 +244,30 @@ export class ApplicationsService {
       data,
       select: APPLICATION_SELECT,
     });
+
+    const isStageChanged =
+      updateData.stage !== undefined && updateData.stage !== application.stage;
+    const isRecordUpdated = Object.keys(updateData).some(
+      (field) => field !== "stage",
+    );
+
+    if (isStageChanged) {
+      this.analyticsService.trackCoreActivity({
+        userId,
+        eventName: CORE_ACTIVITY_EVENT.APPLICATION_STAGE_CHANGED,
+        properties: {
+          from_stage: application.stage,
+          to_stage: updateData.stage ?? application.stage,
+        },
+      });
+    }
+
+    if (isRecordUpdated) {
+      this.analyticsService.trackCoreActivity({
+        userId,
+        eventName: CORE_ACTIVITY_EVENT.APPLICATION_RECORD_UPDATED,
+      });
+    }
 
     return toApplicationResponse(updatedApplication);
   }
@@ -282,6 +318,11 @@ export class ApplicationsService {
           resumeId,
         })),
       });
+    });
+
+    this.analyticsService.trackCoreActivity({
+      userId,
+      eventName: CORE_ACTIVITY_EVENT.APPLICATION_RECORD_UPDATED,
     });
 
     return { resumeIds: uniqueResumeIds };

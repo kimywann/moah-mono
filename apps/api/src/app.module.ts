@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { AnalyticsModule } from "./analytics/analytics.module";
 import { ApplicationsModule } from "./applications/applications.module";
 import { AuthModule } from "./auth/auth.module";
 import { HealthModule } from "./health/health.module";
@@ -10,6 +11,7 @@ import { ResumeModule } from "./resume/resume.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    AnalyticsModule,
     PrismaModule,
     ApplicationsModule,
     AuthModule,

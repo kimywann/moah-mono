@@ -4,9 +4,12 @@ import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import ResumePage from "@/pages/ResumePage";
+import TermsPage from "@/pages/TermsPage";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 import MainLayout from "@/shared/components/layout/MainLayout";
+import RobotsMeta from "@/shared/components/RobotsMeta";
 
 const RequireAuth = () => {
   const { isAuthenticated, isAuthInitialized } = useAuth();
@@ -25,6 +28,7 @@ const RequireAuth = () => {
 const Router = () => {
   return (
     <BrowserRouter>
+      <RobotsMeta />
       <Routes>
         <Route element={<MainLayout />}>
           <Route element={<HomePage />} index />
@@ -38,6 +42,8 @@ const Router = () => {
         </Route>
 
         <Route element={<LoginPage />} path="login" />
+        <Route element={<PrivacyPolicyPage />} path="privacy" />
+        <Route element={<TermsPage />} path="terms" />
         <Route element={<NotFoundPage />} path="*" />
       </Routes>
     </BrowserRouter>

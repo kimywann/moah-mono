@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "@moah/shared/config/config";
 import MHButton from "@moah/ui/components/MHButton";
 import MHIcon from "@moah/ui/components/MHIcon";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -40,6 +40,14 @@ const LoginPage = () => {
           >
             Google로 빠르게 로그인하기
           </MHButton>
+          <p className="display12 regular text-center text-muted-foreground leading-5">
+            로그인 시 Google 계정의 기본 프로필 정보를 이용합니다. 자세한 내용은
+            <br />
+            <Link className="underline hover:text-foreground" to="/privacy">
+              개인정보 처리방침
+            </Link>
+            에서 확인할 수 있습니다.
+          </p>
         </div>
       </section>
     </main>
