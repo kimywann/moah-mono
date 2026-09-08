@@ -4,12 +4,11 @@ import MHButton from "@moah/ui/components/MHButton";
 import MHCheckbox from "@moah/ui/components/MHCheckbox";
 import MHIcon from "@moah/ui/components/MHIcon";
 import MHInput from "@moah/ui/components/MHInput";
-import MHPagination from "@moah/ui/components/MHPagination";
 import MHTable from "@moah/ui/components/MHTable";
 import { toast } from "@moah/ui/components/MHToaster";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import type { IApplicationList } from "@/features/applications/model/application.type";
 import {
   getResumeDownloadUrl,
@@ -22,7 +21,6 @@ import ResumeTypeModal from "@/features/resume/ui/ResumeTypeModal";
 import PDFPreview from "@/shared/components/PDFPreview";
 
 const MAX_ATTACHMENT_COUNT = 4;
-const ATTACHMENT_PAGE_SIZE = 5;
 const isPDFFile = (file: File) => /\.pdf$/i.test(file.name);
 
 interface IApplicationAttachmentModalProps {
@@ -40,7 +38,6 @@ const ApplicationAttachmentModal = (
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [previewResumeId, setPreviewResumeId] = useState<string | null>(null);
   const [downloadingResumeId, setDownloadingResumeId] = useState<string | null>(
     null,
@@ -66,21 +63,14 @@ const ApplicationAttachmentModal = (
     refetchOnWindowFocus: false,
   });
   const resumes = resumesQuery.data ?? [];
+  const normalizedSearchQuery = searchQuery
+    .trim()
+    .normalize("NFC")
+    .toLowerCase();
   const filteredResumes = resumes.filter(({ name }) =>
-    name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-  const totalPages = Math.ceil(filteredResumes.length / ATTACHMENT_PAGE_SIZE);
-  const currentResumes = filteredResumes.slice(
-    (currentPage - 1) * ATTACHMENT_PAGE_SIZE,
-    currentPage * ATTACHMENT_PAGE_SIZE,
+    name.normalize("NFC").toLowerCase().includes(normalizedSearchQuery),
   );
   const isBusy = props.isSaving || uploadResumeMutation.isPending;
-
-  useEffect(() => {
-    if (totalPages > 0 && currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
 
   const handleSelectionChange = (resumeId: string, isSelected: boolean) => {
     setSelectedIds((previousIds) => {
@@ -286,22 +276,17 @@ const ApplicationAttachmentModal = (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                   <MHInput
-                    className="w-full"
                     isFullWidth
                     onChange={(event) => {
                       setSearchQuery(event.target.value);
-                      setCurrentPage(1);
                     }}
                     onClear={() => {
                       setSearchQuery("");
-                      setCurrentPage(1);
                     }}
                     placeholder="파일명 검색"
                     value={searchQuery}
+                    variant="full"
                   />
-                  <span className="regular shrink-0 text-muted-foreground">
-                    {selectedIds.size} / {MAX_ATTACHMENT_COUNT}개 선택
-                  </span>
                 </div>
                 <label
                   className={
@@ -329,7 +314,7 @@ const ApplicationAttachmentModal = (
                   caption="첨부할 파일 목록"
                   className="min-h-0 flex-1 overflow-y-auto"
                   columns={columns}
-                  data={currentResumes}
+                  data={filteredResumes}
                   emptyMessage={
                     resumesQuery.isError
                       ? "파일 목록을 불러오지 못했습니다."
@@ -342,12 +327,10 @@ const ApplicationAttachmentModal = (
                   onSortingChange={() => undefined}
                   sorting={[]}
                 />
-                <div className="mt-3 shrink-0">
-                  <MHPagination
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    totalPages={totalPages}
-                  />
+                <div className="mt-3 flex shrink-0 justify-end">
+                  <span className="regular text-muted-foreground">
+                    {selectedIds.size} / {MAX_ATTACHMENT_COUNT}개 선택
+                  </span>
                 </div>
               </div>
             </div>

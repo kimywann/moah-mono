@@ -169,7 +169,9 @@ const createColumns = (
               {firstAttachment.name}
             </span>
           ) : (
-            <span className="regular text-muted-foreground">미첨부</span>
+            <span className="regular text-muted-foreground">
+              첨부된 파일 없음
+            </span>
           )}
           {firstAttachment && additionalAttachmentCount > 0 && (
             <MHTooltip content={attachmentTooltip}>
