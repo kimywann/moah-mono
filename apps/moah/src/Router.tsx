@@ -4,6 +4,7 @@ import ApplicationsPage from "@/pages/ApplicationsPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import ResumePage from "@/pages/ResumePage";
 import ContentLayout from "@/shared/components/layout/ContentLayout";
 import MainLayout from "@/shared/components/layout/MainLayout";
@@ -38,6 +39,7 @@ const Router = () => {
         </Route>
 
         <Route element={<LoginPage />} path="login" />
+        <Route element={<PrivacyPolicyPage />} path="privacy" />
         <Route element={<NotFoundPage />} path="*" />
       </Routes>
     </BrowserRouter>
