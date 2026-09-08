@@ -59,3 +59,14 @@ packages/
 - Gemini Flash API를 연동해 채용 공고 URL의 원문을 구조화된 데이터로 추출하는 API 개발
 - RESTful API 설계 및 구현 (채용 공고/지원 현황 CRUD 기능 개발)
 - Google OAuth 2.0 및 HttpOnly Cookie 기반 로그인 세션 구현
+
+#### Mixpanel
+
+API 서버에서 성공한 핵심 활동만 전송합니다. 로컬에서는 `apps/api/.env`에 아래 값을 추가하고, 운영에서는 배포 환경의 Secret/환경변수에 등록합니다.
+
+```env
+MIXPANEL_ENABLED=true
+MIXPANEL_TOKEN=프로젝트_토큰
+```
+
+`distinct_id`는 로그인한 내부 `userId`이며, 이메일이나 이력서·지원 내용은 Mixpanel로 전송하지 않습니다.

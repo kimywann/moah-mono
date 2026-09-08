@@ -10,6 +10,8 @@ import {
   NotFoundException,
   PayloadTooLargeException,
 } from "@nestjs/common";
+import { CORE_ACTIVITY_EVENT } from "../analytics/analytics.constants";
+import { AnalyticsService } from "../analytics/analytics.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { ResumeS3Service } from "./resume.s3.service";
 
@@ -27,6 +29,8 @@ export class ResumeService {
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
     @Inject(ResumeS3Service) private readonly resumeS3Service: ResumeS3Service,
+    @Inject(AnalyticsService)
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   async createUploadUrl(userId: string, request: TResumeUploadRequest) {
@@ -193,6 +197,11 @@ export class ResumeService {
         id: true,
         status: true,
       },
+    });
+
+    this.analyticsService.trackCoreActivity({
+      userId,
+      eventName: CORE_ACTIVITY_EVENT.RESUME_UPLOADED,
     });
 
     return {
