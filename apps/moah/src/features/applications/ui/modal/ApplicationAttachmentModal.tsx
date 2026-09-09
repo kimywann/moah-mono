@@ -39,6 +39,7 @@ const ApplicationAttachmentModal = (
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [previewResumeId, setPreviewResumeId] = useState<string | null>(null);
+  const [isMobilePreviewOpen, setIsMobilePreviewOpen] = useState(false);
   const [downloadingResumeId, setDownloadingResumeId] = useState<string | null>(
     null,
   );
@@ -247,17 +248,17 @@ const ApplicationAttachmentModal = (
         <div
           aria-labelledby="application-attachment-modal-title"
           aria-modal="true"
-          className="flex h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] w-full max-w-content flex-col overflow-y-auto rounded-medium bg-background p-8 shadow-xs"
+          className="flex h-[calc(100vh-32px)] tab:h-[calc(100vh-48px)] max-h-[calc(100vh-32px)] tab:max-h-[calc(100vh-48px)] w-full max-w-content flex-col overflow-y-auto rounded-medium bg-background desk:p-8 p-4 tab:p-6 shadow-xs"
           role="dialog"
         >
-          <div className="relative text-center">
+          <div className="relative text-left tab:text-center">
             <h2
-              className="bold display24"
+              className="bold display20 tab:display24"
               id="application-attachment-modal-title"
             >
               파일 첨부
             </h2>
-            <p className="regular display14 mt-2 text-muted-foreground">
+            <p className="regular display12 tab:display14 mt-1 tab:mt-2 text-muted-foreground">
               지원 공고에 연결할 파일을 최대 4개까지 선택할 수 있어요.
             </p>
             <button
@@ -271,8 +272,134 @@ const ApplicationAttachmentModal = (
             </button>
           </div>
 
-          <div className="mt-8 grid min-h-0 flex-1 grid-cols-2 items-stretch gap-6">
-            <div className="flex min-h-0 min-w-0 flex-col">
+          <div className="desk:mt-8 mt-5 tab:mt-6 flex tab:grid min-h-0 flex-1 tab:grid-cols-2 flex-col tab:items-stretch desk:gap-6 gap-4 tab:gap-4">
+            <div className="flex tab:hidden min-h-0 min-w-0 flex-1 flex-col">
+              {isMobilePreviewOpen && previewResumeId ? (
+                <>
+                  <button
+                    className="display14 mb-3 inline-flex w-fit cursor-pointer items-center gap-1 text-muted-foreground"
+                    onClick={() => setIsMobilePreviewOpen(false)}
+                    type="button"
+                  >
+                    <MHIcon icon="arrowLeft" size={16} />
+                    파일 목록
+                  </button>
+                  <PDFPreview
+                    isError={previewQuery.isError}
+                    isLoading={previewQuery.isLoading}
+                    onRetry={() => void previewQuery.refetch()}
+                    previewUrl={previewQuery.data?.previewUrl ?? null}
+                  />
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <MHInput
+                      className="display14"
+                      isFullWidth
+                      onChange={(event) => {
+                        setSearchQuery(event.target.value);
+                      }}
+                      onClear={() => {
+                        setSearchQuery("");
+                      }}
+                      placeholder="파일명 검색"
+                      value={searchQuery}
+                      variant="full"
+                    />
+                    <label
+                      className="display12 semibold inline-flex h-10 shrink-0 cursor-pointer items-center gap-1 rounded-tiny bg-primary px-3 text-white"
+                      htmlFor="application-attachment-upload-mobile"
+                    >
+                      <MHIcon icon="upload" size={16} />
+                      업로드
+                    </label>
+                    <input
+                      accept=".pdf,application/pdf"
+                      className="sr-only"
+                      disabled={
+                        selectedIds.size >= MAX_ATTACHMENT_COUNT || isBusy
+                      }
+                      id="application-attachment-upload-mobile"
+                      onChange={handleFileChange}
+                      type="file"
+                    />
+                  </div>
+                  <ul className="mt-3 min-h-0 flex-1 divide-y divide-border-subtle overflow-y-auto rounded-small border border-neutral10">
+                    {resumesQuery.isPending ? (
+                      <li className="p-8 text-center text-muted-foreground">
+                        불러오는 중...
+                      </li>
+                    ) : filteredResumes.length === 0 ? (
+                      <li className="p-8 text-center text-muted-foreground">
+                        {resumesQuery.isError
+                          ? "파일 목록을 불러오지 못했습니다."
+                          : searchQuery
+                            ? "검색 결과가 없습니다."
+                            : "업로드한 파일이 없습니다."}
+                      </li>
+                    ) : (
+                      filteredResumes.map((resume) => {
+                        const isSelected = selectedIds.has(resume.id);
+                        const isSelectionDisabled =
+                          isBusy ||
+                          (!isSelected &&
+                            selectedIds.size >= MAX_ATTACHMENT_COUNT);
+
+                        return (
+                          <li
+                            className="flex items-center gap-2 p-3"
+                            key={resume.id}
+                          >
+                            <MHCheckbox
+                              disabled={isSelectionDisabled}
+                              isChecked={isSelected}
+                              onChange={(event) =>
+                                handleSelectionChange(
+                                  resume.id,
+                                  event.target.checked,
+                                )
+                              }
+                            />
+                            <button
+                              className="min-w-0 flex-1 truncate text-left"
+                              onClick={() => {
+                                setPreviewResumeId(resume.id);
+                                setIsMobilePreviewOpen(true);
+                              }}
+                              type="button"
+                            >
+                              <span className="display14 regular block truncate">
+                                {resume.name}
+                              </span>
+                              <span className="display12 text-muted-foreground">
+                                {RESUME_TYPE_LABEL[resume.resumeType]}
+                              </span>
+                            </button>
+                            <button
+                              aria-label={`${resume.name} 다운로드`}
+                              className="flex size-8 shrink-0 items-center justify-center text-muted-foreground"
+                              disabled={downloadingResumeId === resume.id}
+                              onClick={() => void handleDownload(resume)}
+                              type="button"
+                            >
+                              <MHIcon icon="download" size={18} />
+                            </button>
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                  <div className="mt-2 flex justify-end">
+                    <span className="display12 text-muted-foreground">
+                      {selectedIds.size} / {MAX_ATTACHMENT_COUNT}개 선택
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="tab:flex hidden min-h-0 min-w-0 flex-col">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                   <MHInput
@@ -334,12 +461,14 @@ const ApplicationAttachmentModal = (
                 </div>
               </div>
             </div>
-            <PDFPreview
-              isError={previewQuery.isError}
-              isLoading={previewQuery.isLoading}
-              onRetry={() => void previewQuery.refetch()}
-              previewUrl={previewQuery.data?.previewUrl ?? null}
-            />
+            <div className="tab:flex hidden min-h-0 min-w-0">
+              <PDFPreview
+                isError={previewQuery.isError}
+                isLoading={previewQuery.isLoading}
+                onRetry={() => void previewQuery.refetch()}
+                previewUrl={previewQuery.data?.previewUrl ?? null}
+              />
+            </div>
           </div>
 
           <div className="mt-8 grid shrink-0 grid-cols-2 gap-3">
