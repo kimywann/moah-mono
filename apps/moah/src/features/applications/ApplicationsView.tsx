@@ -7,6 +7,7 @@ import type { OnChangeFn, SortingState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useApplications } from "@/features/applications/hooks/useApplications";
 import type { TApplicationStage } from "@/features/applications/model/application.type";
+import ApplicationCardList from "@/features/applications/ui/card/ApplicationCardList";
 import ApplicationAttachmentModal from "@/features/applications/ui/modal/ApplicationAttachmentModal";
 import ApplicationDetailModal from "@/features/applications/ui/modal/ApplicationDetailModal";
 import ApplicationRegisterModal from "@/features/applications/ui/modal/ApplicationRegisterModal";
@@ -116,7 +117,7 @@ const ApplicationsView = ({
     });
   };
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = async (ids = [...selectedIds]) => {
     const result = await MHModal<"cancel" | "delete">({
       name: "지원 공고 삭제",
       title: "지원 공고를 삭제할까요?",
@@ -138,8 +139,16 @@ const ApplicationsView = ({
 
     if (result === "delete") {
       try {
-        await deleteApplicationsMutation.mutateAsync([...selectedIds]);
-        setSelectedIds(new Set());
+        await deleteApplicationsMutation.mutateAsync(ids);
+        setSelectedIds((previous) => {
+          const next = new Set(previous);
+
+          for (const id of ids) {
+            next.delete(id);
+          }
+
+          return next;
+        });
       } catch {
         return;
       }
@@ -191,18 +200,29 @@ const ApplicationsView = ({
         />
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <ApplicationStageBadge
-          onStageChange={handleStageFilterChange}
-          selectedStage={listParams.status}
-          stageCounts={applicationsQuery.data.stageCounts}
-        />
-        <div className="flex shrink-0 gap-2">
+      <div className="mb-4 flex desk:flex-row flex-col desk:items-center desk:justify-between gap-3">
+        <div className="flex desk:hidden justify-end">
+          <MHButton
+            onClick={() => setIsRegistrationModalOpen(true)}
+            size="small"
+            variant="secondary"
+          >
+            + 등록하기
+          </MHButton>
+        </div>
+        <div className="-mx-4 tab:-mx-6 desk:mx-0 overflow-x-auto desk:px-0 px-4 tab:px-6">
+          <ApplicationStageBadge
+            onStageChange={handleStageFilterChange}
+            selectedStage={listParams.status}
+            stageCounts={applicationsQuery.data.stageCounts}
+          />
+        </div>
+        <div className="desk:flex hidden justify-end gap-2">
           <MHButton
             onClick={() => setIsRegistrationModalOpen(true)}
             variant="secondary"
           >
-            등록하기
+            + 등록하기
           </MHButton>
           <MHButton
             disabled={
@@ -216,7 +236,21 @@ const ApplicationsView = ({
         </div>
       </div>
 
-      <div className="min-h-82">
+      <div className="desk:hidden min-h-82">
+        <ApplicationCardList
+          applications={applications}
+          isDeleting={deleteApplicationsMutation.isPending}
+          isStageUpdate={updateApplicationMutation.isPending}
+          onAttachmentClick={setAttachmentApplicationId}
+          onDelete={(id) => void handleDeleteClick([id])}
+          onDetailClick={setDetailId}
+          onStageChange={(id, stage) =>
+            updateApplicationMutation.mutate({ id, stage })
+          }
+        />
+      </div>
+
+      <div className="desk:block hidden min-h-82">
         <ApplicationTable
           applications={applications}
           isStageUpdate={updateApplicationMutation.isPending}

@@ -12,7 +12,7 @@ interface IApplicationStageBadgeProps {
 
 const ApplicationStageBadge = (props: IApplicationStageBadgeProps) => {
   return (
-    <fieldset className="flex flex-wrap gap-2 border-0 p-0">
+    <fieldset className="flex desk:w-auto w-max desk:flex-wrap flex-nowrap gap-2 border-0 p-0">
       <legend className="sr-only">지원 단계별 현황</legend>
       {APPLICATION_STAGES.map((stage) => {
         const stageDisplay = APPLICATION_STAGE_DISPLAY[stage];

@@ -141,16 +141,23 @@ const JobPostingExtractionView = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-2">
-              <p className="display12 flex items-center gap-2 px-4 text-primary">
+            <div className="flex tab:flex-row flex-col items-start tab:items-center tab:justify-between gap-1 tab:gap-2 px-4">
+              <p className="display12 flex items-center gap-2 whitespace-nowrap text-primary">
                 <MHIcon icon="info" size={16} />
                 채용 플랫폼 링크는 지원하지 않아요.
               </p>
               {remainingExtractionCount !== null && (
-                <p className="display12 px-4 text-muted-foreground">
-                  {remainingExtractionCount === 0
-                    ? "오늘 분석 횟수를 모두 사용했어요! 내일 00:00에 다시 이용할 수 있어요."
-                    : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 10회`}
+                <p className="display12 whitespace-nowrap text-muted-foreground">
+                  <span className="tab:hidden">
+                    {remainingExtractionCount === 0
+                      ? "모두 사용했어요 · 내일 00:00 초기화"
+                      : `남은 분석 ${remainingExtractionCount} / 10회`}
+                  </span>
+                  <span className="tab:inline hidden">
+                    {remainingExtractionCount === 0
+                      ? "오늘 분석 횟수를 모두 사용했어요! 내일 00:00에 다시 이용할 수 있어요."
+                      : `오늘 남은 분석 횟수 ${remainingExtractionCount} / 10회`}
+                  </span>
                 </p>
               )}
             </div>

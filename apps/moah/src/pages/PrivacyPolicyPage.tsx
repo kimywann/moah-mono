@@ -53,7 +53,7 @@ const EXTERNAL_PROCESSOR_ROWS: IExternalProcessorRow[] = [
 
 const PrivacyPolicyPage = () => {
   return (
-    <main className="min-h-screen bg-background px-6 py-10 sm:px-8">
+    <main className="min-h-screen bg-background px-6 tab:px-8 py-10">
       <div className="mx-auto w-full max-w-3xl">
         <Link
           aria-label="홈으로 이동"
@@ -63,7 +63,7 @@ const PrivacyPolicyPage = () => {
           <img alt="Logo" className="size-10 object-contain" src={logo} />
         </Link>
 
-        <article className="mt-8 rounded-medium border border-border-subtle bg-background p-6 sm:p-10">
+        <article className="mt-8 rounded-medium border border-border-subtle bg-background p-6 tab:p-10">
           <h1 className="bold display28 mt-2">개인정보 처리방침</h1>
           <p className="display14 regular mt-4 text-muted-foreground leading-6">
             모아(이하 “서비스”)는 이용자의 개인정보를 중요하게 생각하며 관련

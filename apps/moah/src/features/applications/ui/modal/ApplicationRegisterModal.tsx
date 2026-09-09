@@ -107,7 +107,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
 
         <div className="mt-8">
           <h3 className="bold display18">필수 입력</h3>
-          <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 tab:grid-cols-2 gap-x-4 gap-y-5">
             <Controller
               control={control}
               name="companyName"
@@ -163,7 +163,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
             />
           </button>
           {isOptionalOpen && (
-            <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 tab:grid-cols-2 gap-x-4 gap-y-5">
               <RegistrationField label="경력">
                 <ExperienceField
                   maxYears={maxYears}
@@ -310,7 +310,7 @@ const ApplicationRegisterModal = (props: IApplicationRegisterModalProps) => {
                 name="url"
                 render={({ field }) => (
                   <RegistrationField
-                    className="sm:col-span-2"
+                    className="tab:col-span-2"
                     error={errors.url?.message}
                     label="채용 공고 URL"
                   >

@@ -1,13 +1,10 @@
-import MHIcon from "@moah/ui/components/MHIcon";
 import { Link } from "react-router";
 import logo from "@/shared/assets/logo.svg";
-
-const NAV_CLASS =
-  "flex flex-col items-center justify-center gap-1 rounded-small px-3 py-2 text-center text-muted-foreground transition-colors hover:bg-muted";
+import NavigationMenu from "@/shared/components/layout/NavigationMenu";
 
 const Sidebar = () => {
   return (
-    <aside className="sticky top-0 flex h-screen w-30 shrink-0 flex-col border-neutral10 border-r">
+    <aside className="sticky top-0 desk:flex hidden h-screen w-30 shrink-0 flex-col border-neutral10 border-r">
       <div className="flex items-center justify-center px-5 py-6">
         <Link to="/">
           <img
@@ -18,30 +15,9 @@ const Sidebar = () => {
         </Link>
       </div>
 
-      <nav
-        aria-label="주요 메뉴"
-        className="mt-10 flex w-full flex-col gap-4 px-5"
-      >
-        <Link className={NAV_CLASS} to="/">
-          <MHIcon icon="house" size={20} />
-          <span className="display14 medium">홈</span>
-        </Link>
-
-        <Link className={NAV_CLASS} to="/applications">
-          <MHIcon icon="clipboardList" size={20} />
-          <span className="display14 medium">지원 목록</span>
-        </Link>
-
-        <Link className={NAV_CLASS} to="/resume">
-          <MHIcon icon="fileText" size={20} />
-          <span className="display14 medium">이력서</span>
-        </Link>
-
-        {/* <Link className={NAV_CLASS} to="/board">
-          <MHIcon icon="squareKanban" size={20} />
-          <span className="display14 medium">칸반 보드</span>
-        </Link> */}
-      </nav>
+      <div className="mt-10 px-5">
+        <NavigationMenu />
+      </div>
     </aside>
   );
 };
