@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+  --breakpoint-*: initial;
+  --breakpoint-tab: 48rem;
+  --breakpoint-desk: 64rem;
+
   --container-layout: 1920px;
   --container-content: 1440px;
 

@@ -188,7 +188,7 @@ const ApplicationDetailContent = ({
   form,
   onChange,
 }: IApplicationDetailContentProps) => (
-  <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
+  <div className="grid grid-cols-1 tab:grid-cols-2 gap-x-4 gap-y-5">
     <ApplicationDetailField label="회사명">
       <MHInput
         isFullWidth
@@ -276,7 +276,7 @@ const ApplicationDetailContent = ({
         value={form.techStacks}
       />
     </ApplicationDetailField>
-    <ApplicationDetailField className="sm:col-span-2" label="채용 공고 URL">
+    <ApplicationDetailField className="tab:col-span-2" label="채용 공고 URL">
       <MHInput
         isFullWidth
         readOnly
