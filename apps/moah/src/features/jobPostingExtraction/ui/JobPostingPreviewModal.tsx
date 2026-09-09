@@ -15,6 +15,10 @@ interface IJobPostingPreviewModalProps {
   onSaveSuccess: () => void;
 }
 
+const FIELD_CLASS = "flex flex-col gap-1 tab:gap-2";
+const LABEL_CLASS = "semibold display12 tab:display14 text-neutral40";
+const INPUT_CLASS = "tab:display16 tab:h-11 tab:px-4";
+
 const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -69,10 +73,12 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-6">
-      <div className="flex max-h-[calc(100vh-48px)] w-full max-w-200 flex-col overflow-y-auto rounded-medium bg-background p-8 shadow-xs">
-        <div className="flex items-start justify-between gap-6">
-          <h2 className="bold display24">추출한 채용 공고를 확인해주세요</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 tab:p-6">
+      <div className="flex max-h-[calc(100vh-32px)] tab:max-h-[calc(100vh-48px)] w-full max-w-200 flex-col overflow-y-auto rounded-medium bg-background p-4 tab:p-8 shadow-xs">
+        <div className="flex items-start justify-between gap-4 tab:gap-6">
+          <h2 className="bold display18 tab:display24">
+            추출한 채용 공고를 확인해주세요
+          </h2>
 
           <button
             className="flex size-8 shrink-0 cursor-pointer items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
@@ -83,94 +89,100 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
           </button>
         </div>
 
-        <div className="mt-8 flex flex-col gap-5">
-          <div className="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">회사명</span>
+        <div className="mt-5 tab:mt-8 flex flex-col gap-4 tab:gap-5">
+          <div className="grid grid-cols-2 gap-x-2 tab:gap-x-4 gap-y-4 tab:gap-y-5">
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>회사명</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 placeholder="회사명을 입력해 주세요"
                 readOnly
+                size="small"
                 value={props.jobPosting.companyName ?? ""}
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">포지션</span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>포지션</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 placeholder="포지션을 입력해 주세요"
                 readOnly
+                size="small"
                 value={props.jobPosting.position ?? ""}
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">경력</span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>경력</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 placeholder="경력 조건을 입력해 주세요"
                 readOnly
+                size="small"
                 value={careerValue}
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">
-                근무 지역
-              </span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>근무 지역</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 placeholder="근무 지역을 입력해 주세요"
                 readOnly
+                size="small"
                 value={props.jobPosting.location ?? ""}
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">
-                지원 마감일
-              </span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>지원 마감일</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 readOnly
+                size="small"
                 type={isDateDeadline ? "date" : "text"}
                 value={deadlineValue}
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">
-                채용 절차
-              </span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>채용 절차</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 readOnly
+                size="small"
                 value={
                   props.jobPosting.hiringProcess.join(" · ") || "정보 없음"
                 }
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <span className="semibold display14 text-neutral40">
-                기술 스택
-              </span>
+            <div className={FIELD_CLASS}>
+              <span className={LABEL_CLASS}>기술 스택</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 readOnly
+                size="small"
                 value={props.jobPosting.techStacks.join(" · ") || "정보 없음"}
               />
             </div>
 
-            <div className="flex flex-col gap-2 sm:col-span-2">
-              <span className="semibold display14 text-neutral40">
-                채용 공고 URL
-              </span>
+            <div className="col-span-2 flex flex-col gap-1 tab:gap-2">
+              <span className={LABEL_CLASS}>채용 공고 URL</span>
               <MHInput
+                className={INPUT_CLASS}
                 isFullWidth
                 placeholder="URL을 입력해 주세요"
                 readOnly
+                size="small"
                 type="url"
                 value={props.jobPosting.url ?? "등록된 URL 없음"}
               />
@@ -178,7 +190,7 @@ const JobPostingPreviewModal = (props: IJobPostingPreviewModalProps) => {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-5 tab:mt-8">
           {props.isLoggedIn ? (
             <MHButton
               disabled={isSaving}
