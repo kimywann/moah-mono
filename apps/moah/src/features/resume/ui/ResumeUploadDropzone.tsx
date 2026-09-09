@@ -4,6 +4,7 @@ import type { ChangeEvent, DragEvent } from "react";
 import { useState } from "react";
 
 interface IResumeUploadBannerProps {
+  isCompact?: boolean;
   isUploading?: boolean;
   onFileSelect: (file: File) => void;
   selectedFileName?: string;
@@ -12,6 +13,7 @@ interface IResumeUploadBannerProps {
 const isPDFFile = (file: File) => /\.pdf$/i.test(file.name);
 
 const ResumeUploadBanner = ({
+  isCompact = false,
   isUploading = false,
   onFileSelect,
   selectedFileName,
@@ -55,10 +57,33 @@ const ResumeUploadBanner = ({
     handleFile(event.dataTransfer.files[0]);
   };
 
+  if (isCompact) {
+    return (
+      <div className="flex flex-col items-end gap-1">
+        <label className="display12 semibold inline-flex h-8 cursor-pointer items-center justify-center gap-1 rounded-tiny bg-primary px-3 text-white transition-colors hover:bg-primary-hover">
+          <input
+            accept=".pdf,application/pdf"
+            className="sr-only"
+            disabled={isUploading}
+            onChange={handleChange}
+            type="file"
+          />
+          <MHIcon icon="upload" size={16} />
+          {isUploading ? "업로드 중" : "파일 업로드"}
+        </label>
+        {errorMessage && (
+          <p className="display10 medium text-danger" role="alert">
+            {errorMessage}
+          </p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <label
       className={cn(
-        "relative block aspect-6/1 overflow-hidden rounded-medium border-2 border-border border-dashed transition-colors hover:bg-muted",
+        "relative block aspect-6/1 cursor-pointer overflow-hidden rounded-medium border-2 border-border border-dashed transition-colors hover:bg-muted",
         isDragging && "border-primary bg-primary/5",
       )}
       onDragLeave={handleDragLeave}

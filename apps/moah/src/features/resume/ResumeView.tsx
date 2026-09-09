@@ -8,6 +8,7 @@ import { useState } from "react";
 import { getResumePreviewUrl } from "@/features/resume/api/resume";
 import { useResumes } from "@/features/resume/hooks/useResumes";
 import type { IResume } from "@/features/resume/model/resume.type";
+import ResumeList from "@/features/resume/ui/ResumeList";
 import ResumeTable from "@/features/resume/ui/ResumeTable";
 import ResumeTypeModal from "@/features/resume/ui/ResumeTypeModal";
 import ResumeUploadDropzone from "@/features/resume/ui/ResumeUploadDropzone";
@@ -127,7 +128,7 @@ const ResumeView = () => {
   return (
     <>
       <section className="w-full">
-        <div className="mb-6">
+        <div className="mb-6 desk:block hidden">
           <ResumeUploadDropzone
             isUploading={uploadResumeMutation.isPending}
             onFileSelect={handleFileSelect}
@@ -136,28 +137,50 @@ const ResumeView = () => {
         </div>
 
         <div className="mb-4 flex flex-col gap-4">
-          <h1 className="bold display24">파일 목록</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="bold display20 tab:display24">파일 목록</h1>
+            <div className="desk:hidden">
+              <ResumeUploadDropzone
+                isCompact
+                isUploading={uploadResumeMutation.isPending}
+                onFileSelect={handleFileSelect}
+                selectedFileName={selectedFileName}
+              />
+            </div>
+          </div>
           <MHSegmentFilter
             ariaLabel="파일 유형 필터"
+            className="tab:flex grid tab:w-fit w-full grid-cols-4"
             onValueChange={setResumeFilter}
             options={[
               { label: "전체", value: "ALL" },
               { label: "이력서", value: "RESUME" },
-              { label: "포트폴리오", value: "PORTFOLIO" },
+              { label: "포폴", value: "PORTFOLIO" },
               { label: "기타", value: "OTHER" },
             ]}
             value={resumeFilter}
           />
         </div>
 
-        <ResumeTable
-          isDeleting={deleteResumeMutation.isPending}
-          onDeleteClick={(resume) => void handleDeleteClick(resume)}
-          onPreviewClick={(resume) => void handlePreviewClick(resume)}
-          onSortingChange={setSorting}
-          resumes={filteredResumes}
-          sorting={sorting}
-        />
+        <div className="desk:hidden">
+          <ResumeList
+            isDeleting={deleteResumeMutation.isPending}
+            onDeleteClick={(resume) => void handleDeleteClick(resume)}
+            onPreviewClick={(resume) => void handlePreviewClick(resume)}
+            resumes={filteredResumes}
+          />
+        </div>
+
+        <div className="desk:block hidden">
+          <ResumeTable
+            isDeleting={deleteResumeMutation.isPending}
+            onDeleteClick={(resume) => void handleDeleteClick(resume)}
+            onPreviewClick={(resume) => void handlePreviewClick(resume)}
+            onSortingChange={setSorting}
+            resumes={filteredResumes}
+            sorting={sorting}
+          />
+        </div>
       </section>
 
       {isTypeModalOpen && selectedFile && (
