@@ -461,7 +461,7 @@ const ApplicationAttachmentModal = (
                 </div>
               </div>
             </div>
-            <div className="tab:flex hidden min-h-0 min-w-0">
+            <div className="tab:flex hidden min-h-0 w-full min-w-0 flex-col">
               <PDFPreview
                 isError={previewQuery.isError}
                 isLoading={previewQuery.isLoading}

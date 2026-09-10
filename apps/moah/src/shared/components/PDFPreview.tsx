@@ -15,7 +15,7 @@ const PDFPreview = ({
   previewUrl,
 }: IPDFPreviewProps) => {
   return (
-    <section className="flex min-h-120 min-w-0 flex-col rounded-small border border-neutral10">
+    <section className="flex h-full min-h-120 w-full min-w-0 flex-col rounded-small border border-neutral10">
       <h3 className="semibold display16 border-border-subtle border-b px-4 py-3">
         PDF 미리보기
       </h3>
