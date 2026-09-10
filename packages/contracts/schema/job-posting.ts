@@ -38,6 +38,10 @@ const RESTRICTED_JOB_POSTING_PLATFORMS: IRestrictedJobPostingPlatform[] = [
     hostname: "wanted.co.kr",
     label: "원티드",
   },
+  {
+    hostname: "greetinghr.com",
+    label: "그리팅",
+  },
 ];
 
 const findRestrictedJobPostingPlatform = (url: string) => {
