@@ -58,4 +58,5 @@ packages/
 #### BE
 - Gemini Flash API를 연동해 채용 공고 URL의 원문을 구조화된 데이터로 추출하는 API 개발
 - RESTful API 설계 및 구현 (채용 공고/지원 현황 CRUD 기능 개발)
-- Google OAuth 2.0 및 HttpOnly Cookie 기반 로그인 세션 구현
+- Google OAuth 2.0 및 세션 기반 인증 구현
+- S3 Presigned URL 파일 업로드 구현
