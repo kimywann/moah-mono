@@ -51,7 +51,6 @@ packages/
 ## 기술적 구현
 
 #### FE
-- pnpm Workspace와 Turborepo 기반 모노레포 구성
 - 공통 디자인 토큰과 UI 컴포넌트를 활용한 디자인 시스템 구축
 - TanStack Query를 활용한 낙관적 업데이트 및 캐시 갱신
 
